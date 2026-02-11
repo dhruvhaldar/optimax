@@ -9,13 +9,14 @@ This project implements solvers and visualizations for the following course modu
 ### 1. Linear Programming (Simplex/Interior Point)
 *   **Module**: `api/solvers/lp.py`
 *   **Features**: Solves LP problems using `scipy.optimize.linprog` (Highs method, which includes Simplex/Interior Point). Visualizes 2D feasible regions and objective functions.
-*   **Artifact**:
+
     ![LP Feasible Region](assets/lp.png)
 
 ### 2. Integer Programming (Branch-and-Bound)
 *   **Module**: `api/solvers/ip.py`
 *   **Features**: Custom Branch-and-Bound implementation for integer programming. Visualizes the search tree, showing branching decisions, bounds, and pruning.
-*   **Artifact**:
+
+
     ![Branch and Bound Tree](assets/ip.png)
 
 ### 3. Decomposition & Column Generation
@@ -25,13 +26,13 @@ This project implements solvers and visualizations for the following course modu
 ### 4. Lagrangian Relaxation
 *   **Module**: `api/solvers/lagrangian.py`
 *   **Features**: Solves the Generalized Assignment Problem (GAP) using Lagrangian Relaxation. Visualizes the convergence of the Lower Bound using subgradient optimization.
-*   **Artifact**:
-    ![Lagrangian Convergence](assets/lagrangian.png)
+
+     ![Lagrangian Convergence](assets/lagrangian.png)
 
 ### 5. Stochastic Programming
 *   **Module**: `api/solvers/stochastic.py`
 *   **Features**: Solves the Two-Stage Stochastic Farmer's Problem (Deterministic Equivalent). Visualizes the optimal first-stage decision (planting) and second-stage profit distribution across scenarios.
-*   **Artifact**:
+
     ![Stochastic Results](assets/stochastic.png)
 
 ## Tech Stack
