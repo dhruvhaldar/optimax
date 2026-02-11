@@ -1,4 +1,10 @@
-# Optimax: SF2812 Optimization Toolkit
+# Optimax: Comprehensive Optimization Toolkit
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB)
+![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=flat&logo=vercel&logoColor=white)
 
 Optimax is a comprehensive optimization toolkit designed for the **[SF2812 Applied Linear Optimization](https://www.kth.se/student/kurser/kurs/SF2812?lang=en)** course at KTH. It provides a web-based interface to visualize and solve problems covering the core syllabus topics, including Linear Programming, Integer Programming, Column Generation, Lagrangian Relaxation, and Stochastic Programming.
 
@@ -16,7 +22,6 @@ This project implements solvers and visualizations for the following course modu
 *   **Module**: `api/solvers/ip.py`
 *   **Features**: Custom Branch-and-Bound implementation for integer programming. Visualizes the search tree, showing branching decisions, bounds, and pruning.
 
-
     ![Branch and Bound Tree](assets/ip.png)
 
 ### 3. Decomposition & Column Generation
@@ -27,7 +32,7 @@ This project implements solvers and visualizations for the following course modu
 *   **Module**: `api/solvers/lagrangian.py`
 *   **Features**: Solves the Generalized Assignment Problem (GAP) using Lagrangian Relaxation. Visualizes the convergence of the Lower Bound using subgradient optimization.
 
-     ![Lagrangian Convergence](assets/lagrangian.png)
+    ![Lagrangian Convergence](assets/lagrangian.png)
 
 ### 5. Stochastic Programming
 *   **Module**: `api/solvers/stochastic.py`
