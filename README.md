@@ -1,6 +1,6 @@
 # Optimax: SF2812 Optimization Toolkit
 
-Optimax is a comprehensive optimization toolkit designed for the **SF2812 Applied Linear Optimization** course at KTH. It provides a web-based interface to visualize and solve problems covering the core syllabus topics, including Linear Programming, Integer Programming, Column Generation, Lagrangian Relaxation, and Stochastic Programming.
+Optimax is a comprehensive optimization toolkit designed for the **[SF2812 Applied Linear Optimization](https://www.kth.se/student/kurser/kurs/SF2812?lang=en)** course at KTH. It provides a web-based interface to visualize and solve problems covering the core syllabus topics, including Linear Programming, Integer Programming, Column Generation, Lagrangian Relaxation, and Stochastic Programming.
 
 ## Syllabus Coverage
 
@@ -45,7 +45,7 @@ This project implements solvers and visualizations for the following course modu
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/optimax.git
+    git clone https://github.com/dhruvhaldar/optimax.git
     cd optimax
     ```
 
