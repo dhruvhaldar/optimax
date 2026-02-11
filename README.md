@@ -1,4 +1,4 @@
-# Optimax: Comprehensive Optimization Toolkit
+# optimax: Comprehensive Optimization Toolkit
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)
@@ -6,7 +6,7 @@
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB)
 ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=flat&logo=vercel&logoColor=white)
 
-Optimax is a comprehensive optimization toolkit designed for the **[SF2812 Applied Linear Optimization](https://www.kth.se/student/kurser/kurs/SF2812?lang=en)** course at KTH. It provides a web-based interface to visualize and solve problems covering the core syllabus topics, including Linear Programming, Integer Programming, Column Generation, Lagrangian Relaxation, and Stochastic Programming.
+optimax is a comprehensive optimization toolkit designed for the **[SF2812 Applied Linear Optimization](https://www.kth.se/student/kurser/kurs/SF2812?lang=en)** course at KTH. It provides a web-based interface to visualize and solve problems covering the core syllabus topics, including Linear Programming, Integer Programming, Column Generation, Lagrangian Relaxation, and Stochastic Programming.
 
 ## Syllabus Coverage
 
@@ -54,18 +54,30 @@ This project implements solvers and visualizations for the following course modu
     cd optimax
     ```
 
-2.  **Install Backend Dependencies**:
+2.  **Create and Activate Virtual Environment**:
+    *   **Windows**:
+        ```bash
+        python -m venv venv
+        .\venv\Scripts\activate
+        ```
+    *   **macOS/Linux**:
+        ```bash
+        python -m venv venv
+        source venv/bin/activate
+        ```
+
+3.  **Install Backend Dependencies**:
     ```bash
     pip install -r requirements.txt
     ```
 
-3.  **Run the API Server**:
+4.  **Run the API Server**:
     ```bash
     python -m uvicorn api.index:app --reload
     ```
     The API will be available at `http://localhost:8000/api`.
 
-4.  **Run the Frontend**:
+5.  **Run the Frontend**:
     ```bash
     cd frontend
     npm install
