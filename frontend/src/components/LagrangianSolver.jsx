@@ -29,41 +29,83 @@ const LagrangianSolver = () => {
   };
 
   return (
-    <div className="card">
-      <h2>Lagrangian Relaxation (Generalized Assignment)</h2>
-      <div className="form-group">
-        <label>Costs (Task x Agent):</label>
-        <textarea rows="3" value={costs} onChange={e => setCosts(e.target.value)} placeholder="[[c11, c12], [c21, c22]]" />
+    <div className="glass-panel p-6">
+      <h2 className="text-2xl font-bold mb-6 text-cyan-100">Lagrangian Relaxation (Generalized Assignment)</h2>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Costs (Task x Agent):</label>
+        <textarea
+          rows="3"
+          value={costs}
+          onChange={e => setCosts(e.target.value)}
+          placeholder="[[c11, c12], [c21, c22]]"
+          className="glass-input w-full font-mono"
+        />
       </div>
-      <div className="form-group">
-        <label>Weights (Task x Agent):</label>
-        <textarea rows="3" value={weights} onChange={e => setWeights(e.target.value)} placeholder="[[w11, w12], [w21, w22]]" />
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Weights (Task x Agent):</label>
+        <textarea
+          rows="3"
+          value={weights}
+          onChange={e => setWeights(e.target.value)}
+          placeholder="[[w11, w12], [w21, w22]]"
+          className="glass-input w-full font-mono"
+        />
       </div>
-      <div className="form-group">
-        <label>Agent Capacities:</label>
-        <input type="text" value={capacities} onChange={e => setCapacities(e.target.value)} placeholder="[C1, C2]" />
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Agent Capacities:</label>
+        <input
+          type="text"
+          value={capacities}
+          onChange={e => setCapacities(e.target.value)}
+          placeholder="[C1, C2]"
+          className="glass-input w-full"
+        />
       </div>
-      <button className="solve-btn" onClick={solveLagrangian} disabled={loading}>
+      <button
+        className="glass-btn-primary w-full md:w-auto"
+        onClick={solveLagrangian}
+        disabled={loading}
+      >
         {loading ? 'Solving...' : 'Solve Lagrangian'}
       </button>
 
-      {error && <div style={{color: 'red', marginTop: '10px'}}>Error: {error}</div>}
+      {error && (
+        <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+          Error: {error}
+        </div>
+      )}
 
       {result && (
-        <div style={{marginTop: '20px'}}>
-          <h3>Results</h3>
-          <p>Status: {result.status}</p>
-          <p>Final Lower Bound: {result.lb_history[result.lb_history.length - 1].toFixed(2)}</p>
-          <p>Best Upper Bound (Feasible): {result.ub ? result.ub.toFixed(2) : "None"}</p>
-          <p>Best Solution (Feasible): {result.best_solution ? JSON.stringify(result.best_solution) : "None"}</p>
+        <div className="mt-8 p-6 bg-black/20 rounded-xl border border-white/5">
+          <h3 className="text-xl font-bold mb-4 text-white">Results</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Status</span>
+              <span className="text-lg font-semibold text-green-400">{result.status}</span>
+            </div>
+            <div className="bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Final Lower Bound</span>
+              <span className="text-lg font-semibold text-white">{result.lb_history[result.lb_history.length - 1].toFixed(2)}</span>
+            </div>
+            <div className="bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Best Upper Bound (Feasible)</span>
+              <span className="text-lg font-semibold text-white">{result.ub ? result.ub.toFixed(2) : "None"}</span>
+            </div>
+            <div className="bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Best Solution</span>
+              <code className="text-cyan-300 font-mono text-sm">{result.best_solution ? JSON.stringify(result.best_solution) : "None"}</code>
+            </div>
+          </div>
+
           {result.plot && (
-            <div>
-              <h4>Lower Bound Convergence</h4>
-              <img src={`data:image/png;base64,${result.plot}`} alt="Lagrangian Convergence" className="result-image" />
+            <div className="mb-6">
+              <h4 className="text-lg font-semibold mb-3 text-slate-200">Lower Bound Convergence</h4>
+              <img src={`data:image/png;base64,${result.plot}`} alt="Lagrangian Convergence" className="w-full rounded-lg border border-white/20 shadow-lg" />
             </div>
           )}
-          <h4>Logs:</h4>
-          <pre style={{maxHeight: '200px', overflowY: 'scroll'}}>
+
+          <h4 className="text-lg font-semibold mb-2 text-slate-200">Logs</h4>
+          <pre className="bg-black/30 p-4 rounded-lg border border-white/10 text-slate-400 text-sm overflow-y-auto max-h-60 font-mono">
             {result.logs.join('\n')}
           </pre>
         </div>

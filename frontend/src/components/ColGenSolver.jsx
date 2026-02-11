@@ -27,35 +27,67 @@ const ColGenSolver = () => {
   };
 
   return (
-    <div className="card">
-      <h2>Column Generation (Cutting Stock)</h2>
-      <div className="form-group">
-        <label>Roll Length:</label>
-        <input type="number" value={rollLength} onChange={e => setRollLength(e.target.value)} />
+    <div className="glass-panel p-6">
+      <h2 className="text-2xl font-bold mb-6 text-cyan-100">Column Generation (Cutting Stock)</h2>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Roll Length:</label>
+        <input
+          type="number"
+          value={rollLength}
+          onChange={e => setRollLength(e.target.value)}
+          className="glass-input w-full"
+        />
       </div>
-      <div className="form-group">
-        <label>Demands (Width, Quantity):</label>
-        <textarea rows="3" value={demands} onChange={e => setDemands(e.target.value)} placeholder="[[width, qty], ...]" />
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Demands (Width, Quantity):</label>
+        <textarea
+          rows="3"
+          value={demands}
+          onChange={e => setDemands(e.target.value)}
+          placeholder="[[width, qty], ...]"
+          className="glass-input w-full font-mono"
+        />
       </div>
-      <button className="solve-btn" onClick={solveColGen} disabled={loading}>
+      <button
+        className="glass-btn-primary w-full md:w-auto"
+        onClick={solveColGen}
+        disabled={loading}
+      >
         {loading ? 'Solving...' : 'Solve Cutting Stock'}
       </button>
 
-      {error && <div style={{color: 'red', marginTop: '10px'}}>Error: {error}</div>}
+      {error && (
+        <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+          Error: {error}
+        </div>
+      )}
 
       {result && (
-        <div style={{marginTop: '20px'}}>
-          <h3>Results</h3>
-          <p>Status: {result.status}</p>
-          <p>Rolls Used: {result.objective.toFixed(2)} (LP Relaxation)</p>
-          <h4>Patterns Generated:</h4>
-          <ul>
+        <div className="mt-8 p-6 bg-black/20 rounded-xl border border-white/5">
+          <h3 className="text-xl font-bold mb-4 text-white">Results</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Status</span>
+              <span className="text-lg font-semibold text-green-400">{result.status}</span>
+            </div>
+            <div className="bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Rolls Used (LP Relaxation)</span>
+              <span className="text-lg font-semibold text-white">{result.objective.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <h4 className="text-lg font-semibold mb-3 text-slate-200">Patterns Generated</h4>
+          <ul className="space-y-2 mb-6">
             {result.patterns.map((pat, idx) => (
-              <li key={idx}>Pattern {idx + 1}: {JSON.stringify(pat)} (x_{idx+1} = {result.solution[idx]?.toFixed(2)})</li>
+              <li key={idx} className="bg-white/5 p-3 rounded flex justify-between items-center border border-white/10">
+                <span className="text-cyan-200">Pattern {idx + 1}: {JSON.stringify(pat)}</span>
+                <span className="text-slate-400 text-sm">x_{idx + 1} = {result.solution[idx]?.toFixed(2)}</span>
+              </li>
             ))}
           </ul>
-          <h4>Logs:</h4>
-          <pre style={{maxHeight: '200px', overflowY: 'scroll'}}>
+
+          <h4 className="text-lg font-semibold mb-2 text-slate-200">Logs</h4>
+          <pre className="bg-black/30 p-4 rounded-lg border border-white/10 text-slate-400 text-sm overflow-y-auto max-h-60 font-mono">
             {result.logs.join('\n')}
           </pre>
         </div>

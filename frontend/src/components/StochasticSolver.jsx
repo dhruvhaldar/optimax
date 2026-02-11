@@ -43,32 +43,66 @@ const StochasticSolver = () => {
   };
 
   return (
-    <div className="card">
-      <h2>Stochastic Programming (Farmer's Problem)</h2>
-      <div className="form-group">
-        <label>Total Land (Acres):</label>
-        <input type="number" value={land} onChange={e => setLand(e.target.value)} />
+    <div className="glass-panel p-6">
+      <h2 className="text-2xl font-bold mb-6 text-cyan-100">Stochastic Programming (Farmer's Problem)</h2>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Total Land (Acres):</label>
+        <input
+          type="number"
+          value={land}
+          onChange={e => setLand(e.target.value)}
+          className="glass-input w-full"
+        />
       </div>
-      <div className="form-group">
-        <label>Scenarios (Name, Prob, Yields [Wheat, Corn, Beets]):</label>
-        <textarea rows="15" value={scenarios} onChange={e => setScenarios(e.target.value)} />
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Scenarios (Name, Prob, Yields [Wheat, Corn, Beets]):</label>
+        <textarea
+          rows="15"
+          value={scenarios}
+          onChange={e => setScenarios(e.target.value)}
+          className="glass-input w-full font-mono text-sm leading-relaxed"
+        />
       </div>
-      <button className="solve-btn" onClick={solveStochastic} disabled={loading}>
+      <button
+        className="glass-btn-primary w-full md:w-auto"
+        onClick={solveStochastic}
+        disabled={loading}
+      >
         {loading ? 'Solving...' : 'Solve Stochastic LP'}
       </button>
 
-      {error && <div style={{color: 'red', marginTop: '10px'}}>Error: {error}</div>}
+      {error && (
+        <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+          Error: {error}
+        </div>
+      )}
 
       {result && (
-        <div style={{marginTop: '20px'}}>
-          <h3>Results</h3>
-          <p>Status: {result.success ? "Optimal" : "Failed"}</p>
-          <p>Expected Profit: ${result.expected_profit?.toFixed(2)}</p>
-          <p>Acres Allocation (x): {result.x ? `Wheat: ${result.x[0].toFixed(1)}, Corn: ${result.x[1].toFixed(1)}, Beets: ${result.x[2].toFixed(1)}` : "None"}</p>
+        <div className="mt-8 p-6 bg-black/20 rounded-xl border border-white/5">
+          <h3 className="text-xl font-bold mb-4 text-white">Results</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Status</span>
+              <span className={`text-lg font-semibold ${result.success ? 'text-green-400' : 'text-red-400'}`}>
+                {result.success ? "Optimal" : "Failed"}
+              </span>
+            </div>
+            <div className="bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Expected Profit</span>
+              <span className="text-lg font-semibold text-white">${result.expected_profit?.toFixed(2)}</span>
+            </div>
+            <div className="col-span-1 md:col-span-2 bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Acres Allocation</span>
+              <span className="text-lg font-semibold text-cyan-300">
+                {result.x ? `Wheat: ${result.x[0].toFixed(1)}, Corn: ${result.x[1].toFixed(1)}, Beets: ${result.x[2].toFixed(1)}` : "None"}
+              </span>
+            </div>
+          </div>
+
           {result.plot && (
             <div>
-              <h4>Decision & Profit Distribution</h4>
-              <img src={`data:image/png;base64,${result.plot}`} alt="Stochastic Plots" className="result-image" />
+              <h4 className="text-lg font-semibold mb-3 text-slate-200">Decision & Profit Distribution</h4>
+              <img src={`data:image/png;base64,${result.plot}`} alt="Stochastic Plots" className="w-full rounded-lg border border-white/20 shadow-lg" />
             </div>
           )}
         </div>

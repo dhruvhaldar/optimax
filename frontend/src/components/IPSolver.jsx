@@ -31,41 +31,84 @@ const IPSolver = () => {
   };
 
   return (
-    <div className="card">
-      <h2>Integer Programming (Branch and Bound)</h2>
-      <div className="form-group">
-        <label>Objective Coefficients (c):</label>
-        <input type="text" value={c} onChange={e => setC(e.target.value)} />
+    <div className="glass-panel p-6">
+      <h2 className="text-2xl font-bold mb-6 text-cyan-100">Integer Programming (Branch and Bound)</h2>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Objective Coefficients (c):</label>
+        <input
+          type="text"
+          value={c}
+          onChange={e => setC(e.target.value)}
+          className="glass-input w-full"
+        />
       </div>
-      <div className="form-group">
-        <label>Constraint Matrix (A_ub):</label>
-        <textarea rows="3" value={A} onChange={e => setA(e.target.value)} />
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Constraint Matrix (A_ub):</label>
+        <textarea
+          rows="3"
+          value={A}
+          onChange={e => setA(e.target.value)}
+          className="glass-input w-full font-mono"
+        />
       </div>
-      <div className="form-group">
-        <label>Constraint RHS (b_ub):</label>
-        <input type="text" value={b} onChange={e => setB(e.target.value)} />
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-slate-300 mb-2">Constraint RHS (b_ub):</label>
+        <input
+          type="text"
+          value={b}
+          onChange={e => setB(e.target.value)}
+          className="glass-input w-full"
+        />
       </div>
-      <div className="form-group">
-        <label>
-          <input type="checkbox" checked={maximize} onChange={e => setMaximize(e.target.checked)} /> Maximize Objective
+      <div className="mb-6">
+        <label className="flex items-center space-x-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={maximize}
+            onChange={e => setMaximize(e.target.checked)}
+            className="form-checkbox h-5 w-5 text-cyan-500 rounded border-gray-300 focus:ring-cyan-500 bg-white/10"
+          />
+          <span className="text-slate-300">Maximize Objective</span>
         </label>
       </div>
-      <button className="solve-btn" onClick={solveIP} disabled={loading}>
+      <button
+        className="glass-btn-primary w-full md:w-auto"
+        onClick={solveIP}
+        disabled={loading}
+      >
         {loading ? 'Solving...' : 'Solve IP'}
       </button>
 
-      {error && <div style={{color: 'red', marginTop: '10px'}}>Error: {error}</div>}
+      {error && (
+        <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+          Error: {error}
+        </div>
+      )}
 
       {result && (
-        <div style={{marginTop: '20px'}}>
-          <h3>Results</h3>
-          <p>Status: {result.success ? "Optimal" : "Failed"}</p>
-          <p>Objective Value: {result.fun.toFixed(4)}</p>
-          <p>Solution (x): {JSON.stringify(result.x)}</p>
+        <div className="mt-8 p-6 bg-black/20 rounded-xl border border-white/5">
+          <h3 className="text-xl font-bold mb-4 text-white">Results</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Status</span>
+              <span className={`text-lg font-semibold ${result.success ? 'text-green-400' : 'text-red-400'}`}>
+                {result.success ? "Optimal" : "Failed"}
+              </span>
+            </div>
+            <div className="bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Objective Value</span>
+              <span className="text-lg font-semibold text-white">{result.fun.toFixed(4)}</span>
+            </div>
+            <div className="col-span-1 md:col-span-2 bg-white/5 p-4 rounded-lg">
+              <span className="text-slate-400 block text-sm">Solution (x)</span>
+              <code className="text-cyan-300 font-mono">{JSON.stringify(result.x)}</code>
+            </div>
+          </div>
+
           {result.tree_plot && (
             <div>
-              <h4>Branch and Bound Tree</h4>
-              <img src={`data:image/png;base64,${result.tree_plot}`} alt="B&B Tree" className="result-image" />
+              <h4 className="text-lg font-semibold mb-3 text-slate-200">Branch and Bound Tree</h4>
+              <img src={`data:image/png;base64,${result.tree_plot}`} alt="B&B Tree" className="w-full rounded-lg border border-white/20 shadow-lg" />
             </div>
           )}
         </div>

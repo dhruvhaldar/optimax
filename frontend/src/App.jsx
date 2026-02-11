@@ -21,21 +21,33 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <div className="header">
-        <h1>Optimax: SF2812 Optimization Toolkit</h1>
-        <p>Applied Linear Optimization - Solver & Visualizer</p>
+    <div className="container mx-auto px-4 py-8">
+      <div className="glass-panel p-8 mb-8 text-center bg-gradient-to-r from-white/5 to-white/10">
+        <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-purple-300">
+          Optimax: SF2812 Optimization Toolkit
+        </h1>
+        <p className="text-slate-300 text-lg">Applied Linear Optimization - Solver & Visualizer</p>
       </div>
 
-      <div className="nav">
-        <button className={`nav-button ${activeTab === 'lp' ? 'active' : ''}`} onClick={() => setActiveTab('lp')}>LP (Simplex)</button>
-        <button className={`nav-button ${activeTab === 'ip' ? 'active' : ''}`} onClick={() => setActiveTab('ip')}>IP (B&B)</button>
-        <button className={`nav-button ${activeTab === 'colgen' ? 'active' : ''}`} onClick={() => setActiveTab('colgen')}>Column Generation</button>
-        <button className={`nav-button ${activeTab === 'lagrangian' ? 'active' : ''}`} onClick={() => setActiveTab('lagrangian')}>Lagrangian Relaxation</button>
-        <button className={`nav-button ${activeTab === 'stochastic' ? 'active' : ''}`} onClick={() => setActiveTab('stochastic')}>Stochastic Prog</button>
+      <div className="flex flex-wrap justify-center gap-4 mb-8">
+        {[
+          { id: 'lp', label: 'LP (Simplex)' },
+          { id: 'ip', label: 'IP (B&B)' },
+          { id: 'colgen', label: 'Column Generation' },
+          { id: 'lagrangian', label: 'Lagrangian Relaxation' },
+          { id: 'stochastic', label: 'Stochastic Prog' },
+        ].map(tab => (
+          <button
+            key={tab.id}
+            className={`glass-btn ${activeTab === tab.id ? 'bg-cyan-500/40 border-cyan-400 shadow-cyan-500/30' : ''}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      <div className="content">
+      <div className="glass-panel p-6 min-h-[400px]">
         {renderSolver()}
       </div>
     </div>
