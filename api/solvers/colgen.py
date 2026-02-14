@@ -1,6 +1,5 @@
 import numpy as np
-from scipy.optimize import linprog
-import pulp
+from scipy.optimize import linprog, milp, LinearConstraint
 
 def solve_cutting_stock(roll_length, demands):
     """
@@ -52,17 +51,27 @@ def solve_cutting_stock(roll_length, demands):
 
         # Subproblem: Knapsack
         # Maximize sum(duals[i] * a[i]) s.t. sum(widths[i] * a[i]) <= roll_length
+        # Scipy milp minimizes c^T x, so we minimize -duals^T a
 
-        prob = pulp.LpProblem("Subproblem", pulp.LpMaximize)
-        a_vars = [pulp.LpVariable(f"a_{i}", 0, cat="Integer") for i in range(n_items)]
+        c_sub = -duals
 
-        prob += pulp.lpSum([duals[i] * a_vars[i] for i in range(n_items)])
-        prob += pulp.lpSum([widths[i] * a_vars[i] for i in range(n_items)]) <= roll_length
+        # Constraints: 0 <= widths @ a <= roll_length
+        A_sub = np.array([widths]) # 1 x n_items matrix
+        b_l = np.array([0])
+        b_u = np.array([roll_length])
 
-        prob.solve(pulp.PULP_CBC_CMD(msg=0))
+        constraints = LinearConstraint(A_sub, b_l, b_u)
+        integrality = np.ones(n_items) # All integer
 
-        new_pattern_val = pulp.value(prob.objective)
-        new_pattern = [int(v.varValue) for v in a_vars]
+        # Solve using HiGHS (via scipy.optimize.milp) - much faster than spawning CBC process
+        res_sub = milp(c=c_sub, constraints=constraints, integrality=integrality)
+
+        if not res_sub.success:
+             logs.append(f"Subproblem failed: {res_sub.message}")
+             break
+
+        new_pattern_val = -res_sub.fun
+        new_pattern = [int(round(x)) for x in res_sub.x]
 
         if new_pattern_val <= 1 + 1e-5:
             logs.append(f"Optimality reached. Max reduced cost val: {new_pattern_val:.4f} <= 1")
