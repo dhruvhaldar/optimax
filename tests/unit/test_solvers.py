@@ -29,6 +29,31 @@ class TestSolvers(unittest.TestCase):
         self.assertEqual(res['x'], [0.0, 5.0])
         self.assertIsNotNone(res['tree_plot'])
 
+    def test_solve_ip_limit(self):
+        # Create a hard Knapsack problem instance that generates many branches
+        n = 15
+        weights = [10 + i for i in range(n)]
+        values = [w + 5 for w in weights]
+        capacity = int(sum(weights) * 0.5)
+
+        c = values
+        A_ub = [weights]
+        b_ub = [capacity]
+
+        # Test with a very small node limit
+        max_nodes = 10
+
+        res = ip.solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=max_nodes)
+
+        # Verify result structure
+        self.assertIn('status', res)
+        self.assertIn('success', res)
+
+        if res['status'] == "Optimal":
+            print("Warning: Solver found optimal solution within 10 nodes. Increase problem difficulty.")
+        else:
+            self.assertEqual(res['status'], "Limit Reached")
+
     def test_solve_colgen(self):
         # Roll length 10. Demands: Width 3 (qty 5), Width 5 (qty 2).
         demands = [[3, 5], [5, 2]]

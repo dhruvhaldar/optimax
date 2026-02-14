@@ -16,7 +16,7 @@ class Node:
         self.value = -np.inf
         self.status = "open" # open, pruned, integer, infeasible, branched
 
-def solve_ip(c, A_ub, b_ub, maximize=True):
+def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
     """
     Solves Integer Programming problem using Branch and Bound.
     Maximize c^T x s.t. A_ub x <= b_ub, x >= 0, integer.
@@ -42,8 +42,15 @@ def solve_ip(c, A_ub, b_ub, maximize=True):
     best_value = -np.inf if maximize else np.inf
 
     node_counter = 0
+    processed_nodes = 0
+    limit_reached = False
 
     while queue:
+        if processed_nodes >= max_nodes:
+            limit_reached = True
+            break
+
+        processed_nodes += 1
         current_node = queue.pop(0) # BFS
 
         # Solve LP relaxation
@@ -121,8 +128,15 @@ def solve_ip(c, A_ub, b_ub, maximize=True):
     # Generate Tree Plot
     img_b64 = plot_tree(nodes)
 
+    status = "Optimal"
+    if limit_reached:
+        status = "Limit Reached"
+    elif best_solution is None:
+        status = "Infeasible"
+
     return {
         "success": best_solution is not None,
+        "status": status,
         "x": best_solution.tolist() if best_solution is not None else None,
         "fun": best_value,
         "tree_plot": img_b64
