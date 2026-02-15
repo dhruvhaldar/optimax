@@ -8,6 +8,7 @@ backend.log
 frontend.log
 frontend/dist/
 frontend/node_modules/
+server.log
 
 # Virtual Environment
 venv/

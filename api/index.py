@@ -1,15 +1,38 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any, Union
 import sys
 import os
+import logging
 
 # Add parent directory to path if needed for local execution
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from api.solvers import lp, ip, colgen, lagrangian, stochastic
 
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = FastAPI()
+
+# Exception Handlers
+@app.exception_handler(ValueError)
+async def value_error_handler(request: Request, exc: ValueError):
+    logger.warning(f"ValueError: {exc}")
+    return JSONResponse(
+        status_code=400,
+        content={"detail": "Invalid input parameters"},
+    )
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Global exception: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error"},
+    )
 
 class LPParams(BaseModel):
     c: List[float]
@@ -48,45 +71,30 @@ def health():
 
 @app.post("/api/lp")
 def solve_lp_route(params: LPParams):
-    try:
-        # Clean bounds: Convert None to None (Pydantic might make them something else or lists)
-        bounds = params.bounds
-        if bounds:
-            bounds = [tuple(b) if b else (0, None) for b in bounds]
-        return lp.solve_lp(params.c, params.A_ub, params.b_ub, bounds, params.maximize)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    # Clean bounds: Convert None to None (Pydantic might make them something else or lists)
+    bounds = params.bounds
+    if bounds:
+        bounds = [tuple(b) if b else (0, None) for b in bounds]
+    return lp.solve_lp(params.c, params.A_ub, params.b_ub, bounds, params.maximize)
 
 @app.post("/api/ip")
 def solve_ip_route(params: IPParams):
-    try:
-        return ip.solve_ip(params.c, params.A_ub, params.b_ub, params.maximize)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return ip.solve_ip(params.c, params.A_ub, params.b_ub, params.maximize)
 
 @app.post("/api/colgen")
 def solve_colgen_route(params: ColGenParams):
-    try:
-        # Convert list of lists to list of tuples if needed, or just pass as is
-        return colgen.solve_cutting_stock(params.roll_length, params.demands)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    # Convert list of lists to list of tuples if needed, or just pass as is
+    return colgen.solve_cutting_stock(params.roll_length, params.demands)
 
 @app.post("/api/lagrangian")
 def solve_lagrangian_route(params: LagrangianParams):
-    try:
-        return lagrangian.solve_lagrangian(params.costs, params.weights, params.capacities)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return lagrangian.solve_lagrangian(params.costs, params.weights, params.capacities)
 
 @app.post("/api/stochastic")
 def solve_stochastic_route(params: StochasticParams):
-    try:
-        # Convert Pydantic models to dicts
-        scenarios = [s.model_dump() for s in params.scenarios]
-        return stochastic.solve_stochastic(params.total_land, scenarios)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    # Convert Pydantic models to dicts
+    scenarios = [s.model_dump() for s in params.scenarios]
+    return stochastic.solve_stochastic(params.total_land, scenarios)
 
 if __name__ == "__main__":
     import uvicorn
