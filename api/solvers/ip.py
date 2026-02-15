@@ -1,4 +1,5 @@
 import numpy as np
+from collections import deque
 from scipy.optimize import linprog
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -32,7 +33,7 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
     initial_bounds = [(0, None)] * n_vars
 
     nodes = []
-    queue = []
+    queue = deque()
 
     root = Node(0, 0, None, "Root", initial_bounds)
     nodes.append(root)
@@ -51,7 +52,7 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
             break
 
         processed_nodes += 1
-        current_node = queue.pop(0) # BFS
+        current_node = queue.popleft() # BFS
 
         # Solve LP relaxation
         res = linprog(c_lp, A_ub=A_ub, b_ub=b_ub, bounds=current_node.bounds, method='highs')
@@ -85,12 +86,14 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
                 best_solution = res.x
         else:
             # Branch
-            # Find first non-integer variable
+            # Find most fractional variable (closest to 0.5)
             idx = -1
+            max_frac = -1
             for i, x_val in enumerate(res.x):
-                if not np.isclose(x_val, round(x_val), atol=1e-5):
+                dist = abs(x_val - round(x_val))
+                if dist > 1e-5 and dist > max_frac:
+                    max_frac = dist
                     idx = i
-                    break
 
             if idx != -1:
                 current_node.status = "branched"
