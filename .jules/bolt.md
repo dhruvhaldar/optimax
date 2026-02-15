@@ -5,3 +5,7 @@
 ## 2024-05-27 - [IP Search Strategy: BFS vs DFS]
 **Learning:** Switching from BFS to DFS in a custom Branch and Bound implementation for Knapsack instances resulted in a ~4.5x slowdown (1.6s -> 7.2s). This suggests that for these instances, finding a feasible solution via DFS was not as critical as exploring the broader tree structure or the node ordering was suboptimal.
 **Action:** Default to Best-First Search for B&B, or verify node ordering heuristics carefully before committing to DFS.
+
+## 2024-05-27 - [Branching Heuristic: Most Fractional vs First Fractional]
+**Learning:** "Most Fractional" branching (picking variable closest to 0.5) provided no benefit for pure Knapsack problems (neutral performance) because the LP relaxation typically yields only one fractional variable. However, for General MIPs with multiple constraints, it reduced node count by ~37% and time by ~28%.
+**Action:** Use "Most Fractional" branching for general purpose solvers, but don't expect magic on single-constraint problems.
