@@ -34,8 +34,9 @@ const IPSolver = () => {
     <div className="glass-panel p-6">
       <h2 className="text-2xl font-bold mb-6 text-cyan-100">Integer Programming (Branch and Bound)</h2>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-300 mb-2">Objective Coefficients (c):</label>
+        <label htmlFor="ip-c" className="block text-sm font-medium text-slate-300 mb-2">Objective Coefficients (c):</label>
         <input
+          id="ip-c"
           type="text"
           value={c}
           onChange={e => setC(e.target.value)}
@@ -43,8 +44,9 @@ const IPSolver = () => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-300 mb-2">Constraint Matrix (A_ub):</label>
+        <label htmlFor="ip-A" className="block text-sm font-medium text-slate-300 mb-2">Constraint Matrix (A_ub):</label>
         <textarea
+          id="ip-A"
           rows="3"
           value={A}
           onChange={e => setA(e.target.value)}
@@ -52,8 +54,9 @@ const IPSolver = () => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-300 mb-2">Constraint RHS (b_ub):</label>
+        <label htmlFor="ip-b" className="block text-sm font-medium text-slate-300 mb-2">Constraint RHS (b_ub):</label>
         <input
+          id="ip-b"
           type="text"
           value={b}
           onChange={e => setB(e.target.value)}
@@ -72,15 +75,24 @@ const IPSolver = () => {
         </label>
       </div>
       <button
-        className="glass-btn-primary w-full md:w-auto"
+        className="glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2"
         onClick={solveIP}
         disabled={loading}
+        aria-busy={loading}
       >
-        {loading ? 'Solving...' : 'Solve IP'}
+        {loading ? (
+          <>
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Solving...
+          </>
+        ) : 'Solve IP'}
       </button>
 
       {error && (
-        <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+        <div role="alert" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
           Error: {error}
         </div>
       )}
@@ -108,7 +120,7 @@ const IPSolver = () => {
           {result.tree_plot && (
             <div>
               <h4 className="text-lg font-semibold mb-3 text-slate-200">Branch and Bound Tree</h4>
-              <img src={`data:image/png;base64,${result.tree_plot}`} alt="B&B Tree" className="w-full rounded-lg border border-white/20 shadow-lg" />
+              <img src={`data:image/png;base64,${result.tree_plot}`} alt="Branch and Bound Tree Visualization" className="w-full rounded-lg border border-white/20 shadow-lg" />
             </div>
           )}
         </div>
