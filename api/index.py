@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from typing import List, Optional, Dict, Any, Union
+from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any, Union, Annotated
 import sys
 import os
 import logging
@@ -34,36 +34,45 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "Internal Server Error"},
     )
 
+# Security Limits
+MAX_VARS = 100
+MAX_CONSTRAINTS = 200
+MAX_SCENARIOS = 50
+
+BoundedFloatList = Annotated[List[float], Field(max_length=MAX_VARS)]
+BoundedConstraintMatrix = Annotated[List[BoundedFloatList], Field(max_length=MAX_CONSTRAINTS)]
+BoundedConstraintVector = Annotated[List[float], Field(max_length=MAX_CONSTRAINTS)]
+
 class LPParams(BaseModel):
-    c: List[float]
-    A_ub: List[List[float]]
-    b_ub: List[float]
-    bounds: Optional[List[Union[List[Optional[float]], None]]] = None
+    c: BoundedFloatList
+    A_ub: BoundedConstraintMatrix
+    b_ub: BoundedConstraintVector
+    bounds: Annotated[Optional[List[Union[List[Optional[float]], None]]], Field(max_length=MAX_VARS)] = None
     maximize: bool = False
 
 class IPParams(BaseModel):
-    c: List[float]
-    A_ub: List[List[float]]
-    b_ub: List[float]
+    c: BoundedFloatList
+    A_ub: BoundedConstraintMatrix
+    b_ub: BoundedConstraintVector
     maximize: bool = True
 
 class ColGenParams(BaseModel):
     roll_length: float
-    demands: List[List[float]] # [[width, quantity], ...]
+    demands: Annotated[List[BoundedFloatList], Field(max_length=MAX_VARS)] # [[width, quantity], ...]
 
 class LagrangianParams(BaseModel):
-    costs: List[List[float]]
-    weights: List[List[float]]
-    capacities: List[float]
+    costs: Annotated[List[BoundedFloatList], Field(max_length=MAX_VARS)]
+    weights: Annotated[List[BoundedFloatList], Field(max_length=MAX_VARS)]
+    capacities: BoundedFloatList
 
 class Scenario(BaseModel):
     name: str
     probability: float
-    yields: List[float]
+    yields: BoundedFloatList
 
 class StochasticParams(BaseModel):
     total_land: float
-    scenarios: List[Scenario]
+    scenarios: Annotated[List[Scenario], Field(max_length=MAX_SCENARIOS)]
 
 @app.get("/api/health")
 def health():
