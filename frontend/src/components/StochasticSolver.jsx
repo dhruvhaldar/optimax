@@ -46,8 +46,9 @@ const StochasticSolver = () => {
     <div className="glass-panel p-6">
       <h2 className="text-2xl font-bold mb-6 text-cyan-100">Stochastic Programming (Farmer's Problem)</h2>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-300 mb-2">Total Land (Acres):</label>
+        <label htmlFor="stochastic-land" className="block text-sm font-medium text-slate-300 mb-2">Total Land (Acres):</label>
         <input
+          id="stochastic-land"
           type="number"
           value={land}
           onChange={e => setLand(e.target.value)}
@@ -55,8 +56,9 @@ const StochasticSolver = () => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-300 mb-2">Scenarios (Name, Prob, Yields [Wheat, Corn, Beets]):</label>
+        <label htmlFor="stochastic-scenarios" className="block text-sm font-medium text-slate-300 mb-2">Scenarios (Name, Prob, Yields [Wheat, Corn, Beets]):</label>
         <textarea
+          id="stochastic-scenarios"
           rows="15"
           value={scenarios}
           onChange={e => setScenarios(e.target.value)}

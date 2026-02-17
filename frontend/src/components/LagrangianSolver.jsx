@@ -32,8 +32,9 @@ const LagrangianSolver = () => {
     <div className="glass-panel p-6">
       <h2 className="text-2xl font-bold mb-6 text-cyan-100">Lagrangian Relaxation (Generalized Assignment)</h2>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-300 mb-2">Costs (Task x Agent):</label>
+        <label htmlFor="lagrangian-costs" className="block text-sm font-medium text-slate-300 mb-2">Costs (Task x Agent):</label>
         <textarea
+          id="lagrangian-costs"
           rows="3"
           value={costs}
           onChange={e => setCosts(e.target.value)}
@@ -42,8 +43,9 @@ const LagrangianSolver = () => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-300 mb-2">Weights (Task x Agent):</label>
+        <label htmlFor="lagrangian-weights" className="block text-sm font-medium text-slate-300 mb-2">Weights (Task x Agent):</label>
         <textarea
+          id="lagrangian-weights"
           rows="3"
           value={weights}
           onChange={e => setWeights(e.target.value)}
@@ -52,8 +54,9 @@ const LagrangianSolver = () => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-300 mb-2">Agent Capacities:</label>
+        <label htmlFor="lagrangian-capacities" className="block text-sm font-medium text-slate-300 mb-2">Agent Capacities:</label>
         <input
+          id="lagrangian-capacities"
           type="text"
           value={capacities}
           onChange={e => setCapacities(e.target.value)}
