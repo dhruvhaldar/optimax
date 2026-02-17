@@ -39,15 +39,18 @@ MAX_VARS = 100
 MAX_CONSTRAINTS = 200
 MAX_SCENARIOS = 50
 
-BoundedFloatList = Annotated[List[float], Field(max_length=MAX_VARS)]
+# Input validation for floats: strict mode, finite, and bounded to avoid overflows/DoS
+SafeFloat = Annotated[float, Field(allow_inf_nan=False, ge=-1e20, le=1e20)]
+
+BoundedFloatList = Annotated[List[SafeFloat], Field(max_length=MAX_VARS)]
 BoundedConstraintMatrix = Annotated[List[BoundedFloatList], Field(max_length=MAX_CONSTRAINTS)]
-BoundedConstraintVector = Annotated[List[float], Field(max_length=MAX_CONSTRAINTS)]
+BoundedConstraintVector = Annotated[List[SafeFloat], Field(max_length=MAX_CONSTRAINTS)]
 
 class LPParams(BaseModel):
     c: BoundedFloatList
     A_ub: BoundedConstraintMatrix
     b_ub: BoundedConstraintVector
-    bounds: Annotated[Optional[List[Union[List[Optional[float]], None]]], Field(max_length=MAX_VARS)] = None
+    bounds: Annotated[Optional[List[Union[List[Optional[SafeFloat]], None]]], Field(max_length=MAX_VARS)] = None
     maximize: bool = False
 
 class IPParams(BaseModel):
@@ -57,7 +60,7 @@ class IPParams(BaseModel):
     maximize: bool = True
 
 class ColGenParams(BaseModel):
-    roll_length: float
+    roll_length: SafeFloat
     demands: Annotated[List[BoundedFloatList], Field(max_length=MAX_VARS)] # [[width, quantity], ...]
 
 class LagrangianParams(BaseModel):
@@ -67,11 +70,11 @@ class LagrangianParams(BaseModel):
 
 class Scenario(BaseModel):
     name: str
-    probability: float
+    probability: SafeFloat
     yields: BoundedFloatList
 
 class StochasticParams(BaseModel):
-    total_land: float
+    total_land: SafeFloat
     scenarios: Annotated[List[Scenario], Field(max_length=MAX_SCENARIOS)]
 
 @app.get("/api/health")
