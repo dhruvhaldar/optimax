@@ -115,7 +115,6 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
                 node_counter += 1
                 left_node = Node(node_counter, current_node.level + 1, current_node.id, f"x{idx} <= {val_floor}", left_bounds)
                 nodes.append(left_node)
-                queue.append(left_node)
 
                 # Right child: x[idx] >= ceil
                 right_bounds = current_node.bounds.copy()
@@ -130,7 +129,17 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
                 node_counter += 1
                 right_node = Node(node_counter, current_node.level + 1, current_node.id, f"x{idx} >= {val_ceil}", right_bounds)
                 nodes.append(right_node)
-                queue.append(right_node)
+
+                # Guided Dive: Explore the branch closer to the fractional value first.
+                # If x is closer to floor (e.g. 3.1), explore Left (<= 3) first.
+                # To pop Left first in DFS (LIFO), push Right then Left.
+                frac_part = res.x[idx] - val_floor
+                if frac_part < 0.5:
+                    queue.append(right_node)
+                    queue.append(left_node)
+                else:
+                    queue.append(left_node)
+                    queue.append(right_node)
 
     # Generate Tree Plot
     img_b64 = plot_tree(nodes)
