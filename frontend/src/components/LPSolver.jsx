@@ -81,6 +81,7 @@ const LPSolver = () => {
         className="glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2"
         onClick={solveLP}
         disabled={loading}
+        aria-busy={loading}
       >
         {loading ? (
           <>
