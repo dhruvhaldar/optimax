@@ -6,6 +6,8 @@ import networkx as nx
 import io
 import base64
 
+MAX_PLOT_NODES = 50
+
 class Node:
     def __init__(self, id, level, parent_id, decision, bounds):
         self.id = id
@@ -91,15 +93,12 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
         else:
             # Branch
             # Find most fractional variable (closest to 0.5)
-            idx = -1
-            max_frac = -1
-            for i, x_val in enumerate(res.x):
-                dist = abs(x_val - round(x_val))
-                if dist > 1e-5 and dist > max_frac:
-                    max_frac = dist
-                    idx = i
+            # Vectorized implementation for speed (O(1) numpy vs O(N) python loop)
+            dist = np.abs(res.x - np.round(res.x))
+            idx = np.argmax(dist)
 
-            if idx != -1:
+            # Ensure we actually found a fractional variable (though is_integer check above should cover this)
+            if dist[idx] > 1e-5:
                 current_node.status = "branched"
                 val_floor = int(np.floor(res.x[idx]))
                 val_ceil = int(np.ceil(res.x[idx]))
@@ -114,7 +113,10 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
 
                 node_counter += 1
                 left_node = Node(node_counter, current_node.level + 1, current_node.id, f"x{idx} <= {val_floor}", left_bounds)
-                nodes.append(left_node)
+
+                # Optimization: Only store nodes for plotting if within limit to save memory
+                if len(nodes) <= MAX_PLOT_NODES:
+                    nodes.append(left_node)
 
                 # Right child: x[idx] >= ceil
                 right_bounds = current_node.bounds.copy()
@@ -128,7 +130,10 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
 
                 node_counter += 1
                 right_node = Node(node_counter, current_node.level + 1, current_node.id, f"x{idx} >= {val_ceil}", right_bounds)
-                nodes.append(right_node)
+
+                # Optimization: Only store nodes for plotting if within limit
+                if len(nodes) <= MAX_PLOT_NODES:
+                    nodes.append(right_node)
 
                 # Guided Dive: Explore the branch closer to the fractional value first.
                 # If x is closer to floor (e.g. 3.1), explore Left (<= 3) first.
@@ -159,9 +164,9 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
     }
 
 def plot_tree(nodes):
-    # Performance Optimization: Skip plotting for large trees (>50 nodes)
+    # Performance Optimization: Skip plotting for large trees (>MAX_PLOT_NODES)
     # as it dominates execution time (e.g. ~75% of time for N=25).
-    if len(nodes) > 50:
+    if len(nodes) > MAX_PLOT_NODES:
         return None
 
     G = nx.DiGraph()
