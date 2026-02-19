@@ -38,6 +38,14 @@ class TestSecurityHeaders(unittest.TestCase):
         self.assertIn("Referrer-Policy", headers)
         self.assertEqual(headers["Referrer-Policy"], "strict-origin-when-cross-origin")
 
+        # Check Permissions-Policy
+        self.assertIn("Permissions-Policy", headers)
+        self.assertEqual(headers["Permissions-Policy"], "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()")
+
+        # Check X-Permitted-Cross-Domain-Policies
+        self.assertIn("X-Permitted-Cross-Domain-Policies", headers)
+        self.assertEqual(headers["X-Permitted-Cross-Domain-Policies"], "none")
+
     def test_security_headers_on_error(self):
         # Verify headers are present even on 404
         response = self.client.get("/api/nonexistent")
@@ -47,6 +55,7 @@ class TestSecurityHeaders(unittest.TestCase):
         self.assertIn("X-Content-Type-Options", headers)
         self.assertIn("X-Frame-Options", headers)
         self.assertIn("Content-Security-Policy", headers)
+        self.assertIn("Permissions-Policy", headers)
 
 if __name__ == '__main__':
     unittest.main()
