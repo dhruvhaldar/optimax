@@ -82,7 +82,7 @@ const LagrangianSolver = () => {
       </button>
 
       {error && (
-        <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+        <div role="alert" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
           Error: {error}
         </div>
       )}
