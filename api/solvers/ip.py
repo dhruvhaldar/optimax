@@ -9,12 +9,13 @@ import base64
 MAX_PLOT_NODES = 50
 
 class Node:
-    def __init__(self, id, level, parent_id, decision, bounds):
+    def __init__(self, id, level, parent_id, decision, bounds, parent_relaxed_value=None):
         self.id = id
         self.level = level
         self.parent_id = parent_id
         self.decision = decision # e.g. "x1 <= 3"
         self.bounds = bounds # List of (min, max) for each var
+        self.parent_relaxed_value = parent_relaxed_value
         self.solution = None
         self.value = -np.inf
         self.status = "open" # open, pruned, integer, infeasible, branched
@@ -41,7 +42,9 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
     nodes = []
     queue = deque()
 
-    root = Node(0, 0, None, "Root", initial_bounds)
+    # Root node
+    root_parent_val = np.inf if maximize else -np.inf
+    root = Node(0, 0, None, "Root", initial_bounds, root_parent_val)
     nodes.append(root)
     queue.append(root)
 
@@ -59,6 +62,14 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
 
         processed_nodes += 1
         current_node = queue.pop() # DFS
+
+        # Pre-solve Pruning: Check if parent's relaxed value already violates the best bound found so far
+        if maximize and current_node.parent_relaxed_value is not None and current_node.parent_relaxed_value < best_value - 1e-6:
+             current_node.status = "pruned"
+             continue
+        if not maximize and current_node.parent_relaxed_value is not None and current_node.parent_relaxed_value > best_value + 1e-6:
+             current_node.status = "pruned"
+             continue
 
         # Solve LP relaxation
         res = linprog(c_lp, A_ub=A_ub, b_ub=b_ub, bounds=current_node.bounds, method='highs')
@@ -112,7 +123,7 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
                 left_bounds[idx] = (old_min, new_max)
 
                 node_counter += 1
-                left_node = Node(node_counter, current_node.level + 1, current_node.id, f"x{idx} <= {val_floor}", left_bounds)
+                left_node = Node(node_counter, current_node.level + 1, current_node.id, f"x{idx} <= {val_floor}", left_bounds, current_node.value)
 
                 # Optimization: Only store nodes for plotting if within limit to save memory
                 if len(nodes) <= MAX_PLOT_NODES:
@@ -129,7 +140,7 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
                 right_bounds[idx] = (new_min, old_max)
 
                 node_counter += 1
-                right_node = Node(node_counter, current_node.level + 1, current_node.id, f"x{idx} >= {val_ceil}", right_bounds)
+                right_node = Node(node_counter, current_node.level + 1, current_node.id, f"x{idx} >= {val_ceil}", right_bounds, current_node.value)
 
                 # Optimization: Only store nodes for plotting if within limit
                 if len(nodes) <= MAX_PLOT_NODES:
