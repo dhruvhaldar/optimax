@@ -9,3 +9,7 @@
 ## 2024-05-24 - Standardized Error Alert Pattern
 **Learning:** Error messages were inconsistent; while `IPSolver` used `role="alert"`, other solvers lacked it. This inconsistency meant that screen reader users might miss critical error feedback in most of the application.
 **Action:** When implementing error states, always wrap the error message in a container with `role="alert"` to ensure immediate announcement by assistive technologies.
+
+## 2024-05-24 - Missing Focus Indicators
+**Learning:** The custom `.glass-btn` and `.glass-btn-primary` classes relied on default browser behavior which was often overridden or insufficient, leaving keyboard users without clear focus indicators.
+**Action:** Always verify focus states for custom interactive components. Added `focus-visible:ring` utilities to ensure high visibility for keyboard navigation.
