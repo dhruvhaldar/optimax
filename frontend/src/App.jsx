@@ -41,6 +41,7 @@ function App() {
             key={tab.id}
             className={`glass-btn ${activeTab === tab.id ? 'bg-cyan-500/40 border-cyan-400 shadow-cyan-500/30' : ''}`}
             onClick={() => setActiveTab(tab.id)}
+            aria-current={activeTab === tab.id ? 'true' : undefined}
           >
             {tab.label}
           </button>
