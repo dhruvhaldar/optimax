@@ -7,3 +7,8 @@
 **Vulnerability:** Pydantic models for mathematical solvers (`List[float]`, `List[List[float]]`) accepted lists of arbitrary size. This could allow an attacker to send massive matrices, causing memory exhaustion (OOM) or excessive CPU usage in the backend solvers (`scipy`, `pulp`), leading to a Denial of Service.
 **Learning:** Type hints like `List[float]` validate the *type* of elements but not the *quantity*. For computational endpoints, explicit bounds are critical to protect resources.
 **Prevention:** Use `Annotated[List[T], Field(max_length=N)]` (Pydantic v2) or `conlist` (Pydantic v1) to enforce strict size limits on all list inputs.
+
+## 2024-10-25 - [Process Exhaustion via Subprocess Spawning]
+**Vulnerability:** The use of `pulp` with its default CBC solver spawned a new subprocess for every subproblem solved in iterative algorithms (like Lagrangian relaxation). In high-concurrency scenarios or with complex problems requiring many iterations, this could lead to process table exhaustion (DoS) and increased attack surface via shell execution.
+**Learning:** While `pulp` is convenient for modeling, its default behavior of shelling out to solvers is risky in production environments, especially serverless or containerized ones where process creation is expensive or limited. `scipy.optimize.milp` (available in newer SciPy versions) offers a high-performance, in-process alternative using HiGHS.
+**Prevention:** Prefer in-process solvers like `scipy.optimize.milp` or `linprog` over wrappers that spawn subprocesses (`pulp`, `pyomo` with external solvers) for high-frequency or user-driven computations.

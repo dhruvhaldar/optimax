@@ -1,5 +1,5 @@
 import numpy as np
-import pulp
+from scipy.optimize import milp, LinearConstraint, Bounds
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -40,22 +40,27 @@ def solve_lagrangian(costs, weights, capacities):
         subproblem_obj_sum = 0
 
         for j in range(n_agents):
-            prob = pulp.LpProblem(f"Agent_{j}", pulp.LpMaximize)
-            x_vars = [pulp.LpVariable(f"x_{i}_{j}", 0, 1, cat="Integer") for i in range(n_tasks)]
+            # Maximize sum_i (lambdas[i] - c_ij) x_ij
+            # Equivalent to Minimize sum_i (c_ij - lambdas[i]) x_ij
+            c_sub = costs[:, j] - lambdas
 
-            # Objective coeffs
-            coeffs = lambdas - costs[:, j]
-            prob += pulp.lpSum([coeffs[i] * x_vars[i] for i in range(n_tasks)])
+            # Constraint: sum_i w_ij x_ij <= C_j
+            # milp constraints: lb <= A_ub x <= ub
+            # Here: -inf <= w^T x <= C_j
+            A_sub = np.array([weights[:, j]]) # 1 x n_tasks matrix
+            b_l = np.array([-np.inf])
+            b_u = np.array([capacities[j]])
 
-            # Constraint
-            prob += pulp.lpSum([weights[i, j] * x_vars[i] for i in range(n_tasks)]) <= capacities[j]
+            constraints = LinearConstraint(A_sub, b_l, b_u)
+            integrality = np.ones(n_tasks) # All variables are integers
+            bounds = Bounds(0, 1) # All variables are binary {0, 1}
 
-            prob.solve(pulp.PULP_CBC_CMD(msg=0))
+            res = milp(c=c_sub, constraints=constraints, integrality=integrality, bounds=bounds)
 
-            if pulp.value(prob.objective) is not None:
-                subproblem_obj_sum += pulp.value(prob.objective)
-                for i in range(n_tasks):
-                    current_x[i, j] = x_vars[i].varValue
+            if res.success:
+                # milp minimizes, so objective value is negative of our maximization target
+                subproblem_obj_sum += -res.fun
+                current_x[:, j] = np.round(res.x) # milp returns float array, round to integer
 
         # LB = sum(lambdas) - Max ... = sum(lambdas) - subproblem_obj_sum
         current_lb = np.sum(lambdas) - subproblem_obj_sum
