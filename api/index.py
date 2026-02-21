@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any, Union, Annotated
@@ -10,6 +10,7 @@ import logging
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from api.solvers import lp, ip, colgen, lagrangian, stochastic
+from api.limiter import check_rate_limit
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -94,7 +95,7 @@ class StochasticParams(BaseModel):
 def health():
     return {"status": "ok"}
 
-@app.post("/api/lp")
+@app.post("/api/lp", dependencies=[Depends(check_rate_limit)])
 def solve_lp_route(params: LPParams):
     # Clean bounds: Convert None to None (Pydantic might make them something else or lists)
     bounds = params.bounds
@@ -102,20 +103,20 @@ def solve_lp_route(params: LPParams):
         bounds = [tuple(b) if b else (0, None) for b in bounds]
     return lp.solve_lp(params.c, params.A_ub, params.b_ub, bounds, params.maximize)
 
-@app.post("/api/ip")
+@app.post("/api/ip", dependencies=[Depends(check_rate_limit)])
 def solve_ip_route(params: IPParams):
     return ip.solve_ip(params.c, params.A_ub, params.b_ub, params.maximize)
 
-@app.post("/api/colgen")
+@app.post("/api/colgen", dependencies=[Depends(check_rate_limit)])
 def solve_colgen_route(params: ColGenParams):
     # Convert list of lists to list of tuples if needed, or just pass as is
     return colgen.solve_cutting_stock(params.roll_length, params.demands)
 
-@app.post("/api/lagrangian")
+@app.post("/api/lagrangian", dependencies=[Depends(check_rate_limit)])
 def solve_lagrangian_route(params: LagrangianParams):
     return lagrangian.solve_lagrangian(params.costs, params.weights, params.capacities)
 
-@app.post("/api/stochastic")
+@app.post("/api/stochastic", dependencies=[Depends(check_rate_limit)])
 def solve_stochastic_route(params: StochasticParams):
     # Convert Pydantic models to dicts
     scenarios = [s.model_dump() for s in params.scenarios]
