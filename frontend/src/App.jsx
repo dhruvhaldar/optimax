@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import './App.css';
-import LPSolver from './components/LPSolver';
-import IPSolver from './components/IPSolver';
-import ColGenSolver from './components/ColGenSolver';
-import LagrangianSolver from './components/LagrangianSolver';
-import StochasticSolver from './components/StochasticSolver';
+
+// Lazy load solver components for performance optimization (Code Splitting)
+const LPSolver = lazy(() => import('./components/LPSolver'));
+const IPSolver = lazy(() => import('./components/IPSolver'));
+const ColGenSolver = lazy(() => import('./components/ColGenSolver'));
+const LagrangianSolver = lazy(() => import('./components/LagrangianSolver'));
+const StochasticSolver = lazy(() => import('./components/StochasticSolver'));
+
+// Loading component for Suspense fallback
+const LoadingSpinner = () => (
+  <div className="flex flex-col items-center justify-center py-20 h-full w-full">
+    <svg className="animate-spin h-10 w-10 text-cyan-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <p className="text-slate-300 font-medium">Loading Solver...</p>
+  </div>
+);
 
 function App() {
   const [activeTab, setActiveTab] = useState('lp');
@@ -49,7 +62,9 @@ function App() {
       </div>
 
       <div className="glass-panel p-6 min-h-[400px]">
-        {renderSolver()}
+        <Suspense fallback={<LoadingSpinner />}>
+          {renderSolver()}
+        </Suspense>
       </div>
     </div>
   );
