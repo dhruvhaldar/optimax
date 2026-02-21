@@ -7,6 +7,18 @@ const ColGenSolver = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLogs = () => {
+    if (!result?.logs) return;
+    const text = result.logs.join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(err => {
+      console.error('Failed to copy logs:', err);
+    });
+  };
 
   const solveColGen = async () => {
     setLoading(true);
@@ -97,7 +109,16 @@ const ColGenSolver = () => {
             ))}
           </ul>
 
-          <h4 className="text-lg font-semibold mb-2 text-slate-200">Logs</h4>
+          <div className="flex justify-between items-center mb-2">
+            <h4 className="text-lg font-semibold text-slate-200">Logs</h4>
+            <button
+              onClick={handleCopyLogs}
+              className="text-xs bg-white/10 hover:bg-white/20 text-cyan-300 px-2 py-1 rounded transition-colors"
+              aria-label={copied ? "Copied logs to clipboard" : "Copy logs to clipboard"}
+            >
+              {copied ? "Copied!" : "Copy Logs"}
+            </button>
+          </div>
           <pre className="bg-black/30 p-4 rounded-lg border border-white/10 text-slate-400 text-sm overflow-y-auto max-h-60 font-mono">
             {result.logs.join('\n')}
           </pre>
