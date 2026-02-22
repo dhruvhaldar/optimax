@@ -40,6 +40,7 @@ const IPSolver = () => {
           type="text"
           value={c}
           onChange={e => setC(e.target.value)}
+          placeholder="[c1, c2]"
           className="glass-input w-full"
         />
       </div>
@@ -50,6 +51,7 @@ const IPSolver = () => {
           rows="3"
           value={A}
           onChange={e => setA(e.target.value)}
+          placeholder="[[a11, a12], [a21, a22]]"
           className="glass-input w-full font-mono"
         />
       </div>
@@ -60,6 +62,7 @@ const IPSolver = () => {
           type="text"
           value={b}
           onChange={e => setB(e.target.value)}
+          placeholder="[b1, b2]"
           className="glass-input w-full"
         />
       </div>
