@@ -1,10 +1,11 @@
 import numpy as np
 from collections import deque
 from scipy.optimize import linprog
-import matplotlib.pyplot as plt
 import networkx as nx
 import io
 import base64
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 MAX_PLOT_NODES = 50
 
@@ -20,7 +21,7 @@ class Node:
         self.value = -np.inf
         self.status = "open" # open, pruned, integer, infeasible, branched
 
-def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
+def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
     """
     Solves Integer Programming problem using Branch and Bound.
     Maximize c^T x s.t. A_ub x <= b_ub, x >= 0, integer.
@@ -158,7 +159,7 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000):
                     queue.append(right_node)
 
     # Generate Tree Plot
-    img_b64 = plot_tree(nodes)
+    img_b64 = None if skip_plot else plot_tree(nodes)
 
     status = "Optimal"
     if limit_reached:
@@ -214,13 +215,18 @@ def plot_tree(nodes):
 
         labels[n_id] = label
 
-    plt.figure(figsize=(10, 6))
-    nx.draw(G, pos, with_labels=True, labels=labels, node_color=colors, node_size=2000, font_size=8, node_shape="o", arrows=True)
-    plt.title("Branch and Bound Tree")
+    # Use Matplotlib Object-Oriented Interface for better performance and thread safety
+    fig = Figure(figsize=(10, 6))
+    ax = fig.add_subplot(111)
+
+    nx.draw(G, pos, ax=ax, with_labels=True, labels=labels, node_color=colors, node_size=2000, font_size=8, node_shape="o", arrows=True)
+    ax.set_title("Branch and Bound Tree")
 
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(buf)
+
     buf.seek(0)
     img_str = base64.b64encode(buf.read()).decode('utf-8')
-    plt.close()
+    # No need to explicitly close fig as it is garbage collected
     return img_str

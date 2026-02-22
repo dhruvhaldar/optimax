@@ -9,3 +9,7 @@
 ## 2024-05-27 - [Branching Heuristic: Most Fractional vs First Fractional]
 **Learning:** "Most Fractional" branching (picking variable closest to 0.5) provided no benefit for pure Knapsack problems (neutral performance) because the LP relaxation typically yields only one fractional variable. However, for General MIPs with multiple constraints, it reduced node count by ~37% and time by ~28%.
 **Action:** Use "Most Fractional" branching for general purpose solvers, but don't expect magic on single-constraint problems.
+
+## 2025-05-27 - [Matplotlib Performance: Stateful vs OO]
+**Learning:** Using `matplotlib.pyplot` (stateful) for plot generation in the backend is ~25% slower (0.22s vs 0.16s for small trees) than using the Object-Oriented interface (`Figure`, `FigureCanvasAgg`). The stateful interface also risks thread-safety issues in a web server context.
+**Action:** Always use the `Figure` and `FigureCanvasAgg` classes directly for backend image generation, avoiding `plt.figure()` and `plt.savefig()`.
