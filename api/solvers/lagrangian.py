@@ -1,8 +1,9 @@
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
-import matplotlib.pyplot as plt
 import io
 import base64
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 def solve_lagrangian(costs, weights, capacities):
     """
@@ -102,16 +103,19 @@ def solve_lagrangian(costs, weights, capacities):
     }
 
 def plot_convergence(history):
-    plt.figure(figsize=(6, 4))
-    plt.plot(history, marker='o')
-    plt.title("Lagrangian Lower Bound Convergence")
-    plt.xlabel("Iteration")
-    plt.ylabel("Lower Bound")
-    plt.grid(True)
+    fig = Figure(figsize=(6, 4))
+    ax = fig.add_subplot(111)
+
+    ax.plot(history, marker='o')
+    ax.set_title("Lagrangian Lower Bound Convergence")
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Lower Bound")
+    ax.grid(True)
 
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(buf)
+
     buf.seek(0)
     img_str = base64.b64encode(buf.read()).decode('utf-8')
-    plt.close()
     return img_str

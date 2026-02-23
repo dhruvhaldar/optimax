@@ -1,8 +1,9 @@
 import numpy as np
 from scipy.optimize import linprog
-import matplotlib.pyplot as plt
 import io
 import base64
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 def solve_lp(c, A_ub, b_ub, bounds=None, maximize=False):
     """
@@ -40,7 +41,9 @@ def solve_lp(c, A_ub, b_ub, bounds=None, maximize=False):
     }
 
 def plot_lp(c, A_ub, b_ub, optimal_x, maximize):
-    plt.figure(figsize=(6, 6))
+    # Use Matplotlib Object-Oriented Interface for thread safety
+    fig = Figure(figsize=(6, 6))
+    ax = fig.add_subplot(111)
 
     # Determine plot limits based on constraints and optimal solution
     # Simple heuristic: max of intercepts and optimal solution
@@ -70,7 +73,7 @@ def plot_lp(c, A_ub, b_ub, optimal_x, maximize):
         if a2 != 0:
             y = (b - a1 * x) / a2
             label = f'{a1}x1 + {a2}x2 <= {b}'
-            plt.plot(x, y, label=label)
+            ax.plot(x, y, label=label)
 
             # Update feasible region tracking (assuming <= constraints and a2 > 0)
             # This is a simplification for visualization
@@ -79,11 +82,11 @@ def plot_lp(c, A_ub, b_ub, optimal_x, maximize):
             elif a2 < 0:
                 y_min_feasible = np.maximum(y_min_feasible, y)
         else:
-            plt.axvline(b/a1, label=f'{a1}x1 <= {b}', color='gray', linestyle='--')
+            ax.axvline(b/a1, label=f'{a1}x1 <= {b}', color='gray', linestyle='--')
             # Handle vertical constraint for fill? Complex.
 
     # Shade feasible region (simplified)
-    plt.fill_between(x, y_min_feasible, y_max_feasible, where=(y_max_feasible >= y_min_feasible), color='green', alpha=0.1)
+    ax.fill_between(x, y_min_feasible, y_max_feasible, where=(y_max_feasible >= y_min_feasible), color='green', alpha=0.1)
 
     # Plot Objective Function at Optimal
     # Z = c1*x + c2*y => y = (Z - c1*x)/c2
@@ -91,21 +94,23 @@ def plot_lp(c, A_ub, b_ub, optimal_x, maximize):
     c1, c2 = c
     if c2 != 0:
         y_obj = (opt_val - c1 * x) / c2
-        plt.plot(x, y_obj, 'r--', linewidth=2, label=f'Obj: {opt_val:.2f}')
+        ax.plot(x, y_obj, 'r--', linewidth=2, label=f'Obj: {opt_val:.2f}')
 
-    plt.plot(optimal_x[0], optimal_x[1], 'ro', markersize=8, label='Optimal')
+    ax.plot(optimal_x[0], optimal_x[1], 'ro', markersize=8, label='Optimal')
 
-    plt.xlim(0, limit)
-    plt.ylim(0, limit)
-    plt.xlabel('x1')
-    plt.ylabel('x2')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.title('LP Visualization')
+    ax.set_xlim(0, limit)
+    ax.set_ylim(0, limit)
+    ax.set_xlabel('x1')
+    ax.set_ylabel('x2')
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    ax.set_title('LP Visualization')
 
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(buf)
+
     buf.seek(0)
     img_str = base64.b64encode(buf.read()).decode('utf-8')
-    plt.close()
+    # No need to close fig explicitly as it's not global state
     return img_str
