@@ -17,3 +17,7 @@
 ## 2026-02-22 - Complex Input Guidance
 **Learning:** Solvers requiring JSON or matrix inputs (e.g., `IPSolver`, `StochasticSolver`) lacked explicit format guidance, leading to potential user confusion. Standard HTML `placeholder` attributes proving sufficient for documenting these structures directly within the input field.
 **Action:** Always verify complex input fields include `placeholder` examples demonstrating the expected JSON/list format to reduce cognitive load and potential errors.
+
+## 2026-03-01 - Dynamic Content Announcements
+**Learning:** The application relies heavily on `React.lazy` for code splitting, making the `LoadingSpinner` a frequent transient state. Without `role="status"`, screen reader users experienced silence during these navigations.
+**Action:** Ensure all `Suspense` fallbacks and global loading states utilize `role="status"` and `aria-live="polite"` to provide immediate auditory feedback during component transitions.
