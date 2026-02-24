@@ -95,7 +95,10 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
              continue
 
         # Check if integer
-        is_integer = np.allclose(res.x, np.round(res.x), atol=1e-5)
+        # Optimization: Calculate distance to nearest integer once to avoid redundant np.round and np.abs calls
+        rounded_x = np.round(res.x)
+        dist = np.abs(res.x - rounded_x)
+        is_integer = np.all(dist <= 1e-5)
 
         if is_integer:
             current_node.status = "integer"
@@ -106,7 +109,7 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
             # Branch
             # Find most fractional variable (closest to 0.5)
             # Vectorized implementation for speed (O(1) numpy vs O(N) python loop)
-            dist = np.abs(res.x - np.round(res.x))
+            # dist is already computed!
             idx = np.argmax(dist)
 
             # Ensure we actually found a fractional variable (though is_integer check above should cover this)
