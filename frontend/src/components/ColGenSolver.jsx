@@ -114,7 +114,7 @@ const ColGenSolver = () => {
             <h4 className="text-lg font-semibold text-slate-200">Logs</h4>
             <button
               onClick={handleCopyLogs}
-              className="text-xs bg-white/10 hover:bg-white/20 text-cyan-300 px-2 py-1 rounded transition-colors"
+              className="text-xs bg-white/10 hover:bg-white/20 text-cyan-300 px-2 py-1 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
               aria-label={copied ? "Copied logs to clipboard" : "Copy logs to clipboard"}
             >
               {copied ? "Copied!" : "Copy Logs"}

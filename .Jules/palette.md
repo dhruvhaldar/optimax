@@ -21,3 +21,7 @@
 ## 2026-03-01 - Dynamic Content Announcements
 **Learning:** The application relies heavily on `React.lazy` for code splitting, making the `LoadingSpinner` a frequent transient state. Without `role="status"`, screen reader users experienced silence during these navigations.
 **Action:** Ensure all `Suspense` fallbacks and global loading states utilize `role="status"` and `aria-live="polite"` to provide immediate auditory feedback during component transitions.
+
+## 2026-03-01 - Consistent Result Interactions
+**Learning:** Results often include logs or data that users may want to extract. `ColGenSolver` provided a copy mechanism, while `LagrangianSolver` did not, forcing users to manually select and copy text.
+**Action:** Identify text-heavy result sections (logs, large matrices) and consistently provide a "Copy" utility to improve usability and data portability.
