@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import linprog
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 import io
 import base64
 
@@ -124,7 +125,10 @@ def solve_stochastic(total_land, scenarios):
     }
 
 def plot_stochastic(acres, profit, scenarios, probs, all_x, n_scenarios):
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+    # Use Matplotlib Object-Oriented Interface for thread safety and performance
+    fig = Figure(figsize=(10, 5))
+    ax1 = fig.add_subplot(121)
+    ax2 = fig.add_subplot(122)
 
     # Plot 1: Acres Allocation
     crops = ['Wheat', 'Corn', 'Beets']
@@ -155,10 +159,12 @@ def plot_stochastic(acres, profit, scenarios, probs, all_x, n_scenarios):
     ax2.set_title('Profit per Scenario')
     ax2.legend()
 
-    plt.tight_layout()
+    fig.tight_layout()
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    canvas = FigureCanvasAgg(fig)
+    canvas.print_png(buf)
+
     buf.seek(0)
     img_str = base64.b64encode(buf.read()).decode('utf-8')
-    plt.close()
+    # No need to explicitly close fig as it is garbage collected
     return img_str
