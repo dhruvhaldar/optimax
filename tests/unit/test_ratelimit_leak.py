@@ -47,23 +47,43 @@ class TestRateLimiterMemoryLeak(unittest.TestCase):
                 req1.headers = {}
                 await check_rate_limit(req1)
 
-                # Store size should now be MAX_STORE_SIZE + 1
-                self.assertEqual(len(rate_limit_store), MAX_STORE_SIZE + 1)
+                # Store size should now be 1 because cleanup happens immediately when hitting MAX_STORE_SIZE
+                # The check is now >= MAX_STORE_SIZE, so it triggers cleanup even at exactly 1000 items.
+                self.assertEqual(len(rate_limit_store), 1)
 
-                # Add another request. Now len is MAX_STORE_SIZE + 1, which is > MAX_STORE_SIZE.
-                # This should trigger cleanup.
+                # Add another request.
                 ip_new2 = "10.0.0.2"
                 req2 = MagicMock()
                 req2.client.host = ip_new2
                 req2.headers = {}
                 await check_rate_limit(req2)
 
-                # Cleanup should have removed the initial MAX_STORE_SIZE entries because they are expired.
                 # The remaining entries should be ip_new1 and ip_new2.
                 self.assertLess(len(rate_limit_store), MAX_STORE_SIZE)
                 self.assertEqual(len(rate_limit_store), 2)
                 self.assertIn(ip_new1, rate_limit_store)
                 self.assertIn(ip_new2, rate_limit_store)
+
+        asyncio.run(run_test())
+
+    def test_overflow_protection(self):
+        """
+        Verify that the rate limiter does not grow indefinitely when flooded with unique active IPs.
+        """
+        async def run_test():
+            # 1. Fill the store to MAX_STORE_SIZE with ACTIVE requests
+            current_time = 1000.0
+
+            with patch('time.time', return_value=current_time):
+                for i in range(MAX_STORE_SIZE + 100):
+                    ip = f"10.0.0.{i}"
+                    req = MagicMock()
+                    req.client.host = ip
+                    req.headers = {}
+                    await check_rate_limit(req)
+
+            # 2. Check the size of the store
+            self.assertLessEqual(len(rate_limit_store), MAX_STORE_SIZE, "Rate limit store grew beyond maximum size!")
 
         asyncio.run(run_test())
 
