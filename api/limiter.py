@@ -23,7 +23,7 @@ async def check_rate_limit(request: Request):
     now = time.time()
 
     # Memory Leak Protection: Cleanup if store grows too large
-    if len(rate_limit_store) > MAX_STORE_SIZE:
+    if len(rate_limit_store) >= MAX_STORE_SIZE:
         # Identify IPs with no recent requests (all timestamps expired)
         keys_to_remove = []
         for ip, timestamps in rate_limit_store.items():
@@ -34,6 +34,14 @@ async def check_rate_limit(request: Request):
 
         for ip in keys_to_remove:
             del rate_limit_store[ip]
+
+    # Enforce strict limit by removing LRU (Least Recently Used) if still full
+    if len(rate_limit_store) >= MAX_STORE_SIZE:
+        # Find the IP with the oldest request (LRU)
+        # We look at the last request time for each IP (timestamps[-1])
+        # Default to 0 if list is empty (shouldn't happen for active IPs)
+        oldest_ip = min(rate_limit_store.keys(), key=lambda k: rate_limit_store[k][-1] if rate_limit_store[k] else 0)
+        del rate_limit_store[oldest_ip]
 
     # Filter out old requests outside the window for the current IP
     rate_limit_store[client_ip] = [
