@@ -7,3 +7,8 @@
 **Vulnerability:** The in-memory rate limiter allowed unbounded growth of the IP store because cleanup was only triggered *after* the limit was exceeded, and only removed *expired* entries. An attacker could flood the server with unique IPs, causing memory exhaustion (DoS).
 **Learning:** Rate limiters must strictly enforce memory caps (e.g., using LRU eviction) rather than relying solely on expiration-based cleanup, especially in environments with limited memory (e.g., serverless).
 **Prevention:** Implemented strict `MAX_STORE_SIZE` enforcement with LRU eviction in `api/limiter.py` to guarantee bounded memory usage regardless of traffic patterns.
+
+## 2026-02-25 - IP Spoofing in Rate Limiter (X-Forwarded-For)
+**Vulnerability:** The rate limiter blindly trusted the *first* IP in the `X-Forwarded-For` header (`split(',')[0]`). Attackers could inject a fake `X-Forwarded-For` header (e.g., `X-Forwarded-For: fake-ip`) which Vercel would append to, resulting in `fake-ip, real-ip`. The application would then rate limit the `fake-ip`, allowing the attacker to bypass limits by rotating the fake IP.
+**Learning:** In proxy environments (like Vercel/AWS), the `X-Forwarded-For` header is a comma-separated list where the *client-supplied* values come first, and the *proxy-verified* values are appended. The only trustworthy IP is the one added by the infrastructure you control/trust.
+**Prevention:** Modified `api/limiter.py` to use the **last** IP in the `X-Forwarded-For` chain (`split(',')[-1]`) as the client identifier, ensuring reliance on the IP reported by the immediate trusted proxy.
