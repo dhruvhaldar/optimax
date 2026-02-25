@@ -29,8 +29,21 @@ def solve_lagrangian(costs, weights, capacities):
     ub = np.inf
     best_sol = None
 
-    # Simple heuristic to get initial UB?
-    # Just solve as LP or simple greedy? Skip for now.
+    # Pre-compute constraints and bounds to optimize loop performance
+    # Reuse Bounds and Integrality as they are constant
+    bounds = Bounds(0, 1) # All variables are binary {0, 1}
+    integrality = np.ones(n_tasks) # All variables are integers
+
+    # Pre-compute LinearConstraint for each agent as they are constant across iterations
+    agent_constraints = []
+    for j in range(n_agents):
+        # Constraint: sum_i w_ij x_ij <= C_j
+        # milp constraints: lb <= A_ub x <= ub
+        # Here: -inf <= w^T x <= C_j
+        A_sub = np.array([weights[:, j]]) # 1 x n_tasks matrix
+        b_l = np.array([-np.inf])
+        b_u = np.array([capacities[j]])
+        agent_constraints.append(LinearConstraint(A_sub, b_l, b_u))
 
     for k in range(max_iter):
         # Solve Subproblems
@@ -45,18 +58,7 @@ def solve_lagrangian(costs, weights, capacities):
             # Equivalent to Minimize sum_i (c_ij - lambdas[i]) x_ij
             c_sub = costs[:, j] - lambdas
 
-            # Constraint: sum_i w_ij x_ij <= C_j
-            # milp constraints: lb <= A_ub x <= ub
-            # Here: -inf <= w^T x <= C_j
-            A_sub = np.array([weights[:, j]]) # 1 x n_tasks matrix
-            b_l = np.array([-np.inf])
-            b_u = np.array([capacities[j]])
-
-            constraints = LinearConstraint(A_sub, b_l, b_u)
-            integrality = np.ones(n_tasks) # All variables are integers
-            bounds = Bounds(0, 1) # All variables are binary {0, 1}
-
-            res = milp(c=c_sub, constraints=constraints, integrality=integrality, bounds=bounds)
+            res = milp(c=c_sub, constraints=agent_constraints[j], integrality=integrality, bounds=bounds)
 
             if res.success:
                 # milp minimizes, so objective value is negative of our maximization target
