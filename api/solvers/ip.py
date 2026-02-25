@@ -43,14 +43,101 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
     nodes = []
     queue = deque()
 
-    # Root node
-    root_parent_val = np.inf if maximize else -np.inf
-    root = Node(0, 0, None, "Root", initial_bounds, root_parent_val)
-    nodes.append(root)
-    queue.append(root)
-
     best_solution = None
     best_value = -np.inf if maximize else np.inf
+
+    # --- Root Node Preprocessing ---
+    # Solve root relaxation first to get tighter bounds and initial heuristic
+    root_res = linprog(c_lp, A_ub=A_ub, b_ub=b_ub, bounds=initial_bounds, method='highs')
+
+    if not root_res.success:
+        return {
+            "success": False,
+            "status": "Infeasible",
+            "x": None,
+            "fun": -np.inf if maximize else np.inf,
+            "tree_plot": None
+        }
+
+    root_val = -root_res.fun if maximize else root_res.fun
+
+    # Check if root solution is integer
+    rounded_root_x = np.round(root_res.x)
+    dist_root = np.abs(root_res.x - rounded_root_x)
+    is_root_integer = np.all(dist_root <= 1e-5)
+
+    if is_root_integer:
+        return {
+            "success": True,
+            "status": "Optimal",
+            "x": root_res.x.tolist(),
+            "fun": root_val,
+            "tree_plot": None # Plot skipped for immediate optimality
+        }
+
+    # Heuristic: Simple rounding
+    # Check feasibility of rounded solution
+    is_feasible = True
+    if len(A_ub) > 0:
+         # Check A_ub @ x <= b_ub
+         lhs = A_ub @ rounded_root_x
+         if np.any(lhs > b_ub + 1e-5):
+             is_feasible = False
+
+    if is_feasible:
+        # Calculate objective value
+        obj_val = np.dot(c, rounded_root_x)
+        if maximize and obj_val > best_value:
+            best_value = obj_val
+            best_solution = rounded_root_x
+        elif not maximize and obj_val < best_value:
+            best_value = obj_val
+            best_solution = rounded_root_x
+
+    # Variable Fixing based on Reduced Costs
+    # If maximize: z_lp - reduced_cost < best_value => fix variable
+    # Reduced costs are for minimization of -c.
+    # So reduced cost d_i >= 0 means increasing x_i increases -c.x (decreases c.x).
+    # New value <= root_val - d_i.
+    # If root_val - d_i < best_value, then x_i cannot be 1 (if binary).
+    # Since we don't know if binary, we can only fix if variable is at bound.
+    # For general integer, if at LB (0), and cost to increase to 1 makes it worse than best_value, then x_i must be 0.
+
+    # Only applicable if best_value is finite
+    if (maximize and best_value > -np.inf) or (not maximize and best_value < np.inf):
+        # Check lower bound marginals (variable at lower bound 0)
+        # scipy creates 'lower' attribute on result object
+        if hasattr(root_res, 'lower') and hasattr(root_res.lower, 'marginals'):
+            marginals = root_res.lower.marginals
+            for i in range(n_vars):
+                # If variable is at 0 (approx)
+                if abs(root_res.x[i]) < 1e-5:
+                     d_i = marginals[i]
+                     # Check if forcing x_i >= 1 is worse than best_value
+                     if maximize:
+                         # d_i is cost increase (objective decrease) per unit
+                         # Bound: root_val - d_i
+                         if root_val - d_i < best_value - 1e-6:
+                             # Fix x_i = 0
+                             # Modify initial_bounds
+                             # Since bounds are tuples, creating new list is fine
+                             initial_bounds[i] = (0, 0)
+                     else:
+                         # Minimization
+                         # d_i is cost increase per unit
+                         # Bound: root_val + d_i
+                         if root_val + d_i > best_value + 1e-6:
+                             initial_bounds[i] = (0, 0)
+
+    # Root node setup
+    root_parent_val = np.inf if maximize else -np.inf
+    root = Node(0, 0, None, "Root", initial_bounds, root_parent_val)
+    # Store pre-calculated solution to avoid re-solving
+    root.solution = root_res.x
+    root.value = root_val
+
+    nodes.append(root)
+    queue.append(root)
 
     node_counter = 0
     processed_nodes = 0
@@ -73,7 +160,30 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
              continue
 
         # Solve LP relaxation
-        res = linprog(c_lp, A_ub=A_ub, b_ub=b_ub, bounds=current_node.bounds, method='highs')
+        # Optimization: Use pre-calculated solution if available (e.g. for Root)
+        if current_node.solution is not None:
+             # Use stored solution. Need to mock 'res' object for downstream logic.
+             # We create a simple object with necessary attributes.
+             class MockRes:
+                 def __init__(self, x, fun):
+                     self.success = True
+                     self.x = x
+                     self.fun = fun
+
+             # Adjust fun for maximization (stored value is actual value, linprog returns minimized)
+             # But here we use 'val' directly later.
+             # Wait, downstream code uses 'res.fun' to calculate 'val'.
+             # val = -res.fun if maximize else res.fun
+             # So we should store the 'raw' fun in MockRes?
+             # Or just set val directly?
+             # Let's set val directly and skip the 'val = ...' line if needed?
+             # No, easier to mock res.fun.
+             # If maximize, val = -res.fun => res.fun = -val.
+             res_fun = -current_node.value if maximize else current_node.value
+             res = MockRes(current_node.solution, res_fun)
+
+        else:
+             res = linprog(c_lp, A_ub=A_ub, b_ub=b_ub, bounds=current_node.bounds, method='highs')
 
         if not res.success:
             current_node.status = "infeasible"
