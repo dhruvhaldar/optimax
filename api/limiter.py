@@ -17,8 +17,11 @@ async def check_rate_limit(request: Request):
     """
     client_ip = request.client.host
     # Handle X-Forwarded-For (Vercel/proxies)
+    # SECURITY: Use the LAST IP in the list. The first IP can be spoofed by the client
+    # sending their own X-Forwarded-For header. The last IP is appended by the
+    # immediate proxy (Vercel) and is trustworthy.
     if "x-forwarded-for" in request.headers:
-        client_ip = request.headers["x-forwarded-for"].split(",")[0].strip()
+        client_ip = request.headers["x-forwarded-for"].split(",")[-1].strip()
 
     now = time.time()
 
