@@ -42,8 +42,17 @@ const StochasticSolver = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (!loading) {
+        solveStochastic();
+      }
+    }
+  };
+
   return (
-    <div className="glass-panel p-6">
+    <div className="glass-panel p-6" onKeyDown={handleKeyDown}>
       <h2 className="text-2xl font-bold mb-6 text-cyan-100">Stochastic Programming (Farmer's Problem)</h2>
       <div className="mb-4">
         <label htmlFor="stochastic-land" className="block text-sm font-medium text-slate-300 mb-2">Total Land (Acres):</label>
@@ -71,6 +80,7 @@ const StochasticSolver = () => {
         onClick={solveStochastic}
         disabled={loading}
         aria-busy={loading}
+        title="Press Ctrl+Enter or Cmd+Enter to solve"
       >
         {loading ? (
           <>
@@ -80,7 +90,11 @@ const StochasticSolver = () => {
             </svg>
             Solving...
           </>
-        ) : 'Solve Stochastic LP'}
+        ) : (
+          <>
+            Solve Stochastic LP <span className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">⌘↵</span>
+          </>
+        )}
       </button>
 
       {error && (

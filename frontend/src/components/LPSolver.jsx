@@ -39,8 +39,17 @@ const LPSolver = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (!loading) {
+        solveLP();
+      }
+    }
+  };
+
   return (
-    <div className="glass-panel p-6">
+    <div className="glass-panel p-6" onKeyDown={handleKeyDown}>
       <h2 className="text-2xl font-bold mb-6 text-cyan-100">Linear Programming Solver (Simplex/Interior Point)</h2>
       <div className="mb-4">
         <label htmlFor="lp-c" className="block text-sm font-medium text-slate-300 mb-2">Objective Coefficients (c):</label>
@@ -91,6 +100,7 @@ const LPSolver = () => {
         onClick={solveLP}
         disabled={loading}
         aria-busy={loading}
+        title="Press Ctrl+Enter or Cmd+Enter to solve"
       >
         {loading ? (
           <>
@@ -100,7 +110,11 @@ const LPSolver = () => {
             </svg>
             Solving...
           </>
-        ) : 'Solve LP'}
+        ) : (
+          <>
+            Solve LP <span className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">⌘↵</span>
+          </>
+        )}
       </button>
 
       {error && (

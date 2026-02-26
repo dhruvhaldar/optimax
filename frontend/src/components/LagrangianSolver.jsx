@@ -40,8 +40,17 @@ const LagrangianSolver = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (!loading) {
+        solveLagrangian();
+      }
+    }
+  };
+
   return (
-    <div className="glass-panel p-6">
+    <div className="glass-panel p-6" onKeyDown={handleKeyDown}>
       <h2 className="text-2xl font-bold mb-6 text-cyan-100">Lagrangian Relaxation (Generalized Assignment)</h2>
       <div className="mb-4">
         <label htmlFor="lagrangian-costs" className="block text-sm font-medium text-slate-300 mb-2">Costs (Task x Agent):</label>
@@ -81,6 +90,7 @@ const LagrangianSolver = () => {
         onClick={solveLagrangian}
         disabled={loading}
         aria-busy={loading}
+        title="Press Ctrl+Enter or Cmd+Enter to solve"
       >
         {loading ? (
           <>
@@ -90,7 +100,11 @@ const LagrangianSolver = () => {
             </svg>
             Solving...
           </>
-        ) : 'Solve Lagrangian'}
+        ) : (
+          <>
+            Solve Lagrangian <span className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">⌘↵</span>
+          </>
+        )}
       </button>
 
       {error && (
