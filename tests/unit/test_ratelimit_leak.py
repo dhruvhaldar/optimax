@@ -32,24 +32,34 @@ class TestRateLimiterMemoryLeak(unittest.TestCase):
             # Verify store is full
             self.assertEqual(len(rate_limit_store), MAX_STORE_SIZE)
 
-            # 2. Advance time past duration so all previous entries are expired
-            # We add slight buffer to ensure strictly greater
+            # Verify the first item inserted is at the beginning (LRU)
+            first_ip = list(rate_limit_store.keys())[0]
+            self.assertEqual(first_ip, "192.168.1.0")
+
+            # 2. Advance time past duration
             new_time = start_time + RATE_LIMIT_DURATION + 1.0
 
             with patch('time.time', return_value=new_time):
                 # Add one more request (MAX_STORE_SIZE + 1)
-                # Cleanup condition is if len > MAX_STORE_SIZE.
-                # Current len is MAX_STORE_SIZE. So this call won't trigger cleanup BEFORE processing.
-                # But it will add the new IP.
+                # With LRU, this should evict the oldest item ("192.168.1.0")
+                # and keep size at MAX_STORE_SIZE
                 ip_new1 = "10.0.0.1"
                 req1 = MagicMock()
                 req1.client.host = ip_new1
                 req1.headers = {}
                 await check_rate_limit(req1)
 
-                # Store size should now be 1 because cleanup happens immediately when hitting MAX_STORE_SIZE
-                # The check is now >= MAX_STORE_SIZE, so it triggers cleanup even at exactly 1000 items.
-                self.assertEqual(len(rate_limit_store), 1)
+                # Store size should remain at MAX_STORE_SIZE (stable memory usage)
+                self.assertEqual(len(rate_limit_store), MAX_STORE_SIZE)
+
+                # The new IP should be present
+                self.assertIn(ip_new1, rate_limit_store)
+
+                # The oldest IP should be gone
+                self.assertNotIn("192.168.1.0", rate_limit_store)
+
+                # The second oldest should now be first
+                self.assertEqual(list(rate_limit_store.keys())[0], "192.168.1.1")
 
                 # Add another request.
                 ip_new2 = "10.0.0.2"
@@ -58,11 +68,9 @@ class TestRateLimiterMemoryLeak(unittest.TestCase):
                 req2.headers = {}
                 await check_rate_limit(req2)
 
-                # The remaining entries should be ip_new1 and ip_new2.
-                self.assertLess(len(rate_limit_store), MAX_STORE_SIZE)
-                self.assertEqual(len(rate_limit_store), 2)
-                self.assertIn(ip_new1, rate_limit_store)
+                self.assertEqual(len(rate_limit_store), MAX_STORE_SIZE)
                 self.assertIn(ip_new2, rate_limit_store)
+                self.assertNotIn("192.168.1.1", rate_limit_store)
 
         asyncio.run(run_test())
 
@@ -83,7 +91,7 @@ class TestRateLimiterMemoryLeak(unittest.TestCase):
                     await check_rate_limit(req)
 
             # 2. Check the size of the store
-            self.assertLessEqual(len(rate_limit_store), MAX_STORE_SIZE, "Rate limit store grew beyond maximum size!")
+            self.assertEqual(len(rate_limit_store), MAX_STORE_SIZE, "Rate limit store grew beyond maximum size!")
 
         asyncio.run(run_test())
 
