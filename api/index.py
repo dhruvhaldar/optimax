@@ -55,6 +55,8 @@ MAX_SCENARIOS = 50
 
 # Input validation for floats: strict mode, finite, and bounded to avoid overflows/DoS
 SafeFloat = Annotated[float, Field(allow_inf_nan=False, ge=-1e20, le=1e20)]
+# Input validation for strings: alphanumeric, limited length to prevent XSS/Injection/DoS
+SafeString = Annotated[str, Field(min_length=1, max_length=50, pattern=r"^[a-zA-Z0-9_\-\s]+$")]
 
 BoundedFloatList = Annotated[List[SafeFloat], Field(max_length=MAX_VARS)]
 BoundedConstraintMatrix = Annotated[List[BoundedFloatList], Field(max_length=MAX_CONSTRAINTS)]
@@ -83,7 +85,7 @@ class LagrangianParams(BaseModel):
     capacities: BoundedFloatList
 
 class Scenario(BaseModel):
-    name: str
+    name: SafeString
     probability: SafeFloat
     yields: BoundedFloatList
 
