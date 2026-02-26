@@ -39,8 +39,17 @@ const IPSolver = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (!loading) {
+        solveIP();
+      }
+    }
+  };
+
   return (
-    <div className="glass-panel p-6">
+    <div className="glass-panel p-6" onKeyDown={handleKeyDown}>
       <h2 className="text-2xl font-bold mb-6 text-cyan-100">Integer Programming (Branch and Bound)</h2>
       <div className="mb-4">
         <label htmlFor="ip-c" className="block text-sm font-medium text-slate-300 mb-2">Objective Coefficients (c):</label>
@@ -91,6 +100,7 @@ const IPSolver = () => {
         onClick={solveIP}
         disabled={loading}
         aria-busy={loading}
+        title="Press Ctrl+Enter or Cmd+Enter to solve"
       >
         {loading ? (
           <>
@@ -100,7 +110,11 @@ const IPSolver = () => {
             </svg>
             Solving...
           </>
-        ) : 'Solve IP'}
+        ) : (
+          <>
+            Solve IP <span className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">⌘↵</span>
+          </>
+        )}
       </button>
 
       {error && (

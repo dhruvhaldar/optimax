@@ -1,129 +1,17 @@
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [2367]
-INFO:     Started server process [3943]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-WARNING:api.index:ValueError: Invalid input for linprog: b_ub must be a 1-D array; b_ub must not have more than one non-singleton dimension and the number of rows in A_ub must equal the number of values in b_ub
-INFO:     127.0.0.1:49702 - "POST /api/lp HTTP/1.1" 400 Bad Request
-ERROR:api.index:Global exception: float floor division by zero
-Traceback (most recent call last):
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
-    await self.app(scope, receive, _send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
-    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
-    await self.app(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
-    await route.handle(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
-    await self.app(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/routing.py", line 119, in app
-    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/routing.py", line 105, in app
-    response = await f(request)
-               ^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/routing.py", line 424, in app
-    raw_response = await run_endpoint_function(
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/routing.py", line 314, in run_endpoint_function
-    return await run_in_threadpool(dependant.call, **values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/concurrency.py", line 32, in run_in_threadpool
-    return await anyio.to_thread.run_sync(func)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/anyio/to_thread.py", line 63, in run_sync
-    return await get_async_backend().run_sync_in_worker_thread(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2502, in run_sync_in_worker_thread
-    return await future
-           ^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 986, in run
-    result = context.run(func, *args)
-             ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/app/api/index.py", line 87, in solve_colgen_route
-    return colgen.solve_cutting_stock(params.roll_length, params.demands)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/app/api/solvers/colgen.py", line 19, in solve_cutting_stock
-    pat[i] = int(roll_length // widths[i])
-                 ~~~~~~~~~~~~^^~~~~~~~~~~
-ZeroDivisionError: float floor division by zero
-INFO:     127.0.0.1:60854 - "POST /api/colgen HTTP/1.1" 500 Internal Server Error
-ERROR:    Exception in ASGI application
-Traceback (most recent call last):
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/uvicorn/protocols/http/h11_impl.py", line 410, in run_asgi
-    result = await app(  # type: ignore[func-returns-value]
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
-    return await self.app(scope, receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/applications.py", line 1134, in __call__
-    await super().__call__(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/applications.py", line 107, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
-    raise exc
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
-    await self.app(scope, receive, _send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
-    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
-    await self.app(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
-    await route.handle(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
-    await self.app(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/routing.py", line 119, in app
-    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/routing.py", line 105, in app
-    response = await f(request)
-               ^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/routing.py", line 424, in app
-    raw_response = await run_endpoint_function(
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/fastapi/routing.py", line 314, in run_endpoint_function
-    return await run_in_threadpool(dependant.call, **values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/starlette/concurrency.py", line 32, in run_in_threadpool
-    return await anyio.to_thread.run_sync(func)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/anyio/to_thread.py", line 63, in run_sync
-    return await get_async_backend().run_sync_in_worker_thread(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2502, in run_sync_in_worker_thread
-    return await future
-           ^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 986, in run
-    result = context.run(func, *args)
-             ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/app/api/index.py", line 87, in solve_colgen_route
-    return colgen.solve_cutting_stock(params.roll_length, params.demands)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/app/api/solvers/colgen.py", line 19, in solve_cutting_stock
-    pat[i] = int(roll_length // widths[i])
-                 ~~~~~~~~~~~~^^~~~~~~~~~~
-ZeroDivisionError: float floor division by zero
-INFO:     127.0.0.1:60856 - "POST /api/lp HTTP/1.1" 200 OK
-INFO:     127.0.0.1:38476 - "GET /api/non_existent_endpoint HTTP/1.1" 404 Not Found
+
+> optimax-frontend@1.0.0 dev /app/frontend
+> vite
+
+
+  VITE v4.5.14  ready in 652 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+(node:1830) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+6:55:59 PM [vite] http proxy error at /api/lp:
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
+6:56:29 PM [vite] http proxy error at /api/lp:
+Error: connect ECONNREFUSED 127.0.0.1:8000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)
