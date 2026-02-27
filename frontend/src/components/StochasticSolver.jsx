@@ -23,6 +23,18 @@ const StochasticSolver = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyAllocation = () => {
+    if (!result?.x) return;
+    const text = `Wheat: ${result.x[0].toFixed(1)}, Corn: ${result.x[1].toFixed(1)}, Beets: ${result.x[2].toFixed(1)}`;
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(err => {
+      console.error('Failed to copy allocation:', err);
+    });
+  };
 
   const solveStochastic = async () => {
     setLoading(true);
@@ -118,7 +130,16 @@ const StochasticSolver = () => {
               <span className="text-lg font-semibold text-white">${result.expected_profit?.toFixed(2)}</span>
             </div>
             <div className="col-span-1 md:col-span-2 bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Acres Allocation</span>
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-slate-400 block text-sm">Acres Allocation</span>
+                <button
+                  onClick={handleCopyAllocation}
+                  className="text-xs bg-white/10 hover:bg-white/20 text-cyan-300 px-2 py-1 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                  aria-label={copied ? "Copied allocation to clipboard" : "Copy allocation to clipboard"}
+                >
+                  {copied ? "Copied!" : "Copy"}
+                </button>
+              </div>
               <span className="text-lg font-semibold text-cyan-300">
                 {result.x ? `Wheat: ${result.x[0].toFixed(1)}, Corn: ${result.x[1].toFixed(1)}, Beets: ${result.x[2].toFixed(1)}` : "None"}
               </span>
