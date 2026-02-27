@@ -2,9 +2,6 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)
-![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=flat&logo=react&logoColor=%2361DAFB)
-![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=flat&logo=vercel&logoColor=white)
 
 optimax is a comprehensive optimization toolkit designed for the **[SF2812 Applied Linear Optimization](https://www.kth.se/student/kurser/kurs/SF2812?lang=en)** course at KTH. It provides a web-based interface to visualize and solve problems covering the core syllabus topics, including Linear Programming, Integer Programming, Column Generation, Lagrangian Relaxation, and Stochastic Programming.
 
