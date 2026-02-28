@@ -12,21 +12,21 @@ def solve_stochastic(total_land, scenarios):
     scenarios: list of dict with 'probability' and 'yields' (list of 3 floats: Wheat, Corn, Beets)
     """
     # Costs per acre
-    planting_costs = [150, 230, 260] # Wheat, Corn, Beets
+    planting_costs = np.array([150, 230, 260], dtype=float) # Wheat, Corn, Beets
 
     # Selling prices
-    sell_price = [170, 150, 36, 10] # Wheat, Corn, Beets (quota), Beets (excess)
+    sell_price = np.array([170, 150, 36, 10], dtype=float) # Wheat, Corn, Beets (quota), Beets (excess)
     # Purchase prices
-    buy_price = [238, 210] # Wheat, Corn
+    buy_price = np.array([238, 210], dtype=float) # Wheat, Corn
 
     # Demands (feeding requirements)
-    demands = [200, 240] # Wheat, Corn
+    demands = np.array([200, 240], dtype=float) # Wheat, Corn
 
     # Quota for Beets
-    beets_quota = 6000
+    beets_quota = 6000.0
 
     n_scenarios = len(scenarios)
-    probs = [s['probability'] for s in scenarios]
+    probs = np.array([s['probability'] for s in scenarios], dtype=float)
 
     # Variables:
     # x (3): planted acres
@@ -58,58 +58,54 @@ def solve_stochastic(total_land, scenarios):
         c[base_idx+4] = -sell_price[2] * prob
         c[base_idx+5] = -sell_price[3] * prob
 
-    # Constraints
-    A_ub = []
-    b_ub = []
-    A_eq = []
-    b_eq = []
+    # Optimization: Pre-allocate numpy arrays for constraints instead of appending to lists.
+    # This prevents O(N) memory reallocations inside the loop and significantly speeds up matrix creation.
+    n_ub_constraints = 1 + 3 * n_scenarios
+    A_ub = np.zeros((n_ub_constraints, num_vars))
+    b_ub = np.zeros(n_ub_constraints)
+
+    n_eq_constraints = n_scenarios
+    A_eq = np.zeros((n_eq_constraints, num_vars))
+    b_eq = np.zeros(n_eq_constraints)
 
     # 1. Land constraint: x1 + x2 + x3 <= total_land
-    land_constr = np.zeros(num_vars)
-    land_constr[0:3] = 1
-    A_ub.append(land_constr)
-    b_ub.append(total_land)
+    A_ub[0, 0:3] = 1.0
+    b_ub[0] = total_land
+
+    ub_idx = 1
+    eq_idx = 0
 
     # Per Scenario Constraints
     for i, scen in enumerate(scenarios):
         yld = scen['yields'] # [yW, yC, yB]
         base_idx = 3 + i * 6
 
-        # Wheat: yield*x1 + y1 - w1 >= 200  => -yield*x1 - y1 + w1 <= -200
-        # Corn:  yield*x2 + y2 - w2 >= 240  => -yield*x2 - y2 + w2 <= -240
-        # Beets: yield*x3 - z1 - z2 >= 0    => -yield*x3 + z1 + z2 <= 0
-        # Beets Quota: z1 <= 6000           => z1 <= 6000
+        # Wheat Balance: -yield*x1 - y1 + w1 <= -200
+        A_ub[ub_idx, 0] = -yld[0]      # -yield*x1
+        A_ub[ub_idx, base_idx] = 1.0     # +w1
+        A_ub[ub_idx, base_idx+2] = -1.0  # -y1
+        b_ub[ub_idx] = -demands[0]
+        ub_idx += 1
 
-        # Wheat Balance
-        row_w = np.zeros(num_vars)
-        row_w[0] = -yld[0]      # -yield*x1
-        row_w[base_idx] = 1     # +w1
-        row_w[base_idx+2] = -1  # -y1
-        A_ub.append(row_w)
-        b_ub.append(-demands[0])
-
-        # Corn Balance
-        row_c = np.zeros(num_vars)
-        row_c[1] = -yld[1]
-        row_c[base_idx+1] = 1
-        row_c[base_idx+3] = -1
-        A_ub.append(row_c)
-        b_ub.append(-demands[1])
+        # Corn Balance: -yield*x2 - y2 + w2 <= -240
+        A_ub[ub_idx, 1] = -yld[1]
+        A_ub[ub_idx, base_idx+1] = 1.0
+        A_ub[ub_idx, base_idx+3] = -1.0
+        b_ub[ub_idx] = -demands[1]
+        ub_idx += 1
 
         # Beets Balance (Produced = Sold Quota + Sold Excess)
-        # yld[2]*x3 = z1 + z2
-        row_b = np.zeros(num_vars)
-        row_b[2] = yld[2]
-        row_b[base_idx+4] = -1
-        row_b[base_idx+5] = -1
-        A_eq.append(row_b)
-        b_eq.append(0)
+        # yld[2]*x3 - z1 - z2 = 0
+        A_eq[eq_idx, 2] = yld[2]
+        A_eq[eq_idx, base_idx+4] = -1.0
+        A_eq[eq_idx, base_idx+5] = -1.0
+        b_eq[eq_idx] = 0.0
+        eq_idx += 1
 
-        # Quota Limit
-        row_q = np.zeros(num_vars)
-        row_q[base_idx+4] = 1
-        A_ub.append(row_q)
-        b_ub.append(beets_quota)
+        # Quota Limit: z1 <= 6000
+        A_ub[ub_idx, base_idx+4] = 1.0
+        b_ub[ub_idx] = beets_quota
+        ub_idx += 1
 
     res = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=(0, None), method='highs')
 
