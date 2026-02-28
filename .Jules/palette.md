@@ -25,3 +25,7 @@
 ## 2026-03-01 - Consistent Result Interactions
 **Learning:** Results often include logs or data that users may want to extract. `ColGenSolver` provided a copy mechanism, while `LagrangianSolver` did not, forcing users to manually select and copy text.
 **Action:** Identify text-heavy result sections (logs, large matrices) and consistently provide a "Copy" utility to improve usability and data portability.
+
+## 2026-03-02 - Skip to Main Content Link
+**Learning:** For keyboard and screen reader users, repeatedly tabbing through navigation and header elements to reach the primary content (the solver forms) can be tedious. A "Skip to main content" link is a critical accessibility standard that was missing.
+**Action:** Implemented a skip link that is visually hidden until focused, and ensured the target `<main>` element has `tabIndex="-1"` and `focus:outline-none` so it can receive focus programmatically without showing an awkward outline. Also updated semantic HTML tags (`<header>`, `<main>`) for better structure.
