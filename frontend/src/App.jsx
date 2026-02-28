@@ -34,13 +34,20 @@ function App() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="glass-panel p-8 mb-8 text-center bg-gradient-to-r from-white/5 to-white/10">
+    <div className="container mx-auto px-4 py-8 relative">
+      <a
+        href="#main-content"
+        className="absolute -top-96 left-4 z-50 bg-cyan-600 text-white font-semibold py-3 px-6 rounded-lg shadow-xl transition-all focus:top-4 focus:outline-none focus-visible:ring-4 focus-visible:ring-cyan-400"
+      >
+        Skip to main content
+      </a>
+
+      <header className="glass-panel p-8 mb-8 text-center bg-gradient-to-r from-white/5 to-white/10">
         <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-purple-300">
           Optimax: SF2812 Optimization Toolkit
         </h1>
         <p className="text-slate-300 text-lg">Applied Linear Optimization - Solver & Visualizer</p>
-      </div>
+      </header>
 
       <nav aria-label="Solver selection" className="flex flex-wrap justify-center gap-4 mb-8">
         {[
@@ -61,11 +68,11 @@ function App() {
         ))}
       </nav>
 
-      <div className="glass-panel p-6 min-h-[400px]">
+      <main id="main-content" className="glass-panel p-6 min-h-[400px] focus:outline-none" tabIndex="-1">
         <Suspense fallback={<LoadingSpinner />}>
           {renderSolver()}
         </Suspense>
-      </div>
+      </main>
     </div>
   );
 }
