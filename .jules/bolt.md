@@ -13,3 +13,7 @@
 ## 2025-05-27 - [Matplotlib Performance: Stateful vs OO]
 **Learning:** Using `matplotlib.pyplot` (stateful) for plot generation in the backend is ~25% slower (0.22s vs 0.16s for small trees) than using the Object-Oriented interface (`Figure`, `FigureCanvasAgg`). The stateful interface also risks thread-safety issues in a web server context.
 **Action:** Always use the `Figure` and `FigureCanvasAgg` classes directly for backend image generation, avoiding `plt.figure()` and `plt.savefig()`.
+
+## 2025-02-28 - Numpy Pre-allocation for Constraint Matrices
+**Learning:** In the stochastic solver, dynamically appending constraint rows and right-hand side values to standard Python lists and then letting Scipy convert them to Numpy arrays incurs an unnecessary memory reallocation overhead inside loops (O(N)).
+**Action:** When building large constraint systems across many scenarios or iterations, pre-allocate Numpy arrays with zeros using the known constraint size, and update the indices directly. This avoids memory reallocation overhead and reduces execution time.
