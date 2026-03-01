@@ -10,6 +10,14 @@ def solve_cutting_stock(roll_length, demands):
     quantities = [d[1] for d in demands]
     n_items = len(widths)
 
+    # Security: Validate inputs to prevent ZeroDivisionError (DoS)
+    for w in widths:
+        if w <= 0:
+            raise ValueError("Demand widths must be strictly positive")
+
+    if roll_length <= 0:
+        raise ValueError("Roll length must be strictly positive")
+
     # Initial patterns: One roll for each item type (identity matrix like)
     # Actually, a better initial basis is fitting as many of item i as possible
     patterns = []
