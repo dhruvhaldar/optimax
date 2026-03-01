@@ -53,10 +53,15 @@ def solve_lagrangian(costs, weights, capacities):
         current_x = np.zeros((n_tasks, n_agents))
         subproblem_obj_sum = 0
 
+        # Optimization: Pre-calculate the cost modifier matrix outside the agent loop.
+        # This replaces O(N_AGENTS) Numpy vector subtractions with a single broadcasted subtraction,
+        # reducing overhead in the tight subproblem iteration loop.
+        c_sub_all = costs - lambdas[:, np.newaxis]
+
         for j in range(n_agents):
             # Maximize sum_i (lambdas[i] - c_ij) x_ij
             # Equivalent to Minimize sum_i (c_ij - lambdas[i]) x_ij
-            c_sub = costs[:, j] - lambdas
+            c_sub = c_sub_all[:, j]
 
             res = milp(c=c_sub, constraints=agent_constraints[j], integrality=integrality, bounds=bounds)
 
