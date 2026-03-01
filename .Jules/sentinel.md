@@ -17,3 +17,8 @@
 **Vulnerability:** The application enforced strong security headers (CSP, X-Frame-Options, etc.) within the backend `api/index.py` middleware, but completely lacked them on the statically served React frontend hosted via Vercel CDN. This left the primary UI exposed to UI redress attacks (Clickjacking) and XSS risks since `index.html` was served without protections.
 **Learning:** In decoupled architectures where the backend and frontend are hosted or routed differently (e.g., Vercel static build vs Serverless functions), security headers applied at the backend framework level do NOT propagate to static assets.
 **Prevention:** Configured global security headers at the infrastructure level in `vercel.json` (`"headers"` configuration) to guarantee consistent enforcement across both static frontend assets and API routes.
+
+## 2026-03-01 - Denial of Service via ZeroDivisionError in Column Generation
+**Vulnerability:** The Column Generation solver (`api/solvers/colgen.py`) did not validate user input widths against zero or negative values. An attacker could supply a width of `0`, which caused a `ZeroDivisionError` when computing `roll_length // widths[i]`, crashing the endpoint with a 500 error and allowing for Denial of Service.
+**Learning:** Mathematical operations on user inputs, especially division, must always have strict bounds checking. Pydantic models with `float` types don't prevent zero natively unless strictly configured with `gt=0`.
+**Prevention:** Added explicit validation checks in the solver function to ensure that both `roll_length` and all `demand` widths are strictly positive (>0) before proceeding, immediately raising a `ValueError` which FastAPI cleanly maps to a 400 Bad Request.
