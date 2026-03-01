@@ -17,3 +17,7 @@
 ## 2025-02-28 - Numpy Pre-allocation for Constraint Matrices
 **Learning:** In the stochastic solver, dynamically appending constraint rows and right-hand side values to standard Python lists and then letting Scipy convert them to Numpy arrays incurs an unnecessary memory reallocation overhead inside loops (O(N)).
 **Action:** When building large constraint systems across many scenarios or iterations, pre-allocate Numpy arrays with zeros using the known constraint size, and update the indices directly. This avoids memory reallocation overhead and reduces execution time.
+
+## 2025-02-28 - Pre-computing Broadcasted Numpy Matrices in Inner Loops
+**Learning:** Inside the Lagrangian solver's inner iteration loop, computing `costs[:, j] - lambdas` for each column sequentially involves repeated memory allocation and array subtraction. Pre-computing the entire matrix difference outside the inner loop using Numpy broadcasting (`costs - lambdas[:, np.newaxis]`) eliminates these redundant operations and yields measurable execution time savings.
+**Action:** Always pre-compute vector/matrix operations using broadcasting outside of inner loops when possible, rather than slicing and computing sequentially inside the loop.
