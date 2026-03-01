@@ -85,8 +85,9 @@ const LPSolver = () => {
         />
       </div>
       <div className="mb-6">
-        <label className="flex items-center space-x-3 cursor-pointer">
+        <label htmlFor="lp-maximize" className="flex items-center space-x-3 cursor-pointer">
           <input
+            id="lp-maximize"
             type="checkbox"
             checked={maximize}
             onChange={e => setMaximize(e.target.checked)}

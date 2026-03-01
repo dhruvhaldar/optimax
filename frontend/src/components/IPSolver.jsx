@@ -85,8 +85,9 @@ const IPSolver = () => {
         />
       </div>
       <div className="mb-6">
-        <label className="flex items-center space-x-3 cursor-pointer">
+        <label htmlFor="ip-maximize" className="flex items-center space-x-3 cursor-pointer">
           <input
+            id="ip-maximize"
             type="checkbox"
             checked={maximize}
             onChange={e => setMaximize(e.target.checked)}

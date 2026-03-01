@@ -29,3 +29,7 @@
 ## 2026-03-02 - Skip to Main Content Link
 **Learning:** For keyboard and screen reader users, repeatedly tabbing through navigation and header elements to reach the primary content (the solver forms) can be tedious. A "Skip to main content" link is a critical accessibility standard that was missing.
 **Action:** Implemented a skip link that is visually hidden until focused, and ensured the target `<main>` element has `tabIndex="-1"` and `focus:outline-none` so it can receive focus programmatically without showing an awkward outline. Also updated semantic HTML tags (`<header>`, `<main>`) for better structure.
+
+## 2026-03-02 - Explicit Label-Input Associations for Checkboxes
+**Learning:** While wrapping an `<input type="checkbox">` inside a `<label>` provides implicit association, screen readers and older assistive technologies perform significantly better when inputs are *explicitly* tied via `id` and `htmlFor`. `LPSolver` and `IPSolver` lacked this.
+**Action:** Always include explicit `id` and `htmlFor` attributes on inputs and their wrapping labels, even when implicitly nested.
