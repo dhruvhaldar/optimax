@@ -21,6 +21,7 @@ def solve_cutting_stock(roll_length, demands):
     # Initial patterns: One roll for each item type (identity matrix like)
     # Actually, a better initial basis is fitting as many of item i as possible
     patterns = []
+    patterns_set = set() # O(1) lookup
     for i in range(n_items):
         pat = [0]*n_items
         if widths[i] <= roll_length:
@@ -28,12 +29,24 @@ def solve_cutting_stock(roll_length, demands):
         else:
             pat[i] = 1 # Should not happen if data is valid
         patterns.append(pat)
+        patterns_set.add(tuple(pat))
 
     iter_count = 0
     max_iter = 50
     logs = []
 
     final_res = None
+
+    # Constraints: 0 <= widths @ a <= roll_length
+    A_sub = np.array([widths]) # 1 x n_items matrix
+    b_l = np.array([0])
+    b_u = np.array([roll_length])
+
+    constraints = LinearConstraint(A_sub, b_l, b_u)
+    integrality = np.ones(n_items) # All integer
+
+    # Pre-calculate the negative quantities array
+    quantities_arr = -np.array(quantities)
 
     while iter_count < max_iter:
         # Solve Master LP
@@ -44,7 +57,7 @@ def solve_cutting_stock(roll_length, demands):
         n_patterns = len(patterns)
         c = np.ones(n_patterns)
 
-        res = linprog(c, A_ub=-current_patterns, b_ub=-np.array(quantities), bounds=(0, None), method='highs')
+        res = linprog(c, A_ub=-current_patterns, b_ub=quantities_arr, bounds=(0, None), method='highs')
 
         if not res.success:
             return {"error": "Master problem infeasible", "logs": logs}
@@ -63,14 +76,6 @@ def solve_cutting_stock(roll_length, demands):
 
         c_sub = -duals
 
-        # Constraints: 0 <= widths @ a <= roll_length
-        A_sub = np.array([widths]) # 1 x n_items matrix
-        b_l = np.array([0])
-        b_u = np.array([roll_length])
-
-        constraints = LinearConstraint(A_sub, b_l, b_u)
-        integrality = np.ones(n_items) # All integer
-
         # Solve using HiGHS (via scipy.optimize.milp) - much faster than spawning CBC process
         res_sub = milp(c=c_sub, constraints=constraints, integrality=integrality)
 
@@ -79,18 +84,21 @@ def solve_cutting_stock(roll_length, demands):
              break
 
         new_pattern_val = -res_sub.fun
-        new_pattern = [int(round(x)) for x in res_sub.x]
+        new_pattern = np.rint(res_sub.x).astype(int).tolist()
 
         if new_pattern_val <= 1 + 1e-5:
             logs.append(f"Optimality reached. Max reduced cost val: {new_pattern_val:.4f} <= 1")
             break
 
+        new_pattern_tuple = tuple(new_pattern)
+
         # Check if pattern already exists to avoid cycling (numerical issues)
-        if any((np.array(new_pattern) == np.array(p)).all() for p in patterns):
+        if new_pattern_tuple in patterns_set:
             logs.append("Generated existing pattern. Stopping.")
             break
 
         patterns.append(new_pattern)
+        patterns_set.add(new_pattern_tuple)
         logs.append(f"Iter {iter_count}: Added pattern {new_pattern} (Value: {new_pattern_val:.4f})")
         iter_count += 1
 
