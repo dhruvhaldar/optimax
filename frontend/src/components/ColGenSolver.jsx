@@ -23,12 +23,19 @@ const ColGenSolver = () => {
   const solveColGen = async () => {
     setLoading(true);
     setError(null);
+    let payload;
     try {
-      const payload = {
+      payload = {
         roll_length: parseFloat(rollLength),
         demands: JSON.parse(demands)
       };
+    } catch (err) {
+      setError("Invalid input format. Please ensure demands are formatted as a valid JSON matrix (e.g., [[3, 25], [5, 20]]).");
+      setLoading(false);
+      return;
+    }
 
+    try {
       const response = await axios.post('/api/colgen', payload);
       setResult(response.data);
     } catch (err) {

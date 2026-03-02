@@ -39,12 +39,19 @@ const StochasticSolver = () => {
   const solveStochastic = async () => {
     setLoading(true);
     setError(null);
+    let payload;
     try {
-      const payload = {
+      payload = {
         total_land: parseFloat(land),
         scenarios: JSON.parse(scenarios)
       };
+    } catch (err) {
+      setError("Invalid JSON format in Scenarios. Please check for missing quotes, commas, or brackets.");
+      setLoading(false);
+      return;
+    }
 
+    try {
       const response = await axios.post('/api/stochastic', payload);
       setResult(response.data);
     } catch (err) {
