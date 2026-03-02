@@ -21,3 +21,7 @@
 ## 2025-02-28 - Pre-computing Broadcasted Numpy Matrices in Inner Loops
 **Learning:** Inside the Lagrangian solver's inner iteration loop, computing `costs[:, j] - lambdas` for each column sequentially involves repeated memory allocation and array subtraction. Pre-computing the entire matrix difference outside the inner loop using Numpy broadcasting (`costs - lambdas[:, np.newaxis]`) eliminates these redundant operations and yields measurable execution time savings.
 **Action:** Always pre-compute vector/matrix operations using broadcasting outside of inner loops when possible, rather than slicing and computing sequentially inside the loop.
+
+## 2025-02-28 - O(1) Set Lookup vs O(N) Iteration checking in Column Generation Loop
+**Learning:** In the Column Generation solver's iteration loop, repeatedly checking if a newly generated pattern exists in the list of previously generated patterns using array comparisons (`if any((np.array(new_pattern) == np.array(p)).all() for p in patterns)`) is extremely slow `O(N)` since N is constantly increasing on each iteration. Storing patterns as tuples in a `set` and doing `tuple(new_pattern) in patterns_set` reduced this complexity to `O(1)`, resulting in a measurable performance increase.
+**Action:** Always use sets and tuple structures when performing lookups over frequently mutated collections to preserve `O(1)` time complexity.
