@@ -22,14 +22,21 @@ const LPSolver = () => {
   const solveLP = async () => {
     setLoading(true);
     setError(null);
+    let payload;
     try {
-      const payload = {
+      payload = {
         c: JSON.parse(c),
         A_ub: JSON.parse(A),
         b_ub: JSON.parse(b),
         maximize: maximize
       };
+    } catch (err) {
+      setError("Invalid input format. Please ensure your vectors and matrices are formatted as valid JSON (e.g., [1, 2] or [[1, 2], [3, 4]]).");
+      setLoading(false);
+      return;
+    }
 
+    try {
       const response = await axios.post('/api/lp', payload);
       setResult(response.data);
     } catch (err) {

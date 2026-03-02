@@ -24,13 +24,20 @@ const LagrangianSolver = () => {
   const solveLagrangian = async () => {
     setLoading(true);
     setError(null);
+    let payload;
     try {
-      const payload = {
+      payload = {
         costs: JSON.parse(costs),
         weights: JSON.parse(weights),
         capacities: JSON.parse(capacities)
       };
+    } catch (err) {
+      setError("Invalid input format. Please ensure all matrices and vectors are formatted as valid JSON (e.g., [1, 2] or [[1, 2], [3, 4]]).");
+      setLoading(false);
+      return;
+    }
 
+    try {
       const response = await axios.post('/api/lagrangian', payload);
       setResult(response.data);
     } catch (err) {
