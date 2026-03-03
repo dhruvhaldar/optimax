@@ -48,16 +48,19 @@ def solve_cutting_stock(roll_length, demands):
     # Pre-calculate the negative quantities array
     quantities_arr = -np.array(quantities)
 
+    # Optimization: Pre-allocate numpy arrays for the constraint matrix (current_patterns_neg) and objective (c)
+    # outside the iteration loop instead of repeatedly calling `np.array(patterns).T` on a growing list of lists.
+    # This prevents O(N^2) memory reallocation overhead inside the tight Column Generation loop.
+    current_patterns_neg = -np.array(patterns).T
+    c = np.ones(len(patterns))
+    bounds = (0, None) # Pre-allocate bounds tuple
+
     while iter_count < max_iter:
         # Solve Master LP
         # Min sum(x) s.t. A x >= quantities
         # Scipy: Min c x s.t. -A x <= -quantities
 
-        current_patterns = np.array(patterns).T # n_items x n_patterns
-        n_patterns = len(patterns)
-        c = np.ones(n_patterns)
-
-        res = linprog(c, A_ub=-current_patterns, b_ub=quantities_arr, bounds=(0, None), method='highs')
+        res = linprog(c, A_ub=current_patterns_neg, b_ub=quantities_arr, bounds=bounds, method='highs')
 
         if not res.success:
             return {"error": "Master problem infeasible", "logs": logs}
@@ -99,6 +102,11 @@ def solve_cutting_stock(roll_length, demands):
 
         patterns.append(new_pattern)
         patterns_set.add(new_pattern_tuple)
+
+        # Optimization: Incrementally append the new pattern to the constraint matrix and objective arrays
+        current_patterns_neg = np.hstack((current_patterns_neg, -np.array(new_pattern).reshape(-1, 1)))
+        c = np.append(c, 1)
+
         logs.append(f"Iter {iter_count}: Added pattern {new_pattern} (Value: {new_pattern_val:.4f})")
         iter_count += 1
 

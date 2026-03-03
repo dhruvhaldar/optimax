@@ -25,3 +25,7 @@
 ## 2025-02-28 - O(1) Set Lookup vs O(N) Iteration checking in Column Generation Loop
 **Learning:** In the Column Generation solver's iteration loop, repeatedly checking if a newly generated pattern exists in the list of previously generated patterns using array comparisons (`if any((np.array(new_pattern) == np.array(p)).all() for p in patterns)`) is extremely slow `O(N)` since N is constantly increasing on each iteration. Storing patterns as tuples in a `set` and doing `tuple(new_pattern) in patterns_set` reduced this complexity to `O(1)`, resulting in a measurable performance increase.
 **Action:** Always use sets and tuple structures when performing lookups over frequently mutated collections to preserve `O(1)` time complexity.
+
+## 2025-03-03 - O(N^2) Array Recreation in Loops
+**Learning:** In the Column Generation solver, rebuilding the `A_ub` constraint matrix on every iteration by converting a growing list of lists via `np.array(patterns).T` causes severe `O(N^2)` memory reallocation overhead.
+**Action:** When a constraint matrix or an objective vector grows incrementally inside an optimization loop, pre-allocate or incrementally update existing NumPy arrays using `np.hstack` or `np.append` instead of parsing an entire Python list from scratch on every iteration. Also, extract constant attributes (like bounds) out of the loop.
