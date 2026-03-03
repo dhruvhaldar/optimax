@@ -81,7 +81,7 @@ def plot_lp(c, A_ub, b_ub, optimal_x, maximize):
                 y_max_feasible = np.minimum(y_max_feasible, y)
             elif a2 < 0:
                 y_min_feasible = np.maximum(y_min_feasible, y)
-        else:
+        elif a1 != 0:
             ax.axvline(b/a1, label=f'{a1}x1 <= {b}', color='gray', linestyle='--')
             # Handle vertical constraint for fill? Complex.
 
