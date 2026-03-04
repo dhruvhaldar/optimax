@@ -41,3 +41,7 @@
 ## 2026-03-03 - Disable Spellcheck on Data Inputs
 **Learning:** Browsers natively attempt to spellcheck text areas and text inputs. For inputs that expect raw data formats like JSON, arrays, or matrices, this results in annoying visual noise (red squiggly lines) under variable names, numbers, or JSON syntax, which can confuse users into thinking they have made a syntax error.
 **Action:** Always explicitly add `spellCheck={false}` to any `<input>` or `<textarea>` that is designed to capture raw data, code, or JSON payloads.
+
+## 2026-03-04 - Initial State Visual Guidance
+**Learning:** Forms that handle complex computations often feel visually unbalanced before submission, leaving users without clear initial guidance or anticipation of the output format. Empty states not only fill this visual void but serve as an excellent place to provide a call-to-action and set expectations for the results.
+**Action:** Always include a styled empty state block for result sections in computational interfaces when the initial state has no data to display.

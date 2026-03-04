@@ -108,6 +108,16 @@ const ColGenSolver = () => {
         </div>
       )}
 
+      {!result && !error && !loading && (
+        <div className="mt-8 p-8 bg-white/5 rounded-xl border border-dashed border-white/20 flex flex-col items-center justify-center text-slate-400 text-center">
+          <svg className="w-12 h-12 mb-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <p>Ready to optimize.</p>
+          <p className="text-sm mt-1 opacity-75">Enter your parameters above and click <strong>Solve</strong> to generate the solution.</p>
+        </div>
+      )}
+
       {result && (
         <div className="mt-8 p-6 bg-black/20 rounded-xl border border-white/5">
           <h3 className="text-xl font-bold mb-4 text-white">Results</h3>
