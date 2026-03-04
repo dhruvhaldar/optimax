@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.responses import JSONResponse
+from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any, Union, Annotated
 import sys
@@ -17,6 +18,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+# Performance Optimization (Bolt): Compress large JSON responses (e.g., base64 images from solvers)
+# Reduces payload size by ~25-30% for plots, saving network bandwidth.
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Security Headers Middleware
 @app.middleware("http")
