@@ -67,6 +67,7 @@ const LagrangianSolver = () => {
           value={costs}
           onChange={e => setCosts(e.target.value)}
           placeholder="[[c11, c12], [c21, c22]]"
+          spellCheck={false}
           className="glass-input w-full font-mono"
         />
       </div>
@@ -78,6 +79,7 @@ const LagrangianSolver = () => {
           value={weights}
           onChange={e => setWeights(e.target.value)}
           placeholder="[[w11, w12], [w21, w22]]"
+          spellCheck={false}
           className="glass-input w-full font-mono"
         />
       </div>
@@ -89,6 +91,7 @@ const LagrangianSolver = () => {
           value={capacities}
           onChange={e => setCapacities(e.target.value)}
           placeholder="[C1, C2]"
+          spellCheck={false}
           className="glass-input w-full"
         />
       </div>

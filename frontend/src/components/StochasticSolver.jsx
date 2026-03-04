@@ -91,6 +91,7 @@ const StochasticSolver = () => {
           value={scenarios}
           onChange={e => setScenarios(e.target.value)}
           placeholder={'[{"name": "Scenario1", "probability": 0.5, "yields": [1.0, 2.0]}, ...]'}
+          spellCheck={false}
           className="glass-input w-full font-mono text-sm leading-relaxed"
         />
       </div>

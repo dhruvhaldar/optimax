@@ -76,6 +76,7 @@ const ColGenSolver = () => {
           value={demands}
           onChange={e => setDemands(e.target.value)}
           placeholder="[[width, qty], ...]"
+          spellCheck={false}
           className="glass-input w-full font-mono"
         />
       </div>

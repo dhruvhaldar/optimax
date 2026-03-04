@@ -37,3 +37,7 @@
 ## 2026-04-01 - Cryptic JSON Parsing Errors
 **Learning:** Many solvers accept complex matrix and array data as JSON strings. When users made a typo, `JSON.parse` failed and threw generic JavaScript exceptions ("Unexpected token..."). Displaying this directly in the UI confused users who didn't understand JSON syntax errors.
 **Action:** Intercept `JSON.parse` errors in UI components before they bubble up, and replace them with clear, actionable validation guidance explaining the required format (e.g., "[[1, 2], [3, 4]]") to reduce user frustration.
+
+## 2026-03-03 - Disable Spellcheck on Data Inputs
+**Learning:** Browsers natively attempt to spellcheck text areas and text inputs. For inputs that expect raw data formats like JSON, arrays, or matrices, this results in annoying visual noise (red squiggly lines) under variable names, numbers, or JSON syntax, which can confuse users into thinking they have made a syntax error.
+**Action:** Always explicitly add `spellCheck={false}` to any `<input>` or `<textarea>` that is designed to capture raw data, code, or JSON payloads.
