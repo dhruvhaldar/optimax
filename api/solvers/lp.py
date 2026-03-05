@@ -32,11 +32,14 @@ def solve_lp(c, A_ub, b_ub, bounds=None, maximize=False):
         except Exception as e:
             print(f"Plotting failed: {e}")
 
+    # Security: Explicitly check for None before negating to prevent TypeError (DoS)
+    fun_val = -res.fun if maximize and res.fun is not None else res.fun
+
     return {
         "success": res.success,
         "message": res.message,
         "x": res.x.tolist() if res.x is not None else None,
-        "fun": -res.fun if maximize else res.fun,
+        "fun": fun_val,
         "plot": img_b64
     }
 
