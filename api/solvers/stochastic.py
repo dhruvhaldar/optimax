@@ -45,18 +45,14 @@ def solve_stochastic(total_land, scenarios):
     c = np.zeros(num_vars)
     c[0:3] = planting_costs
 
-    for i in range(n_scenarios):
-        prob = probs[i]
-        base_idx = 3 + i * 6
-        # w1, w2 (sell) -> coeff -170*p, -150*p
-        c[base_idx] = -sell_price[0] * prob
-        c[base_idx+1] = -sell_price[1] * prob
-        # y1, y2 (buy) -> coeff 238*p, 210*p
-        c[base_idx+2] = buy_price[0] * prob
-        c[base_idx+3] = buy_price[1] * prob
-        # z1, z2 (beets) -> coeff -36*p, -10*p
-        c[base_idx+4] = -sell_price[2] * prob
-        c[base_idx+5] = -sell_price[3] * prob
+    # Optimization: Use NumPy broadcasting to calculate objective coefficients for all scenarios simultaneously,
+    # completely eliminating the O(N_SCENARIOS) Python for-loop overhead.
+    scenario_coeffs = np.array([
+        -sell_price[0], -sell_price[1],
+        buy_price[0], buy_price[1],
+        -sell_price[2], -sell_price[3]
+    ])
+    c[3:] = (probs[:, np.newaxis] * scenario_coeffs).flatten()
 
     # Optimization: Pre-allocate numpy arrays for constraints instead of appending to lists.
     # This prevents O(N) memory reallocations inside the loop and significantly speeds up matrix creation.
@@ -136,19 +132,16 @@ def plot_stochastic(acres, profit, scenarios, probs, all_x, n_scenarios):
     # Calculate profit per scenario
     # Profit_s = Revenue_s - Cost_Planting
     cost_planting = np.dot(acres, [150, 230, 260])
-    scenario_profits = []
+    # Optimization: Reshape all_x into a 2D matrix (n_scenarios x 6) and use vectorized operations
+    # and dot products to calculate scenario profits instantly, replacing the slow Python list appending loop.
+    sell_price_arr = np.array([170, 150, 36, 10])
+    buy_price_arr = np.array([238, 210])
 
-    sell_price = [170, 150, 36, 10]
-    buy_price = [238, 210]
+    scenario_vars = all_x[3:3 + n_scenarios * 6].reshape(n_scenarios, 6)
+    revenues = np.dot(scenario_vars[:, [0, 1, 4, 5]], sell_price_arr)
+    cost_purchases = np.dot(scenario_vars[:, [2, 3]], buy_price_arr)
 
-    for i in range(n_scenarios):
-        base_idx = 3 + i * 6
-        # w1, w2, y1, y2, z1, z2
-        vars_s = all_x[base_idx:base_idx+6]
-        revenue = vars_s[0]*sell_price[0] + vars_s[1]*sell_price[1] + vars_s[4]*sell_price[2] + vars_s[5]*sell_price[3]
-        cost_purchase = vars_s[2]*buy_price[0] + vars_s[3]*buy_price[1]
-        profit_s = revenue - cost_purchase - cost_planting
-        scenario_profits.append(profit_s)
+    scenario_profits = revenues - cost_purchases - cost_planting
 
     ax2.bar([s['name'] for s in scenarios], scenario_profits, color='skyblue')
     ax2.axhline(profit, color='red', linestyle='--', label=f'Exp: {profit:.0f}')
