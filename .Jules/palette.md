@@ -45,3 +45,7 @@
 ## 2026-03-04 - Initial State Visual Guidance
 **Learning:** Forms that handle complex computations often feel visually unbalanced before submission, leaving users without clear initial guidance or anticipation of the output format. Empty states not only fill this visual void but serve as an excellent place to provide a call-to-action and set expectations for the results.
 **Action:** Always include a styled empty state block for result sections in computational interfaces when the initial state has no data to display.
+
+## 2026-03-05 - Visual Feedback During Async Operations for Stale Content
+**Learning:** When users re-submit forms that already have results (or empty states), leaving the existing content fully visible and interactive during the new network request creates confusion. Users may try to interact with the stale results (like copying logs) or wonder if the new request actually started.
+**Action:** When handling async form submissions, always apply a visual fading effect (e.g., `opacity-50`) and disable interactions (e.g., `pointer-events-none`) on the existing result or empty state blocks to clearly signal that the UI is busy processing the new request.

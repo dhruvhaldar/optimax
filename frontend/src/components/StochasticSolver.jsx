@@ -123,8 +123,8 @@ const StochasticSolver = () => {
         </div>
       )}
 
-      {!result && !error && !loading && (
-        <div className="mt-8 p-8 bg-white/5 rounded-xl border border-dashed border-white/20 flex flex-col items-center justify-center text-slate-400 text-center">
+      {!result && !error && (
+        <div className={`mt-8 p-8 bg-white/5 rounded-xl border border-dashed border-white/20 flex flex-col items-center justify-center text-slate-400 text-center transition-opacity duration-200 ${loading ? 'opacity-50' : ''}`}>
           <svg className="w-12 h-12 mb-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
@@ -134,7 +134,7 @@ const StochasticSolver = () => {
       )}
 
       {result && (
-        <div className="mt-8 p-6 bg-black/20 rounded-xl border border-white/5">
+        <div className={`mt-8 p-6 bg-black/20 rounded-xl border border-white/5 transition-opacity duration-200 ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
           <h3 className="text-xl font-bold mb-4 text-white">Results</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-white/5 p-4 rounded-lg">
