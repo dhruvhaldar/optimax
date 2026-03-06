@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import './App.css';
 
 // Lazy load solver components for performance optimization (Code Splitting)
@@ -19,8 +19,21 @@ const LoadingSpinner = () => (
   </div>
 );
 
+const TABS = [
+  { id: 'lp', label: 'LP (Simplex)' },
+  { id: 'ip', label: 'IP (B&B)' },
+  { id: 'colgen', label: 'Column Generation' },
+  { id: 'lagrangian', label: 'Lagrangian Relaxation' },
+  { id: 'stochastic', label: 'Stochastic Prog' },
+];
+
 function App() {
   const [activeTab, setActiveTab] = useState('lp');
+
+  useEffect(() => {
+    const activeLabel = TABS.find(tab => tab.id === activeTab)?.label || 'Optimax';
+    document.title = `${activeLabel} | Optimax`;
+  }, [activeTab]);
 
   const renderSolver = () => {
     switch (activeTab) {
@@ -50,13 +63,7 @@ function App() {
       </header>
 
       <nav aria-label="Solver selection" className="flex flex-wrap justify-center gap-4 mb-8">
-        {[
-          { id: 'lp', label: 'LP (Simplex)' },
-          { id: 'ip', label: 'IP (B&B)' },
-          { id: 'colgen', label: 'Column Generation' },
-          { id: 'lagrangian', label: 'Lagrangian Relaxation' },
-          { id: 'stochastic', label: 'Stochastic Prog' },
-        ].map(tab => (
+        {TABS.map(tab => (
           <button
             key={tab.id}
             className={`glass-btn ${activeTab === tab.id ? 'bg-cyan-500/40 border-cyan-400 shadow-cyan-500/30' : ''}`}

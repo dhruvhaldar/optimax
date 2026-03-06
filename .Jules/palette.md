@@ -49,3 +49,7 @@
 ## 2026-03-05 - Visual Feedback During Async Operations for Stale Content
 **Learning:** When users re-submit forms that already have results (or empty states), leaving the existing content fully visible and interactive during the new network request creates confusion. Users may try to interact with the stale results (like copying logs) or wonder if the new request actually started.
 **Action:** When handling async form submissions, always apply a visual fading effect (e.g., `opacity-50`) and disable interactions (e.g., `pointer-events-none`) on the existing result or empty state blocks to clearly signal that the UI is busy processing the new request.
+
+## 2026-03-05 - Dynamic Document Titles in SPAs
+**Learning:** Single Page Applications (SPAs) often fail to update the `<title>` element when the user navigates between virtual views (like tabs). This means screen reader users and sighted users with multiple tabs open lose context of which specific tool or sub-page they are currently on, as the title remains static.
+**Action:** Always implement dynamic document title updates (e.g., via `useEffect` observing the active view state) in SPAs to explicitly reflect the current view or tool name, ensuring users have persistent context.
