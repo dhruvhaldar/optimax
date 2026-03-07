@@ -53,3 +53,7 @@
 ## 2026-03-05 - Dynamic Document Titles in SPAs
 **Learning:** Single Page Applications (SPAs) often fail to update the `<title>` element when the user navigates between virtual views (like tabs). This means screen reader users and sighted users with multiple tabs open lose context of which specific tool or sub-page they are currently on, as the title remains static.
 **Action:** Always implement dynamic document title updates (e.g., via `useEffect` observing the active view state) in SPAs to explicitly reflect the current view or tool name, ensuring users have persistent context.
+
+## 2026-05-15 - Focus Loss from Native Disabled Attribute
+**Learning:** Using the native `disabled={loading}` attribute on form submit buttons immediately removes the element from the tab order when it becomes disabled. If the element currently has focus (which it typically does after a click or enter key press), the browser resets focus to the `<body>` element. This completely breaks the logical navigation flow for keyboard users, forcing them to navigate back through the entire page structure to reach the newly loaded results.
+**Action:** Always replace `disabled={loading}` on submit buttons with `aria-disabled={loading}`, add explicit CSS classes for visual feedback (e.g., `opacity-80 cursor-wait`), and ensure the corresponding click handler has a guard (`if (loading) return;`) to prevent duplicate submissions while correctly preserving keyboard focus.

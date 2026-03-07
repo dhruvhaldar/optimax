@@ -37,6 +37,7 @@ const StochasticSolver = () => {
   };
 
   const solveStochastic = async () => {
+    if (loading) return;
     setLoading(true);
     setError(null);
     let payload;
@@ -96,9 +97,9 @@ const StochasticSolver = () => {
         />
       </div>
       <button
-        className="glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2"
+        className={`glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2 ${loading ? 'opacity-80 cursor-wait' : ''}`}
         onClick={solveStochastic}
-        disabled={loading}
+        aria-disabled={loading}
         aria-busy={loading}
         title="Press Ctrl+Enter or Cmd+Enter to solve"
       >
