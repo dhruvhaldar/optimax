@@ -66,6 +66,10 @@ BoundedFloatList = Annotated[List[SafeFloat], Field(max_length=MAX_VARS)]
 BoundedConstraintMatrix = Annotated[List[BoundedFloatList], Field(max_length=MAX_CONSTRAINTS)]
 BoundedConstraintVector = Annotated[List[SafeFloat], Field(max_length=MAX_CONSTRAINTS)]
 
+# Security: Enforce strict dimensional constraints on nested arrays to prevent IndexError exceptions (DoS/Log Flooding)
+DemandTuple = Annotated[List[SafeFloat], Field(min_length=2, max_length=2)]
+YieldTuple = Annotated[List[SafeFloat], Field(min_length=3, max_length=3)]
+
 class LPParams(BaseModel):
     c: BoundedFloatList
     A_ub: BoundedConstraintMatrix
@@ -81,7 +85,7 @@ class IPParams(BaseModel):
 
 class ColGenParams(BaseModel):
     roll_length: SafeFloat
-    demands: Annotated[List[BoundedFloatList], Field(max_length=MAX_VARS)] # [[width, quantity], ...]
+    demands: Annotated[List[DemandTuple], Field(max_length=MAX_VARS)] # [[width, quantity], ...]
 
 class LagrangianParams(BaseModel):
     costs: Annotated[List[BoundedFloatList], Field(max_length=MAX_VARS)]
@@ -91,7 +95,7 @@ class LagrangianParams(BaseModel):
 class Scenario(BaseModel):
     name: SafeString
     probability: SafeFloat
-    yields: BoundedFloatList
+    yields: YieldTuple
 
 class StochasticParams(BaseModel):
     total_land: SafeFloat
