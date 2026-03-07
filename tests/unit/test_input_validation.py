@@ -62,5 +62,16 @@ class TestInputValidation(unittest.TestCase):
         response = self.client.post("/api/stochastic", json=payload)
         self.assertEqual(response.status_code, 422)
 
+    def test_lagrangian_dimension_mismatch(self):
+        """Test that lagrangian solver validates dimensions properly to prevent 500 error."""
+        payload = {
+            "costs": [[1, 2], [3, 4]],
+            "weights": [[1], [3]],
+            "capacities": [10, 20]
+        }
+        response = self.client.post("/api/lagrangian", json=payload)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json(), {"detail": "Invalid input parameters"})
+
 if __name__ == '__main__':
     unittest.main()
