@@ -17,7 +17,16 @@ def solve_lagrangian(costs, weights, capacities):
     weights = np.array(weights)
     capacities = np.array(capacities)
 
+    # Security: Validate dimensions to prevent IndexError (DoS)
+    if costs.ndim != 2:
+        raise ValueError("Costs must be a 2D matrix")
+
     n_tasks, n_agents = costs.shape
+
+    if weights.shape != (n_tasks, n_agents):
+        raise ValueError(f"Weights must be a {n_tasks}x{n_agents} matrix")
+    if capacities.shape != (n_agents,):
+        raise ValueError(f"Capacities must be a 1D array of length {n_agents}")
 
     # Initialize multipliers (lambda)
     lambdas = np.zeros(n_tasks)
