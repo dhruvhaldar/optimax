@@ -68,40 +68,36 @@ def solve_stochastic(total_land, scenarios):
     A_ub[0, 0:3] = 1.0
     b_ub[0] = total_land
 
-    ub_idx = 1
-    eq_idx = 0
+    # Optimization: Use NumPy advanced indexing to calculate all scenario constraints simultaneously.
+    # This completely eliminates the slow O(N_SCENARIOS) Python for-loop and dramatically speeds up constraint generation.
+    ylds = np.array([s['yields'] for s in scenarios]) # Shape (n_scenarios, 3)
+    base_indices = 3 + np.arange(n_scenarios) * 6
 
-    # Per Scenario Constraints
-    for i, scen in enumerate(scenarios):
-        yld = scen['yields'] # [yW, yC, yB]
-        base_idx = 3 + i * 6
+    # --- Wheat Constraints (ub_idx: 1, 4, 7...) ---
+    wheat_ub_idx = 1 + np.arange(n_scenarios) * 3
+    A_ub[wheat_ub_idx, 0] = -ylds[:, 0]               # -yield*x1
+    A_ub[wheat_ub_idx, base_indices] = 1.0            # +w1
+    A_ub[wheat_ub_idx, base_indices + 2] = -1.0       # -y1
+    b_ub[wheat_ub_idx] = -demands[0]
 
-        # Wheat Balance: -yield*x1 - y1 + w1 <= -200
-        A_ub[ub_idx, 0] = -yld[0]      # -yield*x1
-        A_ub[ub_idx, base_idx] = 1.0     # +w1
-        A_ub[ub_idx, base_idx+2] = -1.0  # -y1
-        b_ub[ub_idx] = -demands[0]
-        ub_idx += 1
+    # --- Corn Constraints (ub_idx: 2, 5, 8...) ---
+    corn_ub_idx = 2 + np.arange(n_scenarios) * 3
+    A_ub[corn_ub_idx, 1] = -ylds[:, 1]                # -yield*x2
+    A_ub[corn_ub_idx, base_indices + 1] = 1.0         # +w2
+    A_ub[corn_ub_idx, base_indices + 3] = -1.0        # -y2
+    b_ub[corn_ub_idx] = -demands[1]
 
-        # Corn Balance: -yield*x2 - y2 + w2 <= -240
-        A_ub[ub_idx, 1] = -yld[1]
-        A_ub[ub_idx, base_idx+1] = 1.0
-        A_ub[ub_idx, base_idx+3] = -1.0
-        b_ub[ub_idx] = -demands[1]
-        ub_idx += 1
+    # --- Beets Balance Constraints (eq_idx: 0, 1, 2...) ---
+    eq_idx = np.arange(n_scenarios)
+    A_eq[eq_idx, 2] = ylds[:, 2]                      # yield*x3
+    A_eq[eq_idx, base_indices + 4] = -1.0             # -z1
+    A_eq[eq_idx, base_indices + 5] = -1.0             # -z2
+    b_eq[eq_idx] = 0.0
 
-        # Beets Balance (Produced = Sold Quota + Sold Excess)
-        # yld[2]*x3 - z1 - z2 = 0
-        A_eq[eq_idx, 2] = yld[2]
-        A_eq[eq_idx, base_idx+4] = -1.0
-        A_eq[eq_idx, base_idx+5] = -1.0
-        b_eq[eq_idx] = 0.0
-        eq_idx += 1
-
-        # Quota Limit: z1 <= 6000
-        A_ub[ub_idx, base_idx+4] = 1.0
-        b_ub[ub_idx] = beets_quota
-        ub_idx += 1
+    # --- Quota Limit Constraints (ub_idx: 3, 6, 9...) ---
+    quota_ub_idx = 3 + np.arange(n_scenarios) * 3
+    A_ub[quota_ub_idx, base_indices + 4] = 1.0        # z1
+    b_ub[quota_ub_idx] = beets_quota
 
     res = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=(0, None), method='highs')
 
