@@ -153,7 +153,12 @@ const ColGenSolver = () => {
               {copied ? "Copied!" : "Copy Logs"}
             </button>
           </div>
-          <pre className="bg-black/30 p-4 rounded-lg border border-white/10 text-slate-400 text-sm overflow-y-auto max-h-60 font-mono">
+          <pre
+            className="bg-black/30 p-4 rounded-lg border border-white/10 text-slate-400 text-sm overflow-y-auto max-h-60 font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            tabIndex={0}
+            role="region"
+            aria-label="Execution logs"
+          >
             {result.logs.join('\n')}
           </pre>
         </div>
