@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.optimize import linprog
+import scipy.sparse as sp
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 import io
@@ -54,50 +55,62 @@ def solve_stochastic(total_land, scenarios):
     ])
     c[3:] = (probs[:, np.newaxis] * scenario_coeffs).flatten()
 
-    # Optimization: Pre-allocate numpy arrays for constraints instead of appending to lists.
-    # This prevents O(N) memory reallocations inside the loop and significantly speeds up matrix creation.
+    # Optimization: Pre-allocate numpy arrays for sparse matrices instead of appending to lists.
+    # We construct A_ub and A_eq as scipy.sparse.coo_matrix to vastly improve memory footprint
+    # and solve time for large scenario counts since the constraint matrices are extremely sparse.
     n_ub_constraints = 1 + 3 * n_scenarios
-    A_ub = np.zeros((n_ub_constraints, num_vars))
+    n_eq_constraints = n_scenarios
+
+    # A_ub Nonzeros: 3 (land) + S*3 (wheat) + S*3 (corn) + S*1 (quota) = 3 + 7*S
+    nnz_ub = 3 + 7 * n_scenarios
+    rows_ub = np.zeros(nnz_ub, dtype=int)
+    cols_ub = np.zeros(nnz_ub, dtype=int)
+    vals_ub = np.zeros(nnz_ub)
     b_ub = np.zeros(n_ub_constraints)
 
-    n_eq_constraints = n_scenarios
-    A_eq = np.zeros((n_eq_constraints, num_vars))
-    b_eq = np.zeros(n_eq_constraints)
-
     # 1. Land constraint: x1 + x2 + x3 <= total_land
-    A_ub[0, 0:3] = 1.0
+    rows_ub[0:3] = 0
+    cols_ub[0:3] = [0, 1, 2]
+    vals_ub[0:3] = 1.0
     b_ub[0] = total_land
 
-    # Optimization: Use NumPy advanced indexing to calculate all scenario constraints simultaneously.
-    # This completely eliminates the slow O(N_SCENARIOS) Python for-loop and dramatically speeds up constraint generation.
+    idx = 3
     ylds = np.array([s['yields'] for s in scenarios]) # Shape (n_scenarios, 3)
     base_indices = 3 + np.arange(n_scenarios) * 6
 
     # --- Wheat Constraints (ub_idx: 1, 4, 7...) ---
     wheat_ub_idx = 1 + np.arange(n_scenarios) * 3
-    A_ub[wheat_ub_idx, 0] = -ylds[:, 0]               # -yield*x1
-    A_ub[wheat_ub_idx, base_indices] = 1.0            # +w1
-    A_ub[wheat_ub_idx, base_indices + 2] = -1.0       # -y1
+    rows_ub[idx:idx + 3*n_scenarios] = np.repeat(wheat_ub_idx, 3)
+    cols_ub[idx:idx + 3*n_scenarios] = np.column_stack((np.zeros(n_scenarios, dtype=int), base_indices, base_indices + 2)).flatten()
+    vals_ub[idx:idx + 3*n_scenarios] = np.column_stack((-ylds[:, 0], np.ones(n_scenarios), np.full(n_scenarios, -1.0))).flatten()
     b_ub[wheat_ub_idx] = -demands[0]
+    idx += 3*n_scenarios
 
     # --- Corn Constraints (ub_idx: 2, 5, 8...) ---
     corn_ub_idx = 2 + np.arange(n_scenarios) * 3
-    A_ub[corn_ub_idx, 1] = -ylds[:, 1]                # -yield*x2
-    A_ub[corn_ub_idx, base_indices + 1] = 1.0         # +w2
-    A_ub[corn_ub_idx, base_indices + 3] = -1.0        # -y2
+    rows_ub[idx:idx + 3*n_scenarios] = np.repeat(corn_ub_idx, 3)
+    cols_ub[idx:idx + 3*n_scenarios] = np.column_stack((np.ones(n_scenarios, dtype=int), base_indices + 1, base_indices + 3)).flatten()
+    vals_ub[idx:idx + 3*n_scenarios] = np.column_stack((-ylds[:, 1], np.ones(n_scenarios), np.full(n_scenarios, -1.0))).flatten()
     b_ub[corn_ub_idx] = -demands[1]
-
-    # --- Beets Balance Constraints (eq_idx: 0, 1, 2...) ---
-    eq_idx = np.arange(n_scenarios)
-    A_eq[eq_idx, 2] = ylds[:, 2]                      # yield*x3
-    A_eq[eq_idx, base_indices + 4] = -1.0             # -z1
-    A_eq[eq_idx, base_indices + 5] = -1.0             # -z2
-    b_eq[eq_idx] = 0.0
+    idx += 3*n_scenarios
 
     # --- Quota Limit Constraints (ub_idx: 3, 6, 9...) ---
     quota_ub_idx = 3 + np.arange(n_scenarios) * 3
-    A_ub[quota_ub_idx, base_indices + 4] = 1.0        # z1
+    rows_ub[idx:idx + n_scenarios] = quota_ub_idx
+    cols_ub[idx:idx + n_scenarios] = base_indices + 4
+    vals_ub[idx:idx + n_scenarios] = np.ones(n_scenarios)
     b_ub[quota_ub_idx] = beets_quota
+
+    A_ub = sp.coo_matrix((vals_ub, (rows_ub, cols_ub)), shape=(n_ub_constraints, num_vars))
+
+    # --- Beets Balance Constraints (eq_idx: 0, 1, 2...) ---
+    eq_idx = np.arange(n_scenarios)
+    rows_eq = np.repeat(eq_idx, 3)
+    cols_eq = np.column_stack((np.full(n_scenarios, 2, dtype=int), base_indices + 4, base_indices + 5)).flatten()
+    vals_eq = np.column_stack((ylds[:, 2], np.full(n_scenarios, -1.0), np.full(n_scenarios, -1.0))).flatten()
+    b_eq = np.zeros(n_eq_constraints)
+
+    A_eq = sp.coo_matrix((vals_eq, (rows_eq, cols_eq)), shape=(n_eq_constraints, num_vars))
 
     res = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=(0, None), method='highs')
 
