@@ -61,3 +61,7 @@
 ## 2026-03-08 - Keyboard Navigation for Scrollable Content
 **Learning:** Native elements like `<pre>` or `<div>` that use CSS `overflow: auto` or `overflow: scroll` to manage large content (such as execution logs) are inaccessible to keyboard-only users by default. Without a `tabIndex`, users cannot tab into the container to scroll its contents using the arrow keys, effectively locking them out of the information if it exceeds the visible area.
 **Action:** Always add `tabIndex={0}`, an appropriate `role` (like `"region"`), an `aria-label`, and clear focus styles (e.g., `focus-visible:ring`) to any container that scrolls content independently of the main page, ensuring keyboard users can navigate and consume the full content.
+
+## 2024-05-25 - Decorative SVGs and Screen Readers
+**Learning:** Decorative SVG icons (like loading spinners or empty state graphics) without `aria-hidden="true"` can be announced confusingly by screen readers as unlabelled graphics, adding noise to the user experience.
+**Action:** Always add `aria-hidden="true"` to `<svg>` elements that are purely decorative or redundant to accompanying text (like "Loading...").
