@@ -152,8 +152,18 @@ def plot_stochastic(acres, profit, scenarios, probs, all_x, n_scenarios):
 
     scenario_profits = revenues - cost_purchases - cost_planting
 
-    ax2.bar([s['name'] for s in scenarios], scenario_profits, color='skyblue')
-    ax2.axhline(profit, color='red', linestyle='--', label=f'Exp: {profit:.0f}')
+    # Optimization: Don't plot individual bars if there are too many scenarios.
+    # Plotting thousands of bars is extremely slow (e.g., ~9s for 1000 bars) and visually unreadable.
+    # Instead, plot a histogram to show the distribution of profits.
+    if n_scenarios <= 50:
+        ax2.bar([s['name'] for s in scenarios], scenario_profits, color='skyblue')
+        ax2.axhline(profit, color='red', linestyle='--', label=f'Exp: {profit:.0f}')
+    else:
+        ax2.hist(scenario_profits, bins=20, color='skyblue', edgecolor='black', alpha=0.7)
+        ax2.set_xlabel('Profit')
+        ax2.set_ylabel('Frequency')
+        ax2.axvline(profit, color='red', linestyle='--', label=f'Exp: {profit:.0f}')
+
     ax2.set_title('Profit per Scenario')
     ax2.legend()
 

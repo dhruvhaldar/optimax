@@ -49,3 +49,7 @@
 ## 2025-03-09 - [Sparse Constraint Matrices in scipy.optimize.linprog]
 **Learning:** For stochastic programming or any linear programming problem with large, mostly empty block-diagonal constraint matrices, constructing `A_ub` and `A_eq` as dense Numpy arrays leads to severe memory allocation overhead and dramatically increases the solve time for solvers like HiGHS. In our tests with 1000 scenarios, constructing dense constraint matrices took over 6 seconds just to set up and solve.
 **Action:** When a constraint matrix is highly sparse, always directly construct `scipy.sparse.coo_matrix` instances using the vectorized `(data, (row, col))` format instead of a 2D dense array. SciPy's `linprog` handles these natively and efficiently, dropping solve time by nearly 40x in some cases.
+
+## 2025-03-10 - [Matplotlib Bar Chart Scaling bottleneck]
+**Learning:** Plotting thousands of individual bars in a bar chart using `ax.bar` in Matplotlib is incredibly slow. In the Stochastic solver, plotting profits for 1000 scenarios individually as bars took ~9.5 seconds, dominating the API response time.
+**Action:** For large categorical datasets with numerous elements, never plot individual bars. Dynamically switch to `ax.hist` to plot data distribution (bins) instead, which brings rendering time from several seconds down to ~0.25s and generates a much more readable visual.
