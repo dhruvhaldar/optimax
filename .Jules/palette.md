@@ -65,3 +65,7 @@
 ## 2024-05-25 - Decorative SVGs and Screen Readers
 **Learning:** Decorative SVG icons (like loading spinners or empty state graphics) without `aria-hidden="true"` can be announced confusingly by screen readers as unlabelled graphics, adding noise to the user experience.
 **Action:** Always add `aria-hidden="true"` to `<svg>` elements that are purely decorative or redundant to accompanying text (like "Loading...").
+
+## 2026-06-15 - Dynamic Platform Keyboard Shortcuts
+**Learning:** Hardcoded keyboard shortcuts (like `⌘↵`) in titles or visual hints can be confusing or misleading for users on non-Mac platforms (Windows, Linux), leading to frustration when trying to use keyboard navigation.
+**Action:** Implemented a custom hook (`useOsShortcut`) that dynamically checks the OS platform and renders the appropriate shortcut symbols (`⌘↵` for Mac, `Ctrl+↵` for others) along with accurate `aria` and `title` attributes across all solver form actions.

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useOsShortcut } from '../hooks/useOsShortcut';
 
 const StochasticSolver = () => {
+  const { shortcutSymbol, shortcutText } = useOsShortcut();
   const [land, setLand] = useState(500);
   const [scenarios, setScenarios] = useState(JSON.stringify([
     {
@@ -101,7 +103,7 @@ const StochasticSolver = () => {
         onClick={solveStochastic}
         aria-disabled={loading}
         aria-busy={loading}
-        title="Press Ctrl+Enter or Cmd+Enter to solve"
+        title={`Press ${shortcutText} to solve`}
       >
         {loading ? (
           <>
@@ -113,7 +115,7 @@ const StochasticSolver = () => {
           </>
         ) : (
           <>
-            Solve Stochastic LP <span className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">⌘↵</span>
+            Solve Stochastic LP <span aria-hidden="true" className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">{shortcutSymbol}</span>
           </>
         )}
       </button>
