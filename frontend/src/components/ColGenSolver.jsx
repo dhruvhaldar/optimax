@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useOsShortcut } from '../hooks/useOsShortcut';
 
 const ColGenSolver = () => {
+  const { shortcutSymbol, shortcutText } = useOsShortcut();
   const [rollLength, setRollLength] = useState(15);
   const [demands, setDemands] = useState("[[3, 25], [5, 20], [7, 15]]");
   const [result, setResult] = useState(null);
@@ -86,7 +88,7 @@ const ColGenSolver = () => {
         onClick={solveColGen}
         aria-disabled={loading}
         aria-busy={loading}
-        title="Press Ctrl+Enter or Cmd+Enter to solve"
+        title={`Press ${shortcutText} to solve`}
       >
         {loading ? (
           <>
@@ -98,7 +100,7 @@ const ColGenSolver = () => {
           </>
         ) : (
           <>
-            Solve Cutting Stock <span className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">⌘↵</span>
+            Solve Cutting Stock <span aria-hidden="true" className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">{shortcutSymbol}</span>
           </>
         )}
       </button>

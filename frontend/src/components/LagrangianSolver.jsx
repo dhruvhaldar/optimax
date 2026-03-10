@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useOsShortcut } from '../hooks/useOsShortcut';
 
 const LagrangianSolver = () => {
+  const { shortcutSymbol, shortcutText } = useOsShortcut();
   const [costs, setCosts] = useState("[[10, 20], [15, 10], [5, 5]]");
   const [weights, setWeights] = useState("[[2, 5], [3, 2], [1, 1]]");
   const [capacities, setCapacities] = useState("[5, 5]");
@@ -101,7 +103,7 @@ const LagrangianSolver = () => {
         onClick={solveLagrangian}
         aria-disabled={loading}
         aria-busy={loading}
-        title="Press Ctrl+Enter or Cmd+Enter to solve"
+        title={`Press ${shortcutText} to solve`}
       >
         {loading ? (
           <>
@@ -113,7 +115,7 @@ const LagrangianSolver = () => {
           </>
         ) : (
           <>
-            Solve Lagrangian <span className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">⌘↵</span>
+            Solve Lagrangian <span aria-hidden="true" className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">{shortcutSymbol}</span>
           </>
         )}
       </button>

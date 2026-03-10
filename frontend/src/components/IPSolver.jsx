@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useOsShortcut } from '../hooks/useOsShortcut';
 
 const IPSolver = () => {
+  const { shortcutSymbol, shortcutText } = useOsShortcut();
   const [c, setC] = useState("[5, 8]");
   const [A, setA] = useState("[[1, 1], [5, 9]]");
   const [b, setB] = useState("[6, 45]");
@@ -112,7 +114,7 @@ const IPSolver = () => {
         onClick={solveIP}
         aria-disabled={loading}
         aria-busy={loading}
-        title="Press Ctrl+Enter or Cmd+Enter to solve"
+        title={`Press ${shortcutText} to solve`}
       >
         {loading ? (
           <>
@@ -124,7 +126,7 @@ const IPSolver = () => {
           </>
         ) : (
           <>
-            Solve IP <span className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">⌘↵</span>
+            Solve IP <span aria-hidden="true" className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">{shortcutSymbol}</span>
           </>
         )}
       </button>

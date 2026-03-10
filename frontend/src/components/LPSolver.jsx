@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useOsShortcut } from '../hooks/useOsShortcut';
 
 const LPSolver = () => {
+  const { shortcutSymbol, shortcutText } = useOsShortcut();
   const [c, setC] = useState("[3, 2]");
   const [A, setA] = useState("[[2, 1], [1, 1], [1, 0]]");
   const [b, setB] = useState("[100, 80, 40]");
@@ -112,7 +114,7 @@ const LPSolver = () => {
         onClick={solveLP}
         aria-disabled={loading}
         aria-busy={loading}
-        title="Press Ctrl+Enter or Cmd+Enter to solve"
+        title={`Press ${shortcutText} to solve`}
       >
         {loading ? (
           <>
@@ -124,7 +126,7 @@ const LPSolver = () => {
           </>
         ) : (
           <>
-            Solve LP <span className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">⌘↵</span>
+            Solve LP <span aria-hidden="true" className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">{shortcutSymbol}</span>
           </>
         )}
       </button>
