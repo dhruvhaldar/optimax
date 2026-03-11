@@ -53,3 +53,7 @@
 ## 2025-03-10 - [Matplotlib Bar Chart Scaling bottleneck]
 **Learning:** Plotting thousands of individual bars in a bar chart using `ax.bar` in Matplotlib is incredibly slow. In the Stochastic solver, plotting profits for 1000 scenarios individually as bars took ~9.5 seconds, dominating the API response time.
 **Action:** For large categorical datasets with numerous elements, never plot individual bars. Dynamically switch to `ax.hist` to plot data distribution (bins) instead, which brings rendering time from several seconds down to ~0.25s and generates a much more readable visual.
+
+## 2025-03-12 - [Vectorized milp calls in Lagrangian Solver]
+**Learning:** In the Lagrangian Relaxation solver, solving `N` separate `milp` subproblems in a loop per iteration introduces enormous overhead due to repeated SciPy setup and execution costs.
+**Action:** When solving multiple independent subproblems with identical variable bounds and integrality constraints (like the Lagrangian agent assignments), concatenate them into a single global `scipy.optimize.milp` problem. Use `scipy.sparse.coo_matrix` to construct a block-diagonal constraint matrix to maintain sparsity, and solve the combined problem in one vectorized call. This reduces solver time significantly (e.g., >50% time reduction for 200 tasks and 40 agents).
