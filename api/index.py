@@ -99,7 +99,7 @@ class Scenario(BaseModel):
 
 class StochasticParams(BaseModel):
     total_land: SafeFloat
-    scenarios: Annotated[List[Scenario], Field(max_length=MAX_SCENARIOS)]
+    scenarios: Annotated[List[Scenario], Field(min_length=1, max_length=MAX_SCENARIOS)]
 
 @app.get("/api/health")
 def health():

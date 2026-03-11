@@ -148,7 +148,7 @@ const StochasticSolver = () => {
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
               <span className="text-slate-400 block text-sm">Expected Profit</span>
-              <span className="text-lg font-semibold text-white">${result.expected_profit?.toFixed(2)}</span>
+              <span className="text-lg font-semibold text-white">{result.expected_profit !== null ? `$${result.expected_profit.toFixed(2)}` : "N/A"}</span>
             </div>
             <div className="col-span-1 md:col-span-2 bg-white/5 p-4 rounded-lg">
               <div className="flex justify-between items-center mb-1">
