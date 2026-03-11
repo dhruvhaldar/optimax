@@ -154,7 +154,7 @@ const LagrangianSolver = () => {
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
               <span className="text-slate-400 block text-sm">Best Solution</span>
-              <code className="text-cyan-300 font-mono text-sm">{result.best_solution ? JSON.stringify(result.best_solution) : "None"}</code>
+              <code className="text-cyan-300 font-mono text-sm overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">{result.best_solution ? JSON.stringify(result.best_solution) : "None"}</code>
             </div>
           </div>
 
