@@ -161,7 +161,7 @@ const StochasticSolver = () => {
                   {copied ? "Copied!" : "Copy"}
                 </button>
               </div>
-              <span className="text-lg font-semibold text-cyan-300">
+              <span className="text-lg font-semibold text-cyan-300 overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">
                 {result.x ? `Wheat: ${result.x[0].toFixed(1)}, Corn: ${result.x[1].toFixed(1)}, Beets: ${result.x[2].toFixed(1)}` : "None"}
               </span>
             </div>

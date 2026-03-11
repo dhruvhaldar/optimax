@@ -172,7 +172,7 @@ const IPSolver = () => {
                   {copied ? "Copied!" : "Copy"}
                 </button>
               </div>
-              <code className="text-cyan-300 font-mono">{JSON.stringify(result.x)}</code>
+              <code className="text-cyan-300 font-mono overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">{JSON.stringify(result.x)}</code>
             </div>
           </div>
 
