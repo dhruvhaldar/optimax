@@ -1,4 +1,5 @@
 import numpy as np
+import heapq
 from collections import deque
 from scipy.optimize import linprog
 import networkx as nx
@@ -21,13 +22,17 @@ class Node:
         self.value = -np.inf
         self.status = "open" # open, pruned, integer, infeasible, branched
 
+    def __lt__(self, other):
+        # Tie-breaker for PriorityQueue
+        return self.id < other.id
+
 def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
     """
     Solves Integer Programming problem using Branch and Bound.
     Maximize c^T x s.t. A_ub x <= b_ub, x >= 0, integer.
 
     Optimization:
-    - Uses Depth-First Search (DFS) for better memory efficiency and faster feasible solution finding.
+    - Uses Best-First Search (via heapq) to explore the most promising nodes first, reducing the total nodes evaluated.
     - Limits tree plotting to 50 nodes to prevent performance degradation on large trees (reduced execution time from ~6s to ~1.3s for N=25).
     """
     c = np.array(c)
@@ -41,7 +46,7 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
     initial_bounds = [(0, None)] * n_vars
 
     nodes = []
-    queue = deque()
+    queue = [] # Min-heap for Best-First Search
 
     best_solution = None
     best_value = -np.inf if maximize else np.inf
@@ -137,7 +142,8 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
     root.value = root_val
 
     nodes.append(root)
-    queue.append(root)
+    priority = -root.value if maximize else root.value
+    heapq.heappush(queue, (priority, root.id, root))
 
     node_counter = 0
     processed_nodes = 0
@@ -149,7 +155,7 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
             break
 
         processed_nodes += 1
-        current_node = queue.pop() # DFS
+        _, _, current_node = heapq.heappop(queue) # Best-First Search
 
         # Pre-solve Pruning: Check if parent's relaxed value already violates the best bound found so far
         if maximize and current_node.parent_relaxed_value is not None and current_node.parent_relaxed_value < best_value - 1e-6:
@@ -260,16 +266,12 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
                 if len(nodes) <= MAX_PLOT_NODES:
                     nodes.append(right_node)
 
-                # Guided Dive: Explore the branch closer to the fractional value first.
-                # If x is closer to floor (e.g. 3.1), explore Left (<= 3) first.
-                # To pop Left first in DFS (LIFO), push Right then Left.
-                frac_part = res.x[idx] - val_floor
-                if frac_part < 0.5:
-                    queue.append(right_node)
-                    queue.append(left_node)
-                else:
-                    queue.append(left_node)
-                    queue.append(right_node)
+                # Best-First Search: push both nodes, priority queue handles ordering based on parent's relaxed value
+                left_priority = -left_node.parent_relaxed_value if maximize else left_node.parent_relaxed_value
+                right_priority = -right_node.parent_relaxed_value if maximize else right_node.parent_relaxed_value
+
+                heapq.heappush(queue, (left_priority, left_node.id, left_node))
+                heapq.heappush(queue, (right_priority, right_node.id, right_node))
 
     # Generate Tree Plot
     img_b64 = None if skip_plot else plot_tree(nodes)
