@@ -61,3 +61,11 @@
 ## 2025-03-12 - [IP Search Strategy: Best-First Search vs DFS]
 **Learning:** Re-visiting the Branch and Bound implementation for IP problems, I noticed that Depth-First Search (DFS) was measurably slower (taking ~2.1s for a 20-variable Knapsack instance) compared to exploring nodes with the best objective value first.
 **Action:** Replaced the LIFO queue (`deque.pop()`) with a priority queue (`heapq`) based on the parent's relaxed objective value, essentially changing the search to Best-First Search. This prioritizes the most promising branches first, drastically reducing the total number of nodes evaluated before finding optimality or pruning, dropping execution time for the 20-var problem to ~1.2s.
+
+## 2025-05-27 - [Class Instantiation in Tight Loops]
+**Learning:** Defining and instantiating a class inline within a tight while loop (like in the B&B `solve_ip` algorithm) carries massive Python object creation overhead and severely slows down execution (e.g., from ~0.17s to ~15s for large problems).
+**Action:** Always pre-define classes outside of tight loops, ideally at the module level.
+
+## 2025-05-27 - [__slots__ for Performance]
+**Learning:** Using `__slots__` in Python classes that are instantiated thousands of times (like `Node` in a Branch and Bound tree) prevents the creation of `__dict__` for each instance, saving memory and slightly improving attribute access speed. Combining this with moving class definitions out of the loop provided a massive speedup for the IP solver.
+**Action:** When a class represents a data structure that will have many instances (e.g., tree nodes, solver results), explicitly define `__slots__` to optimize memory and performance.
