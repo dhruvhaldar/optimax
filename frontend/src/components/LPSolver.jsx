@@ -97,18 +97,33 @@ const LPSolver = () => {
           className="glass-input w-full"
         />
       </div>
-      <div className="mb-6">
-        <label htmlFor="lp-maximize" className="flex items-center space-x-3 cursor-pointer">
-          <input
-            id="lp-maximize"
-            type="checkbox"
-            checked={maximize}
-            onChange={e => setMaximize(e.target.checked)}
-            className="form-checkbox h-5 w-5 text-cyan-500 rounded border-gray-300 focus:ring-cyan-500 bg-white/10"
-          />
-          <span className="text-slate-300">Maximize Objective</span>
-        </label>
-      </div>
+      <fieldset className="mb-6">
+        <legend className="block text-sm font-medium text-slate-300 mb-2">Objective Direction:</legend>
+        <div className="flex items-center space-x-6">
+          <label htmlFor="lp-maximize" className="flex items-center space-x-3 cursor-pointer">
+            <input
+              id="lp-maximize"
+              type="radio"
+              name="lp-objective-direction"
+              checked={maximize === true}
+              onChange={() => setMaximize(true)}
+              className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10"
+            />
+            <span className="text-slate-300">Maximize</span>
+          </label>
+          <label htmlFor="lp-minimize" className="flex items-center space-x-3 cursor-pointer">
+            <input
+              id="lp-minimize"
+              type="radio"
+              name="lp-objective-direction"
+              checked={maximize === false}
+              onChange={() => setMaximize(false)}
+              className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10"
+            />
+            <span className="text-slate-300">Minimize</span>
+          </label>
+        </div>
+      </fieldset>
       <button
         className={`glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2 ${loading ? 'opacity-80 cursor-wait' : ''}`}
         onClick={solveLP}
