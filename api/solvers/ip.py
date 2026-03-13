@@ -11,6 +11,8 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 MAX_PLOT_NODES = 50
 
 class Node:
+    __slots__ = ['id', 'level', 'parent_id', 'decision', 'bounds', 'parent_relaxed_value', 'solution', 'value', 'status']
+
     def __init__(self, id, level, parent_id, decision, bounds, parent_relaxed_value=None):
         self.id = id
         self.level = level
@@ -25,6 +27,14 @@ class Node:
     def __lt__(self, other):
         # Tie-breaker for PriorityQueue
         return self.id < other.id
+
+class MockRes:
+    """Pre-defined class to replace inline class creation inside tight loops."""
+    __slots__ = ['success', 'x', 'fun']
+    def __init__(self, x, fun):
+        self.success = True
+        self.x = x
+        self.fun = fun
 
 def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
     """
@@ -170,11 +180,6 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
         if current_node.solution is not None:
              # Use stored solution. Need to mock 'res' object for downstream logic.
              # We create a simple object with necessary attributes.
-             class MockRes:
-                 def __init__(self, x, fun):
-                     self.success = True
-                     self.x = x
-                     self.fun = fun
 
              # Adjust fun for maximization (stored value is actual value, linprog returns minimized)
              # But here we use 'val' directly later.
@@ -186,6 +191,8 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
              # No, easier to mock res.fun.
              # If maximize, val = -res.fun => res.fun = -val.
              res_fun = -current_node.value if maximize else current_node.value
+
+             # Performance: Instantiate pre-defined global class instead of defining inline
              res = MockRes(current_node.solution, res_fun)
 
         else:
