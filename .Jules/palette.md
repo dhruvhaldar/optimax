@@ -69,3 +69,7 @@
 ## 2026-06-15 - Dynamic Platform Keyboard Shortcuts
 **Learning:** Hardcoded keyboard shortcuts (like `⌘↵`) in titles or visual hints can be confusing or misleading for users on non-Mac platforms (Windows, Linux), leading to frustration when trying to use keyboard navigation.
 **Action:** Implemented a custom hook (`useOsShortcut`) that dynamically checks the OS platform and renders the appropriate shortcut symbols (`⌘↵` for Mac, `Ctrl+↵` for others) along with accurate `aria` and `title` attributes across all solver form actions.
+
+## 2026-06-16 - Ambiguous Binary States
+**Learning:** Using a single checkbox for a binary state where the "unchecked" state isn't simply "off" (e.g., "Maximize Objective" where unchecked implies "Minimize") creates cognitive load and ambiguity. Users might wonder if unchecked means "don't care", "minimize", or something else.
+**Action:** Replaced ambiguous single checkboxes with an explicit semantic `<fieldset>` containing radio buttons for both explicit states (Maximize / Minimize). This guarantees clarity of intent and improves accessibility by using appropriate form grouping constructs.
