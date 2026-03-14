@@ -131,7 +131,7 @@ const ColGenSolver = () => {
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
               <span className="text-slate-400 block text-sm">Rolls Used (LP Relaxation)</span>
-              <span className="text-lg font-semibold text-white">{result.objective.toFixed(2)}</span>
+              <span className="text-lg font-semibold text-white">{result.objective !== null && result.objective !== undefined ? result.objective.toFixed(2) : "N/A"}</span>
             </div>
           </div>
 

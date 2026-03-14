@@ -146,11 +146,11 @@ const LagrangianSolver = () => {
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
               <span className="text-slate-400 block text-sm">Final Lower Bound</span>
-              <span className="text-lg font-semibold text-white">{result.lb_history[result.lb_history.length - 1].toFixed(2)}</span>
+              <span className="text-lg font-semibold text-white">{result.lb_history && result.lb_history.length > 0 && result.lb_history[result.lb_history.length - 1] !== null && result.lb_history[result.lb_history.length - 1] !== undefined ? result.lb_history[result.lb_history.length - 1].toFixed(2) : "N/A"}</span>
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
               <span className="text-slate-400 block text-sm">Best Upper Bound (Feasible)</span>
-              <span className="text-lg font-semibold text-white">{result.ub ? result.ub.toFixed(2) : "None"}</span>
+              <span className="text-lg font-semibold text-white">{result.ub !== null && result.ub !== undefined ? result.ub.toFixed(2) : "None"}</span>
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
               <span className="text-slate-400 block text-sm">Best Solution</span>
