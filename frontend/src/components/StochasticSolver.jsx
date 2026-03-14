@@ -28,8 +28,8 @@ const StochasticSolver = () => {
   const [copied, setCopied] = useState(false);
 
   const handleCopyAllocation = () => {
-    if (!result?.x) return;
-    const text = `Wheat: ${result.x[0].toFixed(1)}, Corn: ${result.x[1].toFixed(1)}, Beets: ${result.x[2].toFixed(1)}`;
+    if (!result?.x || result.x.length < 3) return;
+    const text = `Wheat: ${result.x[0] !== null && result.x[0] !== undefined ? result.x[0].toFixed(1) : "N/A"}, Corn: ${result.x[1] !== null && result.x[1] !== undefined ? result.x[1].toFixed(1) : "N/A"}, Beets: ${result.x[2] !== null && result.x[2] !== undefined ? result.x[2].toFixed(1) : "N/A"}`;
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -162,7 +162,7 @@ const StochasticSolver = () => {
                 </button>
               </div>
               <span className="text-lg font-semibold text-cyan-300 overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">
-                {result.x ? `Wheat: ${result.x[0].toFixed(1)}, Corn: ${result.x[1].toFixed(1)}, Beets: ${result.x[2].toFixed(1)}` : "None"}
+                {result.x && result.x.length >= 3 ? `Wheat: ${result.x[0] !== null && result.x[0] !== undefined ? result.x[0].toFixed(1) : "N/A"}, Corn: ${result.x[1] !== null && result.x[1] !== undefined ? result.x[1].toFixed(1) : "N/A"}, Beets: ${result.x[2] !== null && result.x[2] !== undefined ? result.x[2].toFixed(1) : "N/A"}` : "None"}
               </span>
             </div>
           </div>

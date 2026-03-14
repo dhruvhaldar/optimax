@@ -174,7 +174,7 @@ const IPSolver = () => {
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
               <span className="text-slate-400 block text-sm">Objective Value</span>
-              <span className="text-lg font-semibold text-white">{result.fun.toFixed(4)}</span>
+              <span className="text-lg font-semibold text-white">{result.fun !== null && result.fun !== undefined ? result.fun.toFixed(4) : "N/A"}</span>
             </div>
             <div className="col-span-1 md:col-span-2 bg-white/5 p-4 rounded-lg">
               <div className="flex justify-between items-center mb-1">
