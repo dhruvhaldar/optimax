@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useOsShortcut } from '../hooks/useOsShortcut';
+import { useResultFocus } from '../hooks/useResultFocus';
 
 const LPSolver = () => {
   const { shortcutSymbol, shortcutText } = useOsShortcut();
@@ -12,6 +13,8 @@ const LPSolver = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
+
+  const resultRef = useResultFocus(loading, result);
 
   const handleCopySolution = () => {
     if (!result?.x) return;
@@ -164,7 +167,13 @@ const LPSolver = () => {
 
       {result && (
         <div className={`mt-8 p-6 bg-black/20 rounded-xl border border-white/5 transition-opacity duration-200 ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
-          <h3 className="text-xl font-bold mb-4 text-white">Results</h3>
+          <h3
+            className="text-xl font-bold mb-4 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-sm"
+            tabIndex="-1"
+            ref={resultRef}
+          >
+            Results
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-white/5 p-4 rounded-lg">
               <span className="text-slate-400 block text-sm">Status</span>
