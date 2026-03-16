@@ -69,3 +69,7 @@
 ## 2025-05-27 - [__slots__ for Performance]
 **Learning:** Using `__slots__` in Python classes that are instantiated thousands of times (like `Node` in a Branch and Bound tree) prevents the creation of `__dict__` for each instance, saving memory and slightly improving attribute access speed. Combining this with moving class definitions out of the loop provided a massive speedup for the IP solver.
 **Action:** When a class represents a data structure that will have many instances (e.g., tree nodes, solver results), explicitly define `__slots__` to optimize memory and performance.
+
+## 2025-05-27 - [Custom DP vs Scipy MILP for Subproblems]
+**Learning:** For Unbounded Knapsack subproblems with integer weights in Column Generation, a pure Python/NumPy 1D dynamic programming approach is significantly faster (~2.5x-3.5x) than invoking `scipy.optimize.milp`. The constant overhead of setting up the SciPy MILP solver on every column generation iteration drastically slows down the total execution time, overshadowing any benefit from HiGHS's actual solve speed for small instances.
+**Action:** When solving simple, structured IP subproblems (like Knapsack) iteratively inside a larger optimization loop, replace general-purpose solvers like `scipy.optimize.milp` with custom, exact algorithms (e.g., Dynamic Programming for Knapsack with integer weights) to bypass solver setup overhead and dramatically improve loop performance.
