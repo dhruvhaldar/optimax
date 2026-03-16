@@ -147,9 +147,19 @@ const ColGenSolver = () => {
           <h4 className="text-lg font-semibold mb-3 text-slate-200">Patterns Generated</h4>
           <ul className="space-y-2 mb-6">
             {result.patterns.map((pat, idx) => (
-              <li key={idx} className="bg-white/5 p-3 rounded flex justify-between items-center border border-white/10">
-                <span className="text-cyan-200">Pattern {idx + 1}: {JSON.stringify(pat)}</span>
-                <span className="text-slate-400 text-sm">x_{idx + 1} = {result.solution[idx]?.toFixed(2)}</span>
+              <li key={idx} className="bg-white/5 p-3 rounded flex flex-col sm:flex-row justify-between items-start sm:items-center border border-white/10 gap-2">
+                <div className="flex-1 min-w-0 max-w-full">
+                  <span className="text-slate-400 text-sm block mb-1">Pattern {idx + 1}:</span>
+                  <code
+                    className="text-cyan-200 font-mono overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-sm"
+                    tabIndex={0}
+                    role="region"
+                    aria-label={`Pattern ${idx + 1} configuration`}
+                  >
+                    {JSON.stringify(pat)}
+                  </code>
+                </div>
+                <span className="text-slate-400 text-sm whitespace-nowrap shrink-0">x_{idx + 1} = {result.solution[idx]?.toFixed(2)}</span>
               </li>
             ))}
           </ul>
