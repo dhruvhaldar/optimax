@@ -18,6 +18,11 @@ def solve_cutting_stock(roll_length, demands):
     if roll_length <= 0:
         raise ValueError("Roll length must be strictly positive")
 
+    # Security: Prevent Out-Of-Memory (OOM) DoS
+    # roll_length determines the size of the DP array (O(W) memory).
+    if roll_length > 100000:
+        raise ValueError("Roll length exceeds maximum allowed size (100000)")
+
     # Initial patterns: One roll for each item type (identity matrix like)
     # Actually, a better initial basis is fitting as many of item i as possible
     patterns = []
