@@ -84,7 +84,8 @@ class IPParams(BaseModel):
     maximize: bool = True
 
 class ColGenParams(BaseModel):
-    roll_length: SafeFloat
+    # Security: Prevent Out-Of-Memory (OOM) DoS by limiting roll_length to 100,000
+    roll_length: Annotated[SafeFloat, Field(le=100000)]
     demands: Annotated[List[DemandTuple], Field(max_length=MAX_VARS)] # [[width, quantity], ...]
 
 class LagrangianParams(BaseModel):
