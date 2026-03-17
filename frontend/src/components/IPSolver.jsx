@@ -203,7 +203,7 @@ const IPSolver = () => {
           {result.tree_plot && (
             <div>
               <h4 className="text-lg font-semibold mb-3 text-slate-200">Branch and Bound Tree</h4>
-              <img src={`data:image/png;base64,${result.tree_plot}`} alt="Branch and Bound Tree Visualization" className="w-full rounded-lg border border-white/20 shadow-lg" />
+              <img src={`data:image/png;base64,${result.tree_plot}`} alt="Branch and Bound Tree Visualization" tabIndex={0} className="w-full rounded-lg border border-white/20 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" />
             </div>
           )}
         </div>

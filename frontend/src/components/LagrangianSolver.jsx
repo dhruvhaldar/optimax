@@ -170,7 +170,7 @@ const LagrangianSolver = () => {
           {result.plot && (
             <div className="mb-6">
               <h4 className="text-lg font-semibold mb-3 text-slate-200">Lower Bound Convergence</h4>
-              <img src={`data:image/png;base64,${result.plot}`} alt="Lagrangian Convergence" className="w-full rounded-lg border border-white/20 shadow-lg" />
+              <img src={`data:image/png;base64,${result.plot}`} alt="Lagrangian Convergence" tabIndex={0} className="w-full rounded-lg border border-white/20 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" />
             </div>
           )}
 

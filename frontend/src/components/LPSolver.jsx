@@ -203,7 +203,7 @@ const LPSolver = () => {
           {result.plot && (
             <div>
               <h4 className="text-lg font-semibold mb-3 text-slate-200">Feasible Region & Optimal Solution</h4>
-              <img src={`data:image/png;base64,${result.plot}`} alt="LP Plot" className="w-full rounded-lg border border-white/20 shadow-lg" />
+              <img src={`data:image/png;base64,${result.plot}`} alt="LP Plot" tabIndex={0} className="w-full rounded-lg border border-white/20 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" />
             </div>
           )}
         </div>
