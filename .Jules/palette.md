@@ -78,3 +78,7 @@
 ## 2026-06-18 - Accessibility of Inline JSON Arrays in Flex Layouts
 **Learning:** Displaying long arrays (like generated patterns in Column Generation) as simple inline text (`<span>`) inside a flex container breaks the layout on smaller screens, forcing text to overflow off-screen without a scrollbar. Furthermore, sighted users can't easily see it all, and keyboard-only users are completely unable to access the hidden content because it lacks scrollable focus.
 **Action:** Always wrap dynamically generated arrays or JSON strings inside flex lists in a dedicated container or `<code>` block with `overflow-x-auto block`, `tabIndex={0}`, `role="region"`, a descriptive `aria-label`, and `focus-visible:ring`. This guarantees responsiveness and ensures full keyboard accessibility for horizontally scrolled content.
+
+## 2026-06-21 - Keyboard Navigable Data Visualizations
+**Learning:** Automatically generated base64 plots (e.g., from Matplotlib) displayed as `<img />` tags convey critical problem state information to users. By default, these images are ignored during keyboard navigation, meaning keyboard-only users can easily scroll past them without realizing they are there.
+**Action:** Always add `tabIndex={0}` and a clear visual focus ring (e.g., `focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400`) to important data visualization images so keyboard users can intentionally focus on them and be aware of their presence.

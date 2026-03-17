@@ -179,7 +179,7 @@ const StochasticSolver = () => {
           {result.plot && (
             <div>
               <h4 className="text-lg font-semibold mb-3 text-slate-200">Decision & Profit Distribution</h4>
-              <img src={`data:image/png;base64,${result.plot}`} alt="Stochastic Plots" className="w-full rounded-lg border border-white/20 shadow-lg" />
+              <img src={`data:image/png;base64,${result.plot}`} alt="Stochastic Plots" tabIndex={0} className="w-full rounded-lg border border-white/20 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" />
             </div>
           )}
         </div>
