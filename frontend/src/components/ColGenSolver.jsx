@@ -133,16 +133,16 @@ const ColGenSolver = () => {
           >
             Results
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Status</span>
-              <span className="text-lg font-semibold text-green-400">{result.status}</span>
+              <dt className="text-slate-400 block text-sm">Status</dt>
+              <dd className="text-lg font-semibold text-green-400">{result.status}</dd>
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Rolls Used (LP Relaxation)</span>
-              <span className="text-lg font-semibold text-white">{result.objective !== null && result.objective !== undefined ? result.objective.toFixed(2) : "N/A"}</span>
+              <dt className="text-slate-400 block text-sm">Rolls Used (LP Relaxation)</dt>
+              <dd className="text-lg font-semibold text-white">{result.objective !== null && result.objective !== undefined ? result.objective.toFixed(2) : "N/A"}</dd>
             </div>
-          </div>
+          </dl>
 
           <h4 className="text-lg font-semibold mb-3 text-slate-200">Patterns Generated</h4>
           <ul className="space-y-2 mb-6">

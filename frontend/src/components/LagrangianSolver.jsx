@@ -148,24 +148,26 @@ const LagrangianSolver = () => {
           >
             Results
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Status</span>
-              <span className="text-lg font-semibold text-green-400">{result.status}</span>
+              <dt className="text-slate-400 block text-sm">Status</dt>
+              <dd className="text-lg font-semibold text-green-400">{result.status}</dd>
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Final Lower Bound</span>
-              <span className="text-lg font-semibold text-white">{result.lb_history && result.lb_history.length > 0 && result.lb_history[result.lb_history.length - 1] !== null && result.lb_history[result.lb_history.length - 1] !== undefined ? result.lb_history[result.lb_history.length - 1].toFixed(2) : "N/A"}</span>
+              <dt className="text-slate-400 block text-sm">Final Lower Bound</dt>
+              <dd className="text-lg font-semibold text-white">{result.lb_history && result.lb_history.length > 0 && result.lb_history[result.lb_history.length - 1] !== null && result.lb_history[result.lb_history.length - 1] !== undefined ? result.lb_history[result.lb_history.length - 1].toFixed(2) : "N/A"}</dd>
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Best Upper Bound (Feasible)</span>
-              <span className="text-lg font-semibold text-white">{result.ub !== null && result.ub !== undefined ? result.ub.toFixed(2) : "None"}</span>
+              <dt className="text-slate-400 block text-sm">Best Upper Bound (Feasible)</dt>
+              <dd className="text-lg font-semibold text-white">{result.ub !== null && result.ub !== undefined ? result.ub.toFixed(2) : "None"}</dd>
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Best Solution</span>
-              <code className="text-cyan-300 font-mono text-sm overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">{result.best_solution ? JSON.stringify(result.best_solution) : "None"}</code>
+              <dt className="text-slate-400 block text-sm">Best Solution</dt>
+              <dd>
+                <code className="text-cyan-300 font-mono text-sm overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">{result.best_solution ? JSON.stringify(result.best_solution) : "None"}</code>
+              </dd>
             </div>
-          </div>
+          </dl>
 
           {result.plot && (
             <div className="mb-6">
