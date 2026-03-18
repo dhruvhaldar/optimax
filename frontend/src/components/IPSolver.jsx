@@ -174,19 +174,19 @@ const IPSolver = () => {
           >
             Results
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Status</span>
-              <span className={`text-lg font-semibold ${result.success ? 'text-green-400' : 'text-red-400'}`}>
+              <dt className="text-slate-400 block text-sm">Status</dt>
+              <dd className={`text-lg font-semibold ${result.success ? 'text-green-400' : 'text-red-400'}`}>
                 {result.success ? "Optimal" : "Failed"}
-              </span>
+              </dd>
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Objective Value</span>
-              <span className="text-lg font-semibold text-white">{result.fun !== null && result.fun !== undefined ? result.fun.toFixed(4) : "N/A"}</span>
+              <dt className="text-slate-400 block text-sm">Objective Value</dt>
+              <dd className="text-lg font-semibold text-white">{result.fun !== null && result.fun !== undefined ? result.fun.toFixed(4) : "N/A"}</dd>
             </div>
             <div className="col-span-1 md:col-span-2 bg-white/5 p-4 rounded-lg">
-              <div className="flex justify-between items-center mb-1">
+              <dt className="flex justify-between items-center mb-1">
                 <span className="text-slate-400 block text-sm">Solution (x)</span>
                 <button
                   onClick={handleCopySolution}
@@ -195,10 +195,12 @@ const IPSolver = () => {
                 >
                   {copied ? "Copied!" : "Copy"}
                 </button>
-              </div>
-              <code className="text-cyan-300 font-mono overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">{JSON.stringify(result.x)}</code>
+              </dt>
+              <dd>
+                <code className="text-cyan-300 font-mono overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">{JSON.stringify(result.x)}</code>
+              </dd>
             </div>
-          </div>
+          </dl>
 
           {result.tree_plot && (
             <div>

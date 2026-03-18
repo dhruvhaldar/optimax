@@ -82,3 +82,7 @@
 ## 2026-06-21 - Keyboard Navigable Data Visualizations
 **Learning:** Automatically generated base64 plots (e.g., from Matplotlib) displayed as `<img />` tags convey critical problem state information to users. By default, these images are ignored during keyboard navigation, meaning keyboard-only users can easily scroll past them without realizing they are there.
 **Action:** Always add `tabIndex={0}` and a clear visual focus ring (e.g., `focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400`) to important data visualization images so keyboard users can intentionally focus on them and be aware of their presence.
+
+## 2026-07-01 - Semantic Description Lists for Key-Value Data
+**Learning:** Using multiple `div`s with `span` tags to display key-value pairs (like "Status: Optimal" or "Objective Value: 12.5") lacks semantic structure, making it harder for screen readers to interpret the explicit association between the label and its data.
+**Action:** Always use HTML5 `<dl>` (description list) tags combined with `<dt>` (description term) and `<dd>` (description detail) for groups of key-value metrics. This provides a robust semantic structure for assistive technologies while maintaining CSS grid layouts.

@@ -148,19 +148,19 @@ const StochasticSolver = () => {
           >
             Results
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Status</span>
-              <span className={`text-lg font-semibold ${result.success ? 'text-green-400' : 'text-red-400'}`}>
+              <dt className="text-slate-400 block text-sm">Status</dt>
+              <dd className={`text-lg font-semibold ${result.success ? 'text-green-400' : 'text-red-400'}`}>
                 {result.success ? "Optimal" : "Failed"}
-              </span>
+              </dd>
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
-              <span className="text-slate-400 block text-sm">Expected Profit</span>
-              <span className="text-lg font-semibold text-white">{result.expected_profit !== null ? `$${result.expected_profit.toFixed(2)}` : "N/A"}</span>
+              <dt className="text-slate-400 block text-sm">Expected Profit</dt>
+              <dd className="text-lg font-semibold text-white">{result.expected_profit !== null ? `$${result.expected_profit.toFixed(2)}` : "N/A"}</dd>
             </div>
             <div className="col-span-1 md:col-span-2 bg-white/5 p-4 rounded-lg">
-              <div className="flex justify-between items-center mb-1">
+              <dt className="flex justify-between items-center mb-1">
                 <span className="text-slate-400 block text-sm">Acres Allocation</span>
                 <button
                   onClick={handleCopyAllocation}
@@ -169,12 +169,14 @@ const StochasticSolver = () => {
                 >
                   {copied ? "Copied!" : "Copy"}
                 </button>
-              </div>
-              <span className="text-lg font-semibold text-cyan-300 overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">
-                {result.x && result.x.length >= 3 ? `Wheat: ${result.x[0] !== null && result.x[0] !== undefined ? result.x[0].toFixed(1) : "N/A"}, Corn: ${result.x[1] !== null && result.x[1] !== undefined ? result.x[1].toFixed(1) : "N/A"}, Beets: ${result.x[2] !== null && result.x[2] !== undefined ? result.x[2].toFixed(1) : "N/A"}` : "None"}
-              </span>
+              </dt>
+              <dd>
+                <span className="text-lg font-semibold text-cyan-300 overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">
+                  {result.x && result.x.length >= 3 ? `Wheat: ${result.x[0] !== null && result.x[0] !== undefined ? result.x[0].toFixed(1) : "N/A"}, Corn: ${result.x[1] !== null && result.x[1] !== undefined ? result.x[1].toFixed(1) : "N/A"}, Beets: ${result.x[2] !== null && result.x[2] !== undefined ? result.x[2].toFixed(1) : "N/A"}` : "None"}
+                </span>
+              </dd>
             </div>
-          </div>
+          </dl>
 
           {result.plot && (
             <div>
