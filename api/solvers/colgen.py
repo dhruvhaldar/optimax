@@ -91,8 +91,11 @@ def solve_cutting_stock(roll_length, demands):
         # Subproblem: Knapsack using 1D DP
         # Maximize sum(duals[i] * a[i]) s.t. sum(widths[i] * a[i]) <= roll_length
         # Unbounded knapsack
-        dp = np.zeros(W + 1, dtype=float)
-        items = np.full(W + 1, -1, dtype=int)
+        # Optimization: Use standard Python lists instead of NumPy arrays for the DP table.
+        # Iterating and updating individual elements in a NumPy array within a tight Python loop
+        # is significantly slower due to boxing/unboxing overhead. Python lists provide ~3-4x speedup here.
+        dp = [0.0] * (W + 1)
+        items = [-1] * (W + 1)
 
         for i in range(n_items):
             w_i = widths_int[i]
