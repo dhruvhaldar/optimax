@@ -73,3 +73,7 @@
 ## 2025-05-27 - [Custom DP vs Scipy MILP for Subproblems]
 **Learning:** For Unbounded Knapsack subproblems with integer weights in Column Generation, a pure Python/NumPy 1D dynamic programming approach is significantly faster (~2.5x-3.5x) than invoking `scipy.optimize.milp`. The constant overhead of setting up the SciPy MILP solver on every column generation iteration drastically slows down the total execution time, overshadowing any benefit from HiGHS's actual solve speed for small instances.
 **Action:** When solving simple, structured IP subproblems (like Knapsack) iteratively inside a larger optimization loop, replace general-purpose solvers like `scipy.optimize.milp` with custom, exact algorithms (e.g., Dynamic Programming for Knapsack with integer weights) to bypass solver setup overhead and dramatically improve loop performance.
+
+## 2025-03-20 - [NumPy vs Python Lists in Tight Loops]
+**Learning:** While NumPy is generally faster for vectorized operations, accessing and modifying individual elements of a NumPy array inside a tight Python loop (e.g., `dp[w] = new_val`) introduces significant boxing and unboxing overhead. In the ColGen unbounded knapsack DP algorithm, replacing `dp = np.zeros(W)` with a standard Python list `dp = [0.0] * W` resulted in a ~3-4x speedup.
+**Action:** When an algorithm strictly requires sequential element-by-element iteration and updating in pure Python (where vectorization isn't possible, like DP with dependencies on previous elements in the same loop), use native Python lists instead of NumPy arrays.
