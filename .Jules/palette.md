@@ -86,3 +86,7 @@
 ## 2026-07-01 - Semantic Description Lists for Key-Value Data
 **Learning:** Using multiple `div`s with `span` tags to display key-value pairs (like "Status: Optimal" or "Objective Value: 12.5") lacks semantic structure, making it harder for screen readers to interpret the explicit association between the label and its data.
 **Action:** Always use HTML5 `<dl>` (description list) tags combined with `<dt>` (description term) and `<dd>` (description detail) for groups of key-value metrics. This provides a robust semantic structure for assistive technologies while maintaining CSS grid layouts.
+
+## 2026-07-05 - Semantic Tagging for Visual Shortcuts
+**Learning:** Visual keyboard shortcut hints (like `⌘↵`) were embedded in generic `<span>` tags. Using a semantic `<kbd>` tag is standard practice to indicate user input. When placed inside interactive elements (like a button) that already have descriptions, adding `aria-hidden="true"` remains critical to prevent screen readers from redundantly announcing the shortcut text which might be distracting or confusing.
+**Action:** Replaced generic `<span>` tags with semantic `<kbd>` tags for all keyboard shortcuts in interactive components, while retaining `aria-hidden="true"` and styling them as explicit 'keycaps' to improve user recognition.

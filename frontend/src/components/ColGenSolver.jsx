@@ -103,7 +103,7 @@ const ColGenSolver = () => {
           </>
         ) : (
           <>
-            Solve Cutting Stock <span aria-hidden="true" className="text-xs opacity-60 ml-2 font-mono hidden sm:inline">{shortcutSymbol}</span>
+            Solve Cutting Stock <kbd aria-hidden="true" className="text-xs opacity-80 ml-2 font-mono hidden sm:inline px-1.5 py-0.5 bg-white/10 border border-white/20 rounded-md shadow-sm">{shortcutSymbol}</kbd>
           </>
         )}
       </button>
