@@ -90,3 +90,7 @@
 ## 2026-07-05 - Semantic Tagging for Visual Shortcuts
 **Learning:** Visual keyboard shortcut hints (like `⌘↵`) were embedded in generic `<span>` tags. Using a semantic `<kbd>` tag is standard practice to indicate user input. When placed inside interactive elements (like a button) that already have descriptions, adding `aria-hidden="true"` remains critical to prevent screen readers from redundantly announcing the shortcut text which might be distracting or confusing.
 **Action:** Replaced generic `<span>` tags with semantic `<kbd>` tags for all keyboard shortcuts in interactive components, while retaining `aria-hidden="true"` and styling them as explicit 'keycaps' to improve user recognition.
+
+## 2026-07-10 - WAI-ARIA Tablist Navigation Pattern
+**Learning:** Using a generic `<nav>` with `<button>` elements for a tabbed interface creates a confusing experience for screen reader users and requires sighted keyboard users to tab through every single unselected option to reach the content. A proper WAI-ARIA `tablist` makes the structure semantically clear and allows keyboard users to focus the active tab immediately, using arrow keys to navigate options.
+**Action:** Always implement the WAI-ARIA Tablist pattern (`role="tablist"`, `role="tab"`, `role="tabpanel"`, `aria-selected`, `aria-controls`, `aria-labelledby`, and dynamic `tabIndex`) with custom arrow key navigation (`onKeyDown`) whenever building a tabbed view interface.

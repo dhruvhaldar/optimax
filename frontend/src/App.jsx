@@ -62,20 +62,43 @@ function App() {
         <p className="text-slate-300 text-lg">Applied Linear Optimization - Solver & Visualizer</p>
       </header>
 
-      <nav aria-label="Solver selection" className="flex flex-wrap justify-center gap-4 mb-8">
-        {TABS.map(tab => (
+      <div role="tablist" aria-label="Solver selection" className="flex flex-wrap justify-center gap-4 mb-8">
+        {TABS.map((tab, index) => (
           <button
             key={tab.id}
+            role="tab"
+            id={`tab-${tab.id}`}
+            aria-controls="main-content"
+            aria-selected={activeTab === tab.id}
+            tabIndex={activeTab === tab.id ? 0 : -1}
             className={`glass-btn ${activeTab === tab.id ? 'bg-cyan-500/40 border-cyan-400 shadow-cyan-500/30' : ''}`}
             onClick={() => setActiveTab(tab.id)}
-            aria-current={activeTab === tab.id ? 'true' : undefined}
+            onKeyDown={(e) => {
+              let newIndex = index;
+              if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                newIndex = (index + 1) % TABS.length;
+              } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                newIndex = (index - 1 + TABS.length) % TABS.length;
+              } else {
+                return;
+              }
+              e.preventDefault();
+              setActiveTab(TABS[newIndex].id);
+              document.getElementById(`tab-${TABS[newIndex].id}`)?.focus();
+            }}
           >
             {tab.label}
           </button>
         ))}
-      </nav>
+      </div>
 
-      <main id="main-content" className="glass-panel p-6 min-h-[400px] focus:outline-none" tabIndex="-1">
+      <main
+        id="main-content"
+        role="tabpanel"
+        aria-labelledby={`tab-${activeTab}`}
+        className="glass-panel p-6 min-h-[400px] focus:outline-none"
+        tabIndex="-1"
+      >
         <Suspense fallback={<LoadingSpinner />}>
           {renderSolver()}
         </Suspense>
