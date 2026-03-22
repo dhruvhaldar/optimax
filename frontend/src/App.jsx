@@ -35,17 +35,6 @@ function App() {
     document.title = `${activeLabel} | Optimax`;
   }, [activeTab]);
 
-  const renderSolver = () => {
-    switch (activeTab) {
-      case 'lp': return <LPSolver />;
-      case 'ip': return <IPSolver />;
-      case 'colgen': return <ColGenSolver />;
-      case 'lagrangian': return <LagrangianSolver />;
-      case 'stochastic': return <StochasticSolver />;
-      default: return <LPSolver />;
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8 relative">
       <a
@@ -68,7 +57,7 @@ function App() {
             key={tab.id}
             role="tab"
             id={`tab-${tab.id}`}
-            aria-controls="main-content"
+            aria-controls={`panel-${tab.id}`}
             aria-selected={activeTab === tab.id}
             tabIndex={activeTab === tab.id ? 0 : -1}
             className={`glass-btn ${activeTab === tab.id ? 'bg-cyan-500/40 border-cyan-400 shadow-cyan-500/30' : ''}`}
@@ -94,13 +83,15 @@ function App() {
 
       <main
         id="main-content"
-        role="tabpanel"
-        aria-labelledby={`tab-${activeTab}`}
         className="glass-panel p-6 min-h-[400px] focus:outline-none"
         tabIndex="-1"
       >
         <Suspense fallback={<LoadingSpinner />}>
-          {renderSolver()}
+          <div id="panel-lp" role="tabpanel" aria-labelledby="tab-lp" hidden={activeTab !== 'lp'}><LPSolver /></div>
+          <div id="panel-ip" role="tabpanel" aria-labelledby="tab-ip" hidden={activeTab !== 'ip'}><IPSolver /></div>
+          <div id="panel-colgen" role="tabpanel" aria-labelledby="tab-colgen" hidden={activeTab !== 'colgen'}><ColGenSolver /></div>
+          <div id="panel-lagrangian" role="tabpanel" aria-labelledby="tab-lagrangian" hidden={activeTab !== 'lagrangian'}><LagrangianSolver /></div>
+          <div id="panel-stochastic" role="tabpanel" aria-labelledby="tab-stochastic" hidden={activeTab !== 'stochastic'}><StochasticSolver /></div>
         </Suspense>
       </main>
     </div>
