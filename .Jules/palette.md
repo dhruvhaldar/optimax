@@ -94,3 +94,7 @@
 ## 2026-07-10 - WAI-ARIA Tablist Navigation Pattern
 **Learning:** Using a generic `<nav>` with `<button>` elements for a tabbed interface creates a confusing experience for screen reader users and requires sighted keyboard users to tab through every single unselected option to reach the content. A proper WAI-ARIA `tablist` makes the structure semantically clear and allows keyboard users to focus the active tab immediately, using arrow keys to navigate options.
 **Action:** Always implement the WAI-ARIA Tablist pattern (`role="tablist"`, `role="tab"`, `role="tabpanel"`, `aria-selected`, `aria-controls`, `aria-labelledby`, and dynamic `tabIndex`) with custom arrow key navigation (`onKeyDown`) whenever building a tabbed view interface.
+
+## 2026-07-20 - Unmounting Components in Tab Interfaces Causes Data Loss
+**Learning:** In React applications with tabbed navigation, conditionally rendering active tabs (e.g., `{activeTab === 'lp' && <LPSolver />}`) causes the currently active component to unmount when the user switches tabs. If the component contains unsaved user input in complex forms (like JSON parameters), that data is immediately and irrevocably lost, leading to a highly frustrating user experience.
+**Action:** When building tabbed interfaces containing forms or interactive data, avoid conditional rendering. Instead, mount all tab panels and use CSS properties like the HTML5 `hidden` attribute or Tailwind's `hidden` class to toggle visibility. This preserves the local component state while maintaining the illusion of tab switching.
