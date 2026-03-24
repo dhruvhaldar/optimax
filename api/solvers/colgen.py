@@ -33,7 +33,7 @@ def solve_cutting_stock(roll_length, demands):
             pat[i] = int(roll_length // widths[i])
         else:
             pat[i] = 1 # Should not happen if data is valid
-        patterns.append(pat)
+        patterns.append(tuple(pat))
         patterns_set.add(tuple(pat))
 
     iter_count = 0
@@ -43,9 +43,6 @@ def solve_cutting_stock(roll_length, demands):
     final_res = None
 
     # Constraints: 0 <= widths @ a <= roll_length
-    # Optimization: Replaced scipy.optimize.milp with a custom 1D dynamic programming array
-    # for the unbounded knapsack subproblem. Since widths are integers, DP provides an exact
-    # and significantly faster solution by avoiding Scipy's setup overhead (~2.5x speedup per iteration).
     # Convert capacities and weights to integers for DP
     W = int(roll_length)
     widths_int = np.array([int(w) for w in widths])
@@ -58,7 +55,8 @@ def solve_cutting_stock(roll_length, demands):
     # This prevents O(N^2) memory reallocation overhead from using np.hstack/np.append inside the tight loop.
     max_cols = n_items + max_iter
     current_patterns_neg = np.zeros((n_items, max_cols))
-    current_patterns_neg[:, :n_items] = -np.array(patterns).T
+    initial_patterns = -np.array(patterns, dtype=float).T
+    current_patterns_neg[:, :n_items] = initial_patterns
     c = np.zeros(max_cols)
     c[:n_items] = 1
     bounds = (0, None) # Pre-allocate bounds tuple
@@ -112,34 +110,33 @@ def solve_cutting_stock(roll_length, demands):
             break
 
         new_pattern_val = -sub_res.fun
-        new_pattern = np.round(sub_res.x).astype(int).tolist()
+        new_pattern_arr = np.rint(sub_res.x).astype(int)
+        new_pattern_tuple = tuple(new_pattern_arr.tolist())
 
         if new_pattern_val <= 1 + 1e-5:
             logs.append(f"Optimality reached. Max reduced cost val: {new_pattern_val:.4f} <= 1")
             break
-
-        new_pattern_tuple = tuple(new_pattern)
 
         # Check if pattern already exists to avoid cycling (numerical issues)
         if new_pattern_tuple in patterns_set:
             logs.append("Generated existing pattern. Stopping.")
             break
 
-        patterns.append(new_pattern)
+        patterns.append(new_pattern_tuple)
         patterns_set.add(new_pattern_tuple)
 
         # Optimization: Insert the new pattern into the pre-allocated arrays
-        current_patterns_neg[:, current_cols] = -np.array(new_pattern)
+        current_patterns_neg[:, current_cols] = -new_pattern_arr
         c[current_cols] = 1
         current_cols += 1
 
-        logs.append(f"Iter {iter_count}: Added pattern {new_pattern} (Value: {new_pattern_val:.4f})")
+        logs.append(f"Iter {iter_count}: Added pattern {list(new_pattern_tuple)} (Value: {new_pattern_val:.4f})")
         iter_count += 1
 
     return {
         "status": "Optimal",
         "objective": final_res.fun if final_res else 0,
-        "patterns": patterns,
+        "patterns": [list(p) for p in patterns],
         "solution": final_res.x.tolist() if final_res else [],
         "logs": logs
     }
