@@ -98,3 +98,7 @@
 ## 2026-07-20 - Unmounting Components in Tab Interfaces Causes Data Loss
 **Learning:** In React applications with tabbed navigation, conditionally rendering active tabs (e.g., `{activeTab === 'lp' && <LPSolver />}`) causes the currently active component to unmount when the user switches tabs. If the component contains unsaved user input in complex forms (like JSON parameters), that data is immediately and irrevocably lost, leading to a highly frustrating user experience.
 **Action:** When building tabbed interfaces containing forms or interactive data, avoid conditional rendering. Instead, mount all tab panels and use CSS properties like the HTML5 `hidden` attribute or Tailwind's `hidden` class to toggle visibility. This preserves the local component state while maintaining the illusion of tab switching.
+
+## 2026-08-01 - Visual Confirmation for Inline Actions
+**Learning:** Changing the text from "Copy" to "Copied!" provides minimal feedback and can be easily missed if the user's attention is focused on the data itself or if the button is small. To effectively communicate the success of a transient action like copying to the clipboard, changing the color state (e.g., swapping a neutral/accent color to a semantic success color like green) provides immediate, pre-attentive visual reinforcement.
+**Action:** When implementing transient inline actions like "Copy", always toggle the background and text color to semantic success colors (e.g., green-500/20) along with the text change to provide strong visual confirmation of the successful action.

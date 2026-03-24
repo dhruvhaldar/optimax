@@ -190,7 +190,7 @@ const LPSolver = () => {
                 <span className="text-slate-400 block text-sm">Solution (x)</span>
                 <button
                   onClick={handleCopySolution}
-                  className="text-xs bg-white/10 hover:bg-white/20 text-cyan-300 px-2 py-1 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                  className={`text-xs px-2 py-1 rounded transition-colors focus:outline-none focus-visible:ring-2 ${copied ? 'bg-green-500/20 hover:bg-green-500/30 text-green-300 focus-visible:ring-green-400' : 'bg-white/10 hover:bg-white/20 text-cyan-300 focus-visible:ring-cyan-400'}`}
                   aria-label={copied ? "Copied solution to clipboard" : "Copy solution to clipboard"}
                 >
                   {copied ? "Copied!" : "Copy"}
