@@ -29,11 +29,22 @@ const TABS = [
 
 function App() {
   const [activeTab, setActiveTab] = useState('lp');
+  const [visitedTabs, setVisitedTabs] = useState(new Set(['lp']));
 
   useEffect(() => {
     const activeLabel = TABS.find(tab => tab.id === activeTab)?.label || 'Optimax';
     document.title = `${activeLabel} | Optimax`;
   }, [activeTab]);
+
+  const changeTab = (id) => {
+    setActiveTab(id);
+    setVisitedTabs(prev => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 relative">
@@ -61,7 +72,7 @@ function App() {
             aria-selected={activeTab === tab.id}
             tabIndex={activeTab === tab.id ? 0 : -1}
             className={`glass-btn ${activeTab === tab.id ? 'bg-cyan-500/40 border-cyan-400 shadow-cyan-500/30' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => changeTab(tab.id)}
             onKeyDown={(e) => {
               let newIndex = index;
               if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
@@ -72,7 +83,7 @@ function App() {
                 return;
               }
               e.preventDefault();
-              setActiveTab(TABS[newIndex].id);
+              changeTab(TABS[newIndex].id);
               document.getElementById(`tab-${TABS[newIndex].id}`)?.focus();
             }}
           >
@@ -87,11 +98,21 @@ function App() {
         tabIndex="-1"
       >
         <Suspense fallback={<LoadingSpinner />}>
-          <div id="panel-lp" role="tabpanel" aria-labelledby="tab-lp" hidden={activeTab !== 'lp'}><LPSolver /></div>
-          <div id="panel-ip" role="tabpanel" aria-labelledby="tab-ip" hidden={activeTab !== 'ip'}><IPSolver /></div>
-          <div id="panel-colgen" role="tabpanel" aria-labelledby="tab-colgen" hidden={activeTab !== 'colgen'}><ColGenSolver /></div>
-          <div id="panel-lagrangian" role="tabpanel" aria-labelledby="tab-lagrangian" hidden={activeTab !== 'lagrangian'}><LagrangianSolver /></div>
-          <div id="panel-stochastic" role="tabpanel" aria-labelledby="tab-stochastic" hidden={activeTab !== 'stochastic'}><StochasticSolver /></div>
+          <div id="panel-lp" role="tabpanel" aria-labelledby="tab-lp" hidden={activeTab !== 'lp'}>
+            {visitedTabs.has('lp') && <LPSolver />}
+          </div>
+          <div id="panel-ip" role="tabpanel" aria-labelledby="tab-ip" hidden={activeTab !== 'ip'}>
+            {visitedTabs.has('ip') && <IPSolver />}
+          </div>
+          <div id="panel-colgen" role="tabpanel" aria-labelledby="tab-colgen" hidden={activeTab !== 'colgen'}>
+            {visitedTabs.has('colgen') && <ColGenSolver />}
+          </div>
+          <div id="panel-lagrangian" role="tabpanel" aria-labelledby="tab-lagrangian" hidden={activeTab !== 'lagrangian'}>
+            {visitedTabs.has('lagrangian') && <LagrangianSolver />}
+          </div>
+          <div id="panel-stochastic" role="tabpanel" aria-labelledby="tab-stochastic" hidden={activeTab !== 'stochastic'}>
+            {visitedTabs.has('stochastic') && <StochasticSolver />}
+          </div>
         </Suspense>
       </main>
     </div>
