@@ -79,6 +79,10 @@ function App() {
                 newIndex = (index + 1) % TABS.length;
               } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
                 newIndex = (index - 1 + TABS.length) % TABS.length;
+              } else if (e.key === 'Home') {
+                newIndex = 0;
+              } else if (e.key === 'End') {
+                newIndex = TABS.length - 1;
               } else {
                 return;
               }
