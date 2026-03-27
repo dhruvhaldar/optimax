@@ -3,3 +3,6 @@
 ## 2026-08-15 - Explicit aria-live on Error Alerts
 **Learning:** While `role="alert"` theoretically implies `aria-live="assertive"`, depending on the browser and screen reader combination, the dynamic injection of error messages can sometimes fail to be announced immediately if the explicit `aria-live` attribute is missing.
 **Action:** When rendering dynamic error messages or notifications, explicitly combine `aria-live="assertive"` with `role="alert"` to ensure maximum compatibility and guarantee that visually impaired users are immediately notified of form validation failures or server errors.
+## 2024-05-18 - Full ARIA Keyboard Pattern Support
+**Learning:** For interactive tablist components, relying only on arrow keys is insufficient for power users and keyboard-only navigation standards. W3C ARIA specifications recommend supporting `Home` and `End` keys to quickly jump to the first and last tabs, drastically reducing key presses on dense nav bars.
+**Action:** Always verify keyboard navigation patterns against the full W3C ARIA authoring practices rather than just implementing the minimal sequential navigation.
