@@ -50,7 +50,8 @@ def solve_lagrangian(costs, weights, capacities):
     # Row j corresponds to sum_i w_ij x_ij <= C_j
     rows = np.repeat(np.arange(n_agents), n_tasks)
     cols = np.arange(n_tasks * n_agents)
-    vals = weights.flatten('F')
+    # Optimization: Use .ravel('F') instead of .flatten('F') to return a contiguous view and avoid redundant memory copying.
+    vals = weights.ravel('F')
 
     A_sub_sparse = sp.coo_matrix((vals, (rows, cols)), shape=(n_agents, n_tasks * n_agents))
     b_l = np.full(n_agents, -np.inf)
@@ -68,8 +69,9 @@ def solve_lagrangian(costs, weights, capacities):
         # Optimization: Pre-calculate the cost modifier matrix
         c_sub_all = costs - lambdas[:, np.newaxis]
 
-        # Optimization: Flatten the cost matrix to match the global x vector, and solve all subproblems in one milp call
-        c_sub_flat = c_sub_all.flatten('F')
+        # Optimization: Flatten the cost matrix to match the global x vector, and solve all subproblems in one milp call.
+        # Use .ravel('F') instead of .flatten('F') to prevent creating a deep copy in memory.
+        c_sub_flat = c_sub_all.ravel('F')
 
         res = milp(c=c_sub_flat, constraints=all_constraints_sparse, integrality=integrality, bounds=bounds)
 

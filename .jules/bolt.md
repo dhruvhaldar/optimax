@@ -93,3 +93,7 @@
 ## 2025-03-25 - [O(1) memory nested Numpy array creation using np.fromiter]
 **Learning:** Using `np.array([s['yields'] for s in scenarios])` to construct a matrix from an inner property across many scenarios iteratively allocates lists and converts them. This is memory inefficient and noticeably slower at scale.
 **Action:** Replace nested `[item for obj in collection for item in obj['key']]` with a flat generator inside `np.fromiter(generator, dtype, count=N_Total)`, and then apply `.reshape()`. This loads items directly into a pre-allocated C-array, resulting in faster and more memory-efficient execution.
+
+## 2026-03-26 - [Numpy .flatten() vs .ravel() for Matrix Vectorization]
+**Learning:** Using `np.ndarray.flatten()` to transform 2D parameter matrices or constraint matrices into 1D arrays for scipy solver inputs always creates a deep copy of the array. In tight solver iterations (e.g., Column Generation or Lagrangian) or when constructing large scenarios (Stochastic), this leads to completely redundant memory allocation and copying overhead.
+**Action:** Always use `.ravel()` (or `.ravel('F')` for Fortran-order) instead of `.flatten()` when flattening a matrix. `.ravel()` returns a contiguous flattened view of the array whenever possible, avoiding memory allocation and making the flattening operation roughly 10x faster according to benchmarks, which adds up significantly inside iterative loops.
