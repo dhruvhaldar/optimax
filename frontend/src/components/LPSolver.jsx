@@ -73,6 +73,9 @@ const LPSolver = () => {
           onChange={e => setC(e.target.value)}
           placeholder="[c1, c2]"
           spellCheck={false}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="none"
           className="glass-input w-full"
         />
       </div>
@@ -85,6 +88,9 @@ const LPSolver = () => {
           onChange={e => setA(e.target.value)}
           placeholder="[[a11, a12], [a21, a22]]"
           spellCheck={false}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="none"
           className="glass-input w-full font-mono"
         />
       </div>
@@ -97,6 +103,9 @@ const LPSolver = () => {
           onChange={e => setB(e.target.value)}
           placeholder="[b1, b2]"
           spellCheck={false}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="none"
           className="glass-input w-full"
         />
       </div>

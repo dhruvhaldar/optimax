@@ -83,6 +83,9 @@ const ColGenSolver = () => {
           onChange={e => setDemands(e.target.value)}
           placeholder="[[width, qty], ...]"
           spellCheck={false}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="none"
           className="glass-input w-full font-mono"
         />
       </div>
