@@ -89,3 +89,7 @@
 ## 2026-03-24 - [Avoid Python list recreation inside tight numpy loops]
 **Learning:** In the Column Generation solver's tight iteration loop, converting a SciPy result array to a Python list, and then wrapping that list *back* into a `np.array()` to assign into a pre-allocated matrix causes redundant memory allocation overhead (`new_pattern = np.round(sub_res.x).astype(int).tolist()` followed by `np.array(new_pattern)`).
 **Action:** When working with SciPy optimization results (`res.x`) that need to be inserted into pre-allocated NumPy constraint matrices, operate directly on the NumPy arrays (`np.rint(res.x).astype(int)`) and only convert to `tuple` or `list` for set lookups or JSON serialization if required, avoiding the intermediate redundant `np.array(list)` conversions.
+
+## 2025-03-25 - [O(1) memory nested Numpy array creation using np.fromiter]
+**Learning:** Using `np.array([s['yields'] for s in scenarios])` to construct a matrix from an inner property across many scenarios iteratively allocates lists and converts them. This is memory inefficient and noticeably slower at scale.
+**Action:** Replace nested `[item for obj in collection for item in obj['key']]` with a flat generator inside `np.fromiter(generator, dtype, count=N_Total)`, and then apply `.reshape()`. This loads items directly into a pre-allocated C-array, resulting in faster and more memory-efficient execution.
