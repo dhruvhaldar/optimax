@@ -61,8 +61,8 @@ const ColGenSolver = () => {
   };
 
   return (
-    <div className="glass-panel p-6" onKeyDown={handleKeyDown}>
-      <h2 className="text-2xl font-bold mb-6 text-cyan-100">Column Generation (Cutting Stock)</h2>
+    <form aria-labelledby="solver-title" className="glass-panel p-6" onKeyDown={handleKeyDown} onSubmit={e => { e.preventDefault(); if (!loading) solveColGen(); }}>
+      <h2 id="solver-title" className="text-2xl font-bold mb-6 text-cyan-100">Column Generation (Cutting Stock)</h2>
       <div className="mb-4">
         <label htmlFor="colgen-roll-length" className="block text-sm font-medium text-slate-300 mb-2">Roll Length:</label>
         <input
@@ -91,7 +91,7 @@ const ColGenSolver = () => {
       </div>
       <button
         className={`glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2 ${loading ? 'opacity-80 cursor-wait' : ''}`}
-        onClick={solveColGen}
+        type="submit"
         aria-disabled={loading}
         aria-busy={loading}
         title={`Press ${shortcutText} to solve`}
@@ -187,7 +187,7 @@ const ColGenSolver = () => {
           </pre>
         </div>
       )}
-    </div>
+    </form>
   );
 };
 

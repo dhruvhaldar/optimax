@@ -62,8 +62,8 @@ const LPSolver = () => {
   };
 
   return (
-    <div className="glass-panel p-6" onKeyDown={handleKeyDown}>
-      <h2 className="text-2xl font-bold mb-6 text-cyan-100">Linear Programming Solver (Simplex/Interior Point)</h2>
+    <form aria-labelledby="solver-title" className="glass-panel p-6" onKeyDown={handleKeyDown} onSubmit={e => { e.preventDefault(); if (!loading) solveLP(); }}>
+      <h2 id="solver-title" className="text-2xl font-bold mb-6 text-cyan-100">Linear Programming Solver (Simplex/Interior Point)</h2>
       <div className="mb-4">
         <label htmlFor="lp-c" className="block text-sm font-medium text-slate-300 mb-2">Objective Coefficients (c):</label>
         <input
@@ -138,7 +138,7 @@ const LPSolver = () => {
       </fieldset>
       <button
         className={`glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2 ${loading ? 'opacity-80 cursor-wait' : ''}`}
-        onClick={solveLP}
+        type="submit"
         aria-disabled={loading}
         aria-busy={loading}
         title={`Press ${shortcutText} to solve`}
@@ -219,7 +219,7 @@ const LPSolver = () => {
           )}
         </div>
       )}
-    </div>
+    </form>
   );
 };
 
