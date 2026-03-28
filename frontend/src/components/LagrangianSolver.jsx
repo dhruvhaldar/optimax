@@ -63,8 +63,8 @@ const LagrangianSolver = () => {
   };
 
   return (
-    <div className="glass-panel p-6" onKeyDown={handleKeyDown}>
-      <h2 className="text-2xl font-bold mb-6 text-cyan-100">Lagrangian Relaxation (Generalized Assignment)</h2>
+    <form aria-labelledby="solver-title" className="glass-panel p-6" onKeyDown={handleKeyDown} onSubmit={e => { e.preventDefault(); if (!loading) solveLagrangian(); }}>
+      <h2 id="solver-title" className="text-2xl font-bold mb-6 text-cyan-100">Lagrangian Relaxation (Generalized Assignment)</h2>
       <div className="mb-4">
         <label htmlFor="lagrangian-costs" className="block text-sm font-medium text-slate-300 mb-2">Costs (Task x Agent):</label>
         <textarea
@@ -112,7 +112,7 @@ const LagrangianSolver = () => {
       </div>
       <button
         className={`glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2 ${loading ? 'opacity-80 cursor-wait' : ''}`}
-        onClick={solveLagrangian}
+        type="submit"
         aria-disabled={loading}
         aria-busy={loading}
         title={`Press ${shortcutText} to solve`}
@@ -205,7 +205,7 @@ const LagrangianSolver = () => {
           </pre>
         </div>
       )}
-    </div>
+    </form>
   );
 };
 
