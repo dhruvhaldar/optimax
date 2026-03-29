@@ -27,7 +27,9 @@ def solve_stochastic(total_land, scenarios):
     beets_quota = 6000.0
 
     n_scenarios = len(scenarios)
-    probs = np.array([s['probability'] for s in scenarios], dtype=float)
+    # Optimization: Use np.fromiter with a pre-calculated count instead of a list comprehension and np.array
+    # This avoids intermediate Python list creation and improves speed and memory efficiency for large scenario counts.
+    probs = np.fromiter((s['probability'] for s in scenarios), dtype=float, count=n_scenarios)
 
     # Variables:
     # x (3): planted acres
