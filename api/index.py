@@ -62,9 +62,9 @@ SafeFloat = Annotated[float, Field(allow_inf_nan=False, ge=-1e20, le=1e20)]
 # Input validation for strings: alphanumeric, limited length to prevent XSS/Injection/DoS
 SafeString = Annotated[str, Field(min_length=1, max_length=50, pattern=r"^[a-zA-Z0-9_\-\s]+$")]
 
-BoundedFloatList = Annotated[List[SafeFloat], Field(max_length=MAX_VARS)]
-BoundedConstraintMatrix = Annotated[List[BoundedFloatList], Field(max_length=MAX_CONSTRAINTS)]
-BoundedConstraintVector = Annotated[List[SafeFloat], Field(max_length=MAX_CONSTRAINTS)]
+BoundedFloatList = Annotated[List[SafeFloat], Field(min_length=1, max_length=MAX_VARS)]
+BoundedConstraintMatrix = Annotated[List[BoundedFloatList], Field(min_length=1, max_length=MAX_CONSTRAINTS)]
+BoundedConstraintVector = Annotated[List[SafeFloat], Field(min_length=1, max_length=MAX_CONSTRAINTS)]
 
 # Security: Enforce strict dimensional constraints on nested arrays to prevent IndexError exceptions (DoS/Log Flooding)
 DemandTuple = Annotated[List[SafeFloat], Field(min_length=2, max_length=2)]
@@ -86,11 +86,11 @@ class IPParams(BaseModel):
 class ColGenParams(BaseModel):
     # Security: Prevent Out-Of-Memory (OOM) DoS by limiting roll_length to 100,000
     roll_length: Annotated[SafeFloat, Field(le=100000)]
-    demands: Annotated[List[DemandTuple], Field(max_length=MAX_VARS)] # [[width, quantity], ...]
+    demands: Annotated[List[DemandTuple], Field(min_length=1, max_length=MAX_VARS)] # [[width, quantity], ...]
 
 class LagrangianParams(BaseModel):
-    costs: Annotated[List[BoundedFloatList], Field(max_length=MAX_VARS)]
-    weights: Annotated[List[BoundedFloatList], Field(max_length=MAX_VARS)]
+    costs: Annotated[List[BoundedFloatList], Field(min_length=1, max_length=MAX_VARS)]
+    weights: Annotated[List[BoundedFloatList], Field(min_length=1, max_length=MAX_VARS)]
     capacities: BoundedFloatList
 
 class Scenario(BaseModel):
