@@ -14,3 +14,7 @@
 ## 2026-08-15 - Explicit Form Semantics vs Div Keydowns
 **Learning:** React developers frequently implement keyboard shortcuts (like `Cmd+Enter`) by attaching an `onKeyDown` listener to a generic `<div>` wrapper around form inputs. While this achieves the custom behavior, it severely compromises accessibility by stripping native `<form>` semantics. Screen reader "Forms Mode" relies on `<form>` boundaries, and standard keyboard users expect pressing `Enter` to submit fields organically.
 **Action:** When implementing computational solver UIs, use semantic `<form>` wrappers with `onSubmit` handlers (and explicit `type="submit"` buttons). You can still attach the custom `onKeyDown` shortcut listener to the form, but leveraging standard form submissions bridges custom application behaviors with expected native accessibility semantics.
+
+## 2026-08-15 - Explicit Button Types in Semantic Forms
+**Learning:** When wrapping interactive UIs in semantic `<form>` tags for accessibility (e.g., to support screen reader "Forms Mode" and native Enter submissions), any `<button>` element inside the form without an explicit `type` attribute will default to `type="submit"`. This causes secondary actions, like "Copy" buttons for copying results or logs, to unintentionally trigger a full form submission and reload/flash the UI.
+**Action:** Always explicitly declare `type="button"` on all secondary action buttons placed inside a `<form>` element to prevent them from inheriting the default submit behavior.
