@@ -170,6 +170,7 @@ const ColGenSolver = () => {
           <div className="flex justify-between items-center mb-2">
             <h4 className="text-lg font-semibold text-slate-200">Logs</h4>
             <button
+              type="button"
               onClick={handleCopyLogs}
               className={`text-xs px-2 py-1 rounded transition-colors focus:outline-none focus-visible:ring-2 ${copied ? 'bg-green-500/20 hover:bg-green-500/30 text-green-300 focus-visible:ring-green-400' : 'bg-white/10 hover:bg-white/20 text-cyan-300 focus-visible:ring-cyan-400'}`}
               aria-label={copied ? "Copied logs to clipboard" : "Copy logs to clipboard"}
