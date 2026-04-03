@@ -33,6 +33,7 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
     response.headers["X-Permitted-Cross-Domain-Policies"] = "none"
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     return response
 
 # Exception Handlers
@@ -59,6 +60,8 @@ MAX_SCENARIOS = 50
 
 # Input validation for floats: strict mode, finite, and bounded to avoid overflows/DoS
 SafeFloat = Annotated[float, Field(allow_inf_nan=False, ge=-1e20, le=1e20)]
+ProbabilityFloat = Annotated[float, Field(ge=0.0, le=1.0)]
+
 # Input validation for strings: alphanumeric, limited length to prevent XSS/Injection/DoS
 SafeString = Annotated[str, Field(min_length=1, max_length=50, pattern=r"^[a-zA-Z0-9_\-\s]+$")]
 
@@ -95,7 +98,7 @@ class LagrangianParams(BaseModel):
 
 class Scenario(BaseModel):
     name: SafeString
-    probability: SafeFloat
+    probability: ProbabilityFloat
     yields: YieldTuple
 
 class StochasticParams(BaseModel):
