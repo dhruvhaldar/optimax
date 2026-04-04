@@ -56,7 +56,7 @@ const LPSolver = () => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!loading) {
-        solveLP();
+        e.currentTarget.requestSubmit();
       }
     }
   };
@@ -69,6 +69,7 @@ const LPSolver = () => {
         <input
           id="lp-c"
           type="text"
+          required
           value={c}
           onChange={e => setC(e.target.value)}
           placeholder="[c1, c2]"
@@ -84,6 +85,7 @@ const LPSolver = () => {
         <textarea
           id="lp-A"
           rows="3"
+          required
           value={A}
           onChange={e => setA(e.target.value)}
           placeholder="[[a11, a12], [a21, a22]]"
@@ -99,6 +101,7 @@ const LPSolver = () => {
         <input
           id="lp-b"
           type="text"
+          required
           value={b}
           onChange={e => setB(e.target.value)}
           placeholder="[b1, b2]"

@@ -55,7 +55,7 @@ const ColGenSolver = () => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!loading) {
-        solveColGen();
+        e.currentTarget.requestSubmit();
       }
     }
   };
@@ -68,6 +68,7 @@ const ColGenSolver = () => {
         <input
           id="colgen-roll-length"
           type="number"
+          required
           value={rollLength}
           onChange={e => setRollLength(e.target.value)}
           placeholder="e.g. 15"
@@ -79,6 +80,7 @@ const ColGenSolver = () => {
         <textarea
           id="colgen-demands"
           rows="3"
+          required
           value={demands}
           onChange={e => setDemands(e.target.value)}
           placeholder="[[width, qty], ...]"
