@@ -86,17 +86,26 @@ def solve_stochastic(total_land, scenarios):
     # --- Wheat Constraints (ub_idx: 1, 4, 7...) ---
     wheat_ub_idx = 1 + np.arange(n_scenarios) * 3
     rows_ub[idx:idx + 3*n_scenarios] = np.repeat(wheat_ub_idx, 3)
-    # Optimization: Use .ravel() instead of .flatten() to return a contiguous view and prevent redundant deep copies.
-    cols_ub[idx:idx + 3*n_scenarios] = np.column_stack((np.zeros(n_scenarios, dtype=int), base_indices, base_indices + 2)).ravel()
-    vals_ub[idx:idx + 3*n_scenarios] = np.column_stack((-ylds[:, 0], np.ones(n_scenarios), np.full(n_scenarios, -1.0))).ravel()
+    # Optimization: Use slice assignments directly into pre-allocated 1D arrays instead of np.column_stack().ravel()
+    # to avoid creating large intermediate 2D memory matrices.
+    cols_ub[idx : idx + 3*n_scenarios : 3] = 0
+    cols_ub[idx + 1 : idx + 3*n_scenarios : 3] = base_indices
+    cols_ub[idx + 2 : idx + 3*n_scenarios : 3] = base_indices + 2
+    vals_ub[idx : idx + 3*n_scenarios : 3] = -ylds[:, 0]
+    vals_ub[idx + 1 : idx + 3*n_scenarios : 3] = 1.0
+    vals_ub[idx + 2 : idx + 3*n_scenarios : 3] = -1.0
     b_ub[wheat_ub_idx] = -demands[0]
     idx += 3*n_scenarios
 
     # --- Corn Constraints (ub_idx: 2, 5, 8...) ---
     corn_ub_idx = 2 + np.arange(n_scenarios) * 3
     rows_ub[idx:idx + 3*n_scenarios] = np.repeat(corn_ub_idx, 3)
-    cols_ub[idx:idx + 3*n_scenarios] = np.column_stack((np.ones(n_scenarios, dtype=int), base_indices + 1, base_indices + 3)).ravel()
-    vals_ub[idx:idx + 3*n_scenarios] = np.column_stack((-ylds[:, 1], np.ones(n_scenarios), np.full(n_scenarios, -1.0))).ravel()
+    cols_ub[idx : idx + 3*n_scenarios : 3] = 1
+    cols_ub[idx + 1 : idx + 3*n_scenarios : 3] = base_indices + 1
+    cols_ub[idx + 2 : idx + 3*n_scenarios : 3] = base_indices + 3
+    vals_ub[idx : idx + 3*n_scenarios : 3] = -ylds[:, 1]
+    vals_ub[idx + 1 : idx + 3*n_scenarios : 3] = 1.0
+    vals_ub[idx + 2 : idx + 3*n_scenarios : 3] = -1.0
     b_ub[corn_ub_idx] = -demands[1]
     idx += 3*n_scenarios
 
@@ -112,8 +121,14 @@ def solve_stochastic(total_land, scenarios):
     # --- Beets Balance Constraints (eq_idx: 0, 1, 2...) ---
     eq_idx = np.arange(n_scenarios)
     rows_eq = np.repeat(eq_idx, 3)
-    cols_eq = np.column_stack((np.full(n_scenarios, 2, dtype=int), base_indices + 4, base_indices + 5)).ravel()
-    vals_eq = np.column_stack((ylds[:, 2], np.full(n_scenarios, -1.0), np.full(n_scenarios, -1.0))).ravel()
+    cols_eq = np.empty(n_scenarios * 3, dtype=int)
+    cols_eq[0::3] = 2
+    cols_eq[1::3] = base_indices + 4
+    cols_eq[2::3] = base_indices + 5
+    vals_eq = np.empty(n_scenarios * 3, dtype=float)
+    vals_eq[0::3] = ylds[:, 2]
+    vals_eq[1::3] = -1.0
+    vals_eq[2::3] = -1.0
     b_eq = np.zeros(n_eq_constraints)
 
     A_eq = sp.coo_matrix((vals_eq, (rows_eq, cols_eq)), shape=(n_eq_constraints, num_vars))

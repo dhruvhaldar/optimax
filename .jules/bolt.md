@@ -101,3 +101,7 @@
 ## 2025-05-30 - [O(1) memory nested Numpy array creation using np.fromiter for simple properties]
 **Learning:** Using `np.array([s['probability'] for s in scenarios])` to construct a matrix from an inner property across many scenarios iteratively allocates lists and converts them, which is memory inefficient and slow.
 **Action:** Replace `[item['key'] for item in collection]` with a flat generator inside `np.fromiter(generator, dtype, count=N_Total)`. This loads items directly into a pre-allocated C-array, resulting in faster and more memory-efficient execution without creating intermediate lists.
+
+## 2025-06-15 - [np.column_stack memory overhead and performance bottleneck]
+**Learning:** Using `np.column_stack((A, B, C)).ravel()` to interleave arrays when generating flattened index or value arrays for sparse matrices (e.g., `scipy.sparse.coo_matrix`) involves allocating intermediate 2D arrays, copying data over, and then flattening. This leads to considerable memory and performance overhead, particularly inside tight loops or when processing huge sets of scenarios.
+**Action:** Replace `np.column_stack` with direct strided slice assignments into a pre-allocated 1D array. For example, use `arr[0::3] = A; arr[1::3] = B; arr[2::3] = C` instead. This completely bypasses the creation of intermediate structures and reduces both execution time and memory footprint noticeably.
