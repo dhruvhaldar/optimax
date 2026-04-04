@@ -18,3 +18,7 @@
 ## 2026-08-15 - Explicit Button Types in Semantic Forms
 **Learning:** When adopting semantic `<form>` UIs (instead of generic `<div>` keydown handlers) for accessibility, secondary `<button>` elements (e.g., "Copy", "Cancel") inside the form default to `type="submit"`. Clicking these utility buttons will trigger unintentional and potentially destructive form submissions or page reloads, breaking the UX.
 **Action:** Always explicitly set `type="button"` on all non-submit `<button>` elements inside a `<form>` to ensure they only execute their designated `onClick` handlers and do not inadvertently submit the parent form.
+
+## 2026-08-15 - Bridging Custom Keyboard Shortcuts with Native HTML Form Validation
+**Learning:** Attaching a custom `onKeyDown` listener (like `Cmd+Enter`) to a semantic `<form>` that directly invokes the React submit handler (e.g., `solve()`) bypasses native HTML form validation. This means attributes like `required`, `type="email"`, or `min/max` will not prevent the submission, leading to potential unhandled API errors or React state crashes if the custom handler expects valid input.
+**Action:** When implementing custom keyboard shortcuts to submit forms, call `e.currentTarget.requestSubmit()` instead of directly invoking the API function. This triggers the form's native submission flow, ensuring the browser validates all required inputs and displays standard validation messages before the `onSubmit` handler is fired.

@@ -57,7 +57,7 @@ const LagrangianSolver = () => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!loading) {
-        solveLagrangian();
+        e.currentTarget.requestSubmit();
       }
     }
   };
@@ -70,6 +70,7 @@ const LagrangianSolver = () => {
         <textarea
           id="lagrangian-costs"
           rows="3"
+          required
           value={costs}
           onChange={e => setCosts(e.target.value)}
           placeholder="[[c11, c12], [c21, c22]]"
@@ -85,6 +86,7 @@ const LagrangianSolver = () => {
         <textarea
           id="lagrangian-weights"
           rows="3"
+          required
           value={weights}
           onChange={e => setWeights(e.target.value)}
           placeholder="[[w11, w12], [w21, w22]]"
@@ -100,6 +102,7 @@ const LagrangianSolver = () => {
         <input
           id="lagrangian-capacities"
           type="text"
+          required
           value={capacities}
           onChange={e => setCapacities(e.target.value)}
           placeholder="[C1, C2]"

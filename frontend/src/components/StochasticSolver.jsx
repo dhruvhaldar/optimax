@@ -71,7 +71,7 @@ const StochasticSolver = () => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!loading) {
-        solveStochastic();
+        e.currentTarget.requestSubmit();
       }
     }
   };
@@ -84,6 +84,7 @@ const StochasticSolver = () => {
         <input
           id="stochastic-land"
           type="number"
+          required
           value={land}
           onChange={e => setLand(e.target.value)}
           className="glass-input w-full"
@@ -94,6 +95,7 @@ const StochasticSolver = () => {
         <textarea
           id="stochastic-scenarios"
           rows="15"
+          required
           value={scenarios}
           onChange={e => setScenarios(e.target.value)}
           placeholder={'[{"name": "Scenario1", "probability": 0.5, "yields": [1.0, 2.0]}, ...]'}
