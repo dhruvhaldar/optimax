@@ -27,3 +27,8 @@
 **Vulnerability:** Endpoints handling arrays of data (`c`, `A_ub`, `b_ub`, `demands`, `costs`, `weights`) lacked validation for minimum length limits. Supplying an empty list bypassed length validations but triggered `ValueError` or `IndexError` inside backend solvers (like SciPy's `linprog` or `milp`). This resulted in an unhandled exception cascading to the global exception handler, sending a 500 error, and logging the internal stack trace, allowing attackers to leak framework-specific trace details and waste server resources.
 **Learning:** Type limits (e.g. `List[float]`) and maximum limits (`max_length=N`) protect against OOM and log flooding from massive arrays, but zero-length bounds (`min_length=1`) are equally important when the arrays represent mathematical entities passed straight to external solvers that expect non-empty arguments.
 **Prevention:** Use Pydantic's `min_length=1` parameter in `Field()` inside `Annotated[..., Field()]` definitions (e.g., `BoundedFloatList = Annotated[List[SafeFloat], Field(min_length=1, max_length=MAX_VARS)]`) to strictly enforce that required input matrices are not empty. This blocks malformed inputs at the API gateway via a 422 Unprocessable Entity response before processing begins.
+
+## 2024-05-24 - [Data Exposure via Caching]
+**Vulnerability:** API endpoints handling sensitive data might be cached by browsers or intermediate proxies.
+**Learning:** Caching sensitive data can lead to unintended exposure.
+**Prevention:** Add the `Cache-Control: no-store, no-cache, must-revalidate, max-age=0` header to API endpoints to explicitly prevent caching.
