@@ -56,7 +56,7 @@ const IPSolver = () => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!loading) {
-        solveIP();
+        e.currentTarget.requestSubmit();
       }
     }
   };
@@ -76,6 +76,7 @@ const IPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full"
         />
       </div>
@@ -91,6 +92,7 @@ const IPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full font-mono"
         />
       </div>
@@ -106,6 +108,7 @@ const IPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full"
         />
       </div>

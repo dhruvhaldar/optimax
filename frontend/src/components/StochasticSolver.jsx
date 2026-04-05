@@ -71,7 +71,7 @@ const StochasticSolver = () => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!loading) {
-        solveStochastic();
+        e.currentTarget.requestSubmit();
       }
     }
   };
@@ -86,6 +86,7 @@ const StochasticSolver = () => {
           type="number"
           value={land}
           onChange={e => setLand(e.target.value)}
+          required
           className="glass-input w-full"
         />
       </div>
@@ -101,6 +102,7 @@ const StochasticSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full font-mono text-sm leading-relaxed"
         />
       </div>

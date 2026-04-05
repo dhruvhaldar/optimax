@@ -57,7 +57,7 @@ const LagrangianSolver = () => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!loading) {
-        solveLagrangian();
+        e.currentTarget.requestSubmit();
       }
     }
   };
@@ -77,6 +77,7 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full font-mono"
         />
       </div>
@@ -92,6 +93,7 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full font-mono"
         />
       </div>
@@ -107,6 +109,7 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full"
         />
       </div>
