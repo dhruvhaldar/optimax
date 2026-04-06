@@ -62,6 +62,36 @@ class TestInputValidation(unittest.TestCase):
         response = self.client.post("/api/stochastic", json=payload)
         self.assertEqual(response.status_code, 422)
 
+    def test_stochastic_scenario_probability_bounds(self):
+        """Test that probabilities out of the [0.0, 1.0] range are rejected."""
+        # Test probability > 1.0
+        payload_high = {
+            "total_land": 500,
+            "scenarios": [
+                {
+                    "name": "Scenario_1",
+                    "probability": 1.5,
+                    "yields": [2.5, 3.0, 20.0]
+                }
+            ]
+        }
+        response_high = self.client.post("/api/stochastic", json=payload_high)
+        self.assertEqual(response_high.status_code, 422)
+
+        # Test probability < 0.0
+        payload_low = {
+            "total_land": 500,
+            "scenarios": [
+                {
+                    "name": "Scenario_1",
+                    "probability": -0.5,
+                    "yields": [2.5, 3.0, 20.0]
+                }
+            ]
+        }
+        response_low = self.client.post("/api/stochastic", json=payload_low)
+        self.assertEqual(response_low.status_code, 422)
+
     def test_lagrangian_dimension_mismatch(self):
         """Test that lagrangian solver validates dimensions properly to prevent 500 error."""
         payload = {

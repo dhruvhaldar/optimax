@@ -32,3 +32,8 @@
 **Vulnerability:** API endpoints handling sensitive data might be cached by browsers or intermediate proxies.
 **Learning:** Caching sensitive data can lead to unintended exposure.
 **Prevention:** Add the `Cache-Control: no-store, no-cache, must-revalidate, max-age=0` header to API endpoints to explicitly prevent caching.
+
+## 2024-10-27 - [Logic Flaws via Missing Domain Constraints]
+**Vulnerability:** The `probability` field in the Stochastic solver endpoint used a generic `SafeFloat` type hint, which allowed any finite floating-point value (e.g., between `-1e20` and `1e20`). This meant the API would accept mathematically nonsensical probabilities (e.g., `1.5` or `-0.5`), which could lead to logic flaws, unpredictable solver execution, or incorrect expected profit calculations.
+**Learning:** Generic input validation (like just ensuring a value is a float or limiting its absolute maximum for DoS protection) is insufficient for scientific solvers where parameters have strict mathematical domain constraints (like probabilities must be `[0.0, 1.0]`).
+**Prevention:** Use domain-specific boundary constraints in Pydantic using `Field(ge=..., le=...)` (e.g., `Annotated[float, Field(ge=0.0, le=1.0)]`) for variables like probabilities to ensure logic flaws are caught at the API boundary, resulting in a clean 422 error instead of corrupting the solver state.
