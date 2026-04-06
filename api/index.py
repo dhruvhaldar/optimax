@@ -63,6 +63,8 @@ SafeFloat = Annotated[float, Field(allow_inf_nan=False, ge=-1e20, le=1e20)]
 # Input validation for strings: alphanumeric, limited length to prevent XSS/Injection/DoS
 SafeString = Annotated[str, Field(min_length=1, max_length=50, pattern=r"^[a-zA-Z0-9_\-\s]+$")]
 
+ProbabilityFloat = Annotated[float, Field(allow_inf_nan=False, ge=0.0, le=1.0)]
+
 BoundedFloatList = Annotated[List[SafeFloat], Field(min_length=1, max_length=MAX_VARS)]
 BoundedConstraintMatrix = Annotated[List[BoundedFloatList], Field(min_length=1, max_length=MAX_CONSTRAINTS)]
 BoundedConstraintVector = Annotated[List[SafeFloat], Field(min_length=1, max_length=MAX_CONSTRAINTS)]
@@ -96,7 +98,7 @@ class LagrangianParams(BaseModel):
 
 class Scenario(BaseModel):
     name: SafeString
-    probability: SafeFloat
+    probability: ProbabilityFloat
     yields: YieldTuple
 
 class StochasticParams(BaseModel):
