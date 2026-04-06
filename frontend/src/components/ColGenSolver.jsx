@@ -55,7 +55,7 @@ const ColGenSolver = () => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!loading) {
-        solveColGen();
+        e.currentTarget.requestSubmit();
       }
     }
   };
@@ -72,6 +72,7 @@ const ColGenSolver = () => {
           onChange={e => setRollLength(e.target.value)}
           placeholder="e.g. 15"
           className="glass-input w-full"
+          required
         />
       </div>
       <div className="mb-4">
@@ -87,6 +88,7 @@ const ColGenSolver = () => {
           autoCorrect="off"
           autoCapitalize="none"
           className="glass-input w-full font-mono"
+          required
         />
       </div>
       <button
