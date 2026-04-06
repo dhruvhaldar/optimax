@@ -56,7 +56,7 @@ const IPSolver = () => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
       e.preventDefault();
       if (!loading) {
-        solveIP();
+        e.currentTarget.requestSubmit();
       }
     }
   };
@@ -77,6 +77,7 @@ const IPSolver = () => {
           autoCorrect="off"
           autoCapitalize="none"
           className="glass-input w-full"
+          required
         />
       </div>
       <div className="mb-4">
@@ -92,6 +93,7 @@ const IPSolver = () => {
           autoCorrect="off"
           autoCapitalize="none"
           className="glass-input w-full font-mono"
+          required
         />
       </div>
       <div className="mb-4">
@@ -107,6 +109,7 @@ const IPSolver = () => {
           autoCorrect="off"
           autoCapitalize="none"
           className="glass-input w-full"
+          required
         />
       </div>
       <fieldset className="mb-6">
