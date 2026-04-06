@@ -77,6 +77,7 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full font-mono"
           required
         />
@@ -93,6 +94,7 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full font-mono"
           required
         />
@@ -109,6 +111,7 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full"
           required
         />

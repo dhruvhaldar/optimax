@@ -76,6 +76,7 @@ const LPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full"
           required
         />
@@ -92,6 +93,7 @@ const LPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full font-mono"
           required
         />
@@ -108,6 +110,7 @@ const LPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full"
           required
         />

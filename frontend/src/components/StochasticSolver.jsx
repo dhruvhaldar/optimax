@@ -86,6 +86,7 @@ const StochasticSolver = () => {
           type="number"
           value={land}
           onChange={e => setLand(e.target.value)}
+          required
           className="glass-input w-full"
           required
         />
@@ -102,6 +103,7 @@ const StochasticSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          required
           className="glass-input w-full font-mono text-sm leading-relaxed"
           required
         />
