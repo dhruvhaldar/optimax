@@ -105,3 +105,7 @@
 ## 2024-04-06 - Replacing np.column_stack with strided slices for sparse matrix construction
 **Learning:** When flattening interleaved arrays to build `scipy.sparse.coo_matrix` inputs (like `cols` or `vals`), using `np.column_stack((A, B, C)).ravel()` allocates a temporary 2D array and is significantly slower.
 **Action:** Replace `np.column_stack` and `.ravel()` with pre-allocated 1D arrays and strided slice assignments (e.g., `arr[0::3] = A`, `arr[1::3] = B`, `arr[2::3] = C`). This strictly avoids intermediate 2D memory allocations and speeds up execution by ~38% on large scenario counts.
+
+## 2026-04-07 - Disable SciPy milp presolve for small knapsack subproblems
+**Learning:** When using `scipy.optimize.milp` repeatedly to solve very simple or structurally specific subproblems (like the unbounded knapsack problem in Column Generation), the default presolve phase adds significant overhead (e.g. ~2x total execution time) relative to the time spent actually solving the problem. The presolver attempts to simplify the constraint matrix, which is redundant for this specific problem.
+**Action:** Pass `options={'presolve': False}` to `milp` in tight loops for these specific types of problems to bypass the overhead and dramatically speed up execution.

@@ -103,7 +103,9 @@ def solve_cutting_stock(roll_length, demands):
 
         c_sub = -duals # minimize -duals^T a
 
-        sub_res = milp(c=c_sub, constraints=sub_constraints, integrality=sub_integrality, bounds=sub_bounds)
+        # Optimization: Disable presolve overhead for the simple unbounded knapsack subproblem.
+        # SciPy's default presolve phase adds ~2x execution time overhead for this specific matrix structure.
+        sub_res = milp(c=c_sub, constraints=sub_constraints, integrality=sub_integrality, bounds=sub_bounds, options={'presolve': False})
 
         if not sub_res.success:
             logs.append("Subproblem failed.")
