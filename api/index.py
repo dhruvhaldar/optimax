@@ -22,6 +22,24 @@ app = FastAPI()
 # Reduces payload size by ~25-30% for plots, saving network bandwidth.
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
+# Security Payload Size Limit
+MAX_PAYLOAD_SIZE = 2_000_000 # 2MB limit
+
+@app.middleware("http")
+async def limit_request_size(request: Request, call_next):
+    # Security: Protect against DoS by limiting payload size before JSON parsing
+    content_length = request.headers.get("content-length")
+    if content_length:
+        try:
+            if int(content_length) > MAX_PAYLOAD_SIZE:
+                return JSONResponse(
+                    status_code=413,
+                    content={"detail": "Payload Too Large"},
+                )
+        except ValueError:
+            pass
+    return await call_next(request)
+
 # Security Headers Middleware
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
