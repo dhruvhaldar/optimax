@@ -13,3 +13,7 @@
 ## 2024-04-06 - Form Keyboard Shortcuts and Native Validation
 **Learning:** When attaching custom keyboard shortcuts (e.g., `Cmd+Enter`) to forms, triggering submissions directly via a React handler bypasses native HTML form validation (such as `required` attributes). This leads to components trying to process empty or invalid inputs, potentially causing unhandled exceptions downstream.
 **Action:** Always trigger programmatic form submissions using `e.currentTarget.requestSubmit()` rather than directly invoking the form's logic handler. This ensures native HTML validation intercepts invalid states before the programmatic handler is fired.
+
+## 2024-04-08 - Added explicit required indicators to form fields
+**Learning:** Native HTML5 `required` attributes convey requirement state to screen readers programmatically, but this isn't visible to sighted users unless explicitly styled. Duplicated `required` attributes and hidden `className="..."` inside elements were also observed.
+**Action:** Always append a visible indicator, such as `<span aria-hidden="true">*</span>`, to the labels of required inputs to ensure visual accessibility without double-announcing to screen readers.
