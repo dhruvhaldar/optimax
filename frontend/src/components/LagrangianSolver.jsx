@@ -66,7 +66,7 @@ const LagrangianSolver = () => {
     <form aria-labelledby="solver-title" className="glass-panel p-6" onKeyDown={handleKeyDown} onSubmit={e => { e.preventDefault(); if (!loading) solveLagrangian(); }}>
       <h2 id="solver-title" className="text-2xl font-bold mb-6 text-cyan-100">Lagrangian Relaxation (Generalized Assignment)</h2>
       <div className="mb-4">
-        <label htmlFor="lagrangian-costs" className="block text-sm font-medium text-slate-300 mb-2">Costs (Task x Agent):</label>
+        <label htmlFor="lagrangian-costs" className="block text-sm font-medium text-slate-300 mb-2">Costs (Task x Agent) <span className="text-red-400" aria-hidden="true">*</span>:</label>
         <textarea
           id="lagrangian-costs"
           rows="3"
@@ -77,13 +77,11 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required
-          className="glass-input w-full font-mono"
-          required
+          required className="glass-input w-full font-mono"
         />
       </div>
       <div className="mb-4">
-        <label htmlFor="lagrangian-weights" className="block text-sm font-medium text-slate-300 mb-2">Weights (Task x Agent):</label>
+        <label htmlFor="lagrangian-weights" className="block text-sm font-medium text-slate-300 mb-2">Weights (Task x Agent) <span className="text-red-400" aria-hidden="true">*</span>:</label>
         <textarea
           id="lagrangian-weights"
           rows="3"
@@ -94,13 +92,11 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required
-          className="glass-input w-full font-mono"
-          required
+          required className="glass-input w-full font-mono"
         />
       </div>
       <div className="mb-4">
-        <label htmlFor="lagrangian-capacities" className="block text-sm font-medium text-slate-300 mb-2">Agent Capacities:</label>
+        <label htmlFor="lagrangian-capacities" className="block text-sm font-medium text-slate-300 mb-2">Agent Capacities <span className="text-red-400" aria-hidden="true">*</span>:</label>
         <input
           id="lagrangian-capacities"
           type="text"
@@ -111,9 +107,7 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required
-          className="glass-input w-full"
-          required
+          required className="glass-input w-full"
         />
       </div>
       <button

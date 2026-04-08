@@ -80,19 +80,17 @@ const StochasticSolver = () => {
     <form aria-labelledby="solver-title" className="glass-panel p-6" onKeyDown={handleKeyDown} onSubmit={e => { e.preventDefault(); if (!loading) solveStochastic(); }}>
       <h2 id="solver-title" className="text-2xl font-bold mb-6 text-cyan-100">Stochastic Programming (Farmer's Problem)</h2>
       <div className="mb-4">
-        <label htmlFor="stochastic-land" className="block text-sm font-medium text-slate-300 mb-2">Total Land (Acres):</label>
+        <label htmlFor="stochastic-land" className="block text-sm font-medium text-slate-300 mb-2">Total Land (Acres) <span className="text-red-400" aria-hidden="true">*</span>:</label>
         <input
           id="stochastic-land"
           type="number"
           value={land}
           onChange={e => setLand(e.target.value)}
-          required
-          className="glass-input w-full"
-          required
+          required className="glass-input w-full"
         />
       </div>
       <div className="mb-4">
-        <label htmlFor="stochastic-scenarios" className="block text-sm font-medium text-slate-300 mb-2">Scenarios (Name, Prob, Yields [Wheat, Corn, Beets]):</label>
+        <label htmlFor="stochastic-scenarios" className="block text-sm font-medium text-slate-300 mb-2">Scenarios (Name, Prob, Yields [Wheat, Corn, Beets]) <span className="text-red-400" aria-hidden="true">*</span>:</label>
         <textarea
           id="stochastic-scenarios"
           rows="15"
@@ -103,9 +101,7 @@ const StochasticSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required
-          className="glass-input w-full font-mono text-sm leading-relaxed"
-          required
+          required className="glass-input w-full font-mono text-sm leading-relaxed"
         />
       </div>
       <button

@@ -65,7 +65,7 @@ const LPSolver = () => {
     <form aria-labelledby="solver-title" className="glass-panel p-6" onKeyDown={handleKeyDown} onSubmit={e => { e.preventDefault(); if (!loading) solveLP(); }}>
       <h2 id="solver-title" className="text-2xl font-bold mb-6 text-cyan-100">Linear Programming Solver (Simplex/Interior Point)</h2>
       <div className="mb-4">
-        <label htmlFor="lp-c" className="block text-sm font-medium text-slate-300 mb-2">Objective Coefficients (c):</label>
+        <label htmlFor="lp-c" className="block text-sm font-medium text-slate-300 mb-2">Objective Coefficients (c) <span className="text-red-400" aria-hidden="true">*</span>:</label>
         <input
           id="lp-c"
           type="text"
@@ -76,13 +76,11 @@ const LPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required
-          className="glass-input w-full"
-          required
+          required className="glass-input w-full"
         />
       </div>
       <div className="mb-4">
-        <label htmlFor="lp-A" className="block text-sm font-medium text-slate-300 mb-2">Constraint Matrix (A_ub):</label>
+        <label htmlFor="lp-A" className="block text-sm font-medium text-slate-300 mb-2">Constraint Matrix (A_ub) <span className="text-red-400" aria-hidden="true">*</span>:</label>
         <textarea
           id="lp-A"
           rows="3"
@@ -93,13 +91,11 @@ const LPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required
-          className="glass-input w-full font-mono"
-          required
+          required className="glass-input w-full font-mono"
         />
       </div>
       <div className="mb-4">
-        <label htmlFor="lp-b" className="block text-sm font-medium text-slate-300 mb-2">Constraint RHS (b_ub):</label>
+        <label htmlFor="lp-b" className="block text-sm font-medium text-slate-300 mb-2">Constraint RHS (b_ub) <span className="text-red-400" aria-hidden="true">*</span>:</label>
         <input
           id="lp-b"
           type="text"
@@ -110,9 +106,7 @@ const LPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required
-          className="glass-input w-full"
-          required
+          required className="glass-input w-full"
         />
       </div>
       <fieldset className="mb-6">
