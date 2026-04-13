@@ -205,6 +205,7 @@ const IPSolver = () => {
                 >
                   {copied ? "Copied!" : "Copy"}
                 </button>
+                <span aria-live="polite" className="sr-only">{copied ? "Copied to clipboard" : ""}</span>
               </dt>
               <dd>
                 <code className="text-cyan-300 font-mono overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">{JSON.stringify(result.x)}</code>
