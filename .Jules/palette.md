@@ -22,3 +22,7 @@
 ## 2024-05-18 - Route Keyboard Shortcuts via Native Form Submission
 **Learning:** Attaching a custom keyboard shortcut (like `Cmd+Enter`) to an `onKeyDown` handler on a `<form>` and then directly invoking the programmatic submission handler bypasses native HTML form validation. Native features like the `required` attribute will fail to intercept empty fields, passing invalid state directly to the submission logic.
 **Action:** When implementing custom form submission shortcuts, trigger the submission using `e.currentTarget.requestSubmit()` rather than invoking the React submission handler directly. This ensures the native browser validation pipeline executes, displaying native error tooltips to the user before attempting the programmatic handler.
+
+## 2024-05-18 - Explicit aria-live Regions for Transient UI State
+**Learning:** When a button action (like "Copy") changes a small piece of text visually (e.g., to "Copied!") for a brief period before reverting, dynamically changing the `aria-label` is not guaranteed to be announced by screen readers if focus does not change. Further, putting the `aria-live` element inside the button itself can fail because the button often has an `aria-label` that overrides its child text.
+**Action:** For transient inline states, place an external visually hidden `<span aria-live="polite">` directly adjacent to the element triggering the state change to reliably notify screen readers (e.g., "Copied to clipboard").
