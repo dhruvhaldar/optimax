@@ -26,3 +26,7 @@
 ## 2024-05-18 - Explicit aria-live Regions for Transient UI State
 **Learning:** When a button action (like "Copy") changes a small piece of text visually (e.g., to "Copied!") for a brief period before reverting, dynamically changing the `aria-label` is not guaranteed to be announced by screen readers if focus does not change. Further, putting the `aria-live` element inside the button itself can fail because the button often has an `aria-label` that overrides its child text.
 **Action:** For transient inline states, place an external visually hidden `<span aria-live="polite">` directly adjacent to the element triggering the state change to reliably notify screen readers (e.g., "Copied to clipboard").
+
+## 2026-08-15 - Prefer Native Disabled over aria-disabled for Form Submit Buttons
+**Learning:** While `aria-disabled` conveys the disabled state to screen readers, it does not physically prevent the button from being activated via mouse or keyboard (Space/Enter). During async form submissions, relying purely on `aria-disabled` and React state checks can sometimes fail to prevent rapid double-submissions and leaves the button in the focus order.
+**Action:** Always prefer the native `disabled={loading}` attribute for form submit buttons during async operations to robustly prevent duplicate submissions at the browser level and correctly remove the button from the tab sequence.
