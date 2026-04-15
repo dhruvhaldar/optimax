@@ -84,6 +84,8 @@ const StochasticSolver = () => {
         <input
           id="stochastic-land"
           type="number"
+          step="any"
+          min="0"
           value={land}
           onChange={e => setLand(e.target.value)}
           required className="glass-input w-full"

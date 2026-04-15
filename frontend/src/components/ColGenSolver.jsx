@@ -68,6 +68,8 @@ const ColGenSolver = () => {
         <input
           id="colgen-roll-length"
           type="number"
+          step="any"
+          min="0"
           value={rollLength}
           onChange={e => setRollLength(e.target.value)}
           placeholder="e.g. 15"
