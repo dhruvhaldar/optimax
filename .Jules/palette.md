@@ -30,3 +30,7 @@
 ## 2026-08-15 - Prefer Native Disabled over aria-disabled for Form Submit Buttons
 **Learning:** While `aria-disabled` conveys the disabled state to screen readers, it does not physically prevent the button from being activated via mouse or keyboard (Space/Enter). During async form submissions, relying purely on `aria-disabled` and React state checks can sometimes fail to prevent rapid double-submissions and leaves the button in the focus order.
 **Action:** Always prefer the native `disabled={loading}` attribute for form submit buttons during async operations to robustly prevent duplicate submissions at the browser level and correctly remove the button from the tab sequence.
+
+## 2026-04-15 - Support Continuous Values in Number Inputs
+**Learning:** HTML5 `<input type="number">` elements default to `step="1"`. If a user enters a decimal value (e.g., 1.5) for continuous quantities like land area or roll length, native browser validation will block the form submission with an obscure "Please enter a valid value" error, even if the backend uses `parseFloat()`.
+**Action:** Always add `step="any"` to number inputs meant for continuous or fractional data. Additionally, explicitly set `min="0"` for logically non-negative quantities to provide immediate native validation feedback before submission.
