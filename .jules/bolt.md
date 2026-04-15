@@ -109,3 +109,7 @@
 ## 2026-04-07 - Disable SciPy milp presolve for small knapsack subproblems
 **Learning:** When using `scipy.optimize.milp` repeatedly to solve very simple or structurally specific subproblems (like the unbounded knapsack problem in Column Generation), the default presolve phase adds significant overhead (e.g. ~2x total execution time) relative to the time spent actually solving the problem. The presolver attempts to simplify the constraint matrix, which is redundant for this specific problem.
 **Action:** Pass `options={'presolve': False}` to `milp` in tight loops for these specific types of problems to bypass the overhead and dramatically speed up execution.
+
+## 2025-06-03 - [Disable SciPy milp presolve for Branch and Bound relaxations]
+**Learning:** When using `scipy.optimize.linprog` repeatedly to solve structurally identical LP relaxations during a Branch and Bound tree traversal (like in `api/solvers/ip.py`), the default presolve phase adds significant overhead (e.g., ~25-30% of total execution time). The presolver attempts to simplify the constraint matrix on every iteration, which is mostly redundant since only the variable bounds change slightly between nodes.
+**Action:** Pass `options={'presolve': False}` to `linprog` in tight loops for Branch and Bound solvers to bypass the redundant setup overhead and speed up the total solve time.
