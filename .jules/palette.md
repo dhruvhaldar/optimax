@@ -17,3 +17,7 @@
 ## 2024-04-08 - Added explicit required indicators to form fields
 **Learning:** Native HTML5 `required` attributes convey requirement state to screen readers programmatically, but this isn't visible to sighted users unless explicitly styled. Duplicated `required` attributes and hidden `className="..."` inside elements were also observed.
 **Action:** Always append a visible indicator, such as `<span aria-hidden="true">*</span>`, to the labels of required inputs to ensure visual accessibility without double-announcing to screen readers.
+
+## 2024-05-23 - [Pattern: Form Elements Feedback]
+**Learning:** Adding explicit disabled states to inputs and textareas during asynchronous form submissions is an excellent micro-UX improvement. It prevents users from accidentally editing inputs while a request is in flight, avoiding confusion and improving the sense of application responsiveness.
+**Action:** Consistently apply `disabled={loading}` to all form inputs (`<input>`, `<textarea>`) alongside the submit button during async operations, and ensure CSS (`disabled:opacity-50 disabled:cursor-not-allowed`) visually reflects this state.
