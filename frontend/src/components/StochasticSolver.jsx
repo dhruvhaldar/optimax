@@ -1,28 +1,34 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useOsShortcut } from '../hooks/useOsShortcut';
-import { useResultFocus } from '../hooks/useResultFocus';
+import React, { useState } from "react";
+import axios from "axios";
+import { useOsShortcut } from "../hooks/useOsShortcut";
+import { useResultFocus } from "../hooks/useResultFocus";
 
 const StochasticSolver = () => {
   const { shortcutSymbol, shortcutText } = useOsShortcut();
   const [land, setLand] = useState(500);
-  const [scenarios, setScenarios] = useState(JSON.stringify([
-    {
-      name: "Good",
-      probability: 0.33,
-      yields: [3.0, 3.6, 24.0]
-    },
-    {
-      name: "Average",
-      probability: 0.33,
-      yields: [2.5, 3.0, 20.0]
-    },
-    {
-      name: "Bad",
-      probability: 0.34,
-      yields: [2.0, 2.4, 16.0]
-    }
-  ], null, 2));
+  const [scenarios, setScenarios] = useState(
+    JSON.stringify(
+      [
+        {
+          name: "Good",
+          probability: 0.33,
+          yields: [3.0, 3.6, 24.0],
+        },
+        {
+          name: "Average",
+          probability: 0.33,
+          yields: [2.5, 3.0, 20.0],
+        },
+        {
+          name: "Bad",
+          probability: 0.34,
+          yields: [2.0, 2.4, 16.0],
+        },
+      ],
+      null,
+      2,
+    ),
+  );
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -33,12 +39,15 @@ const StochasticSolver = () => {
   const handleCopyAllocation = () => {
     if (!result?.x || result.x.length < 3) return;
     const text = `Wheat: ${result.x[0] !== null && result.x[0] !== undefined ? result.x[0].toFixed(1) : "N/A"}, Corn: ${result.x[1] !== null && result.x[1] !== undefined ? result.x[1].toFixed(1) : "N/A"}, Beets: ${result.x[2] !== null && result.x[2] !== undefined ? result.x[2].toFixed(1) : "N/A"}`;
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }).catch(err => {
-      console.error('Failed to copy allocation:', err);
-    });
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy allocation:", err);
+      });
   };
 
   const solveStochastic = async () => {
@@ -49,26 +58,31 @@ const StochasticSolver = () => {
     try {
       payload = {
         total_land: parseFloat(land),
-        scenarios: JSON.parse(scenarios)
+        scenarios: JSON.parse(scenarios),
       };
     } catch (err) {
-      setError("Invalid JSON format in Scenarios. Please check for missing quotes, commas, or brackets.");
+      setError(
+        "Invalid JSON format in Scenarios. Please check for missing quotes, commas, or brackets.",
+      );
       setLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post('/api/stochastic', payload);
+      const response = await axios.post("/api/stochastic", payload);
       setResult(response.data);
     } catch (err) {
-      setError(err.message + (err.response ? ": " + JSON.stringify(err.response.data) : ""));
+      setError(
+        err.message +
+          (err.response ? ": " + JSON.stringify(err.response.data) : ""),
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyDown = (e) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
       e.preventDefault();
       if (!loading) {
         e.currentTarget.requestSubmit();
@@ -77,37 +91,71 @@ const StochasticSolver = () => {
   };
 
   return (
-    <form aria-labelledby="solver-title" className="glass-panel p-6" onKeyDown={handleKeyDown} onSubmit={e => { e.preventDefault(); if (!loading) solveStochastic(); }}>
-      <h2 id="solver-title" className="text-2xl font-bold mb-6 text-cyan-100">Stochastic Programming (Farmer's Problem)</h2>
+    <form
+      aria-labelledby="solver-title"
+      className="glass-panel p-6"
+      onKeyDown={handleKeyDown}
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!loading) solveStochastic();
+      }}
+    >
+      <h2 id="solver-title" className="text-2xl font-bold mb-6 text-cyan-100">
+        Stochastic Programming (Farmer's Problem)
+      </h2>
       <div className="mb-4">
-        <label htmlFor="stochastic-land" className="block text-sm font-medium text-slate-300 mb-2">Total Land (Acres) <span className="text-red-400" aria-hidden="true">*</span>:</label>
+        <label
+          htmlFor="stochastic-land"
+          className="block text-sm font-medium text-slate-300 mb-2"
+        >
+          Total Land (Acres){" "}
+          <span className="text-red-400" aria-hidden="true">
+            *
+          </span>
+          :
+        </label>
         <input
+          disabled={loading}
           id="stochastic-land"
           type="number"
           step="any"
           min="0"
           value={land}
-          onChange={e => setLand(e.target.value)}
-          required className="glass-input w-full"
+          onChange={(e) => setLand(e.target.value)}
+          required
+          className="glass-input w-full"
         />
       </div>
       <div className="mb-4">
-        <label htmlFor="stochastic-scenarios" className="block text-sm font-medium text-slate-300 mb-2">Scenarios (Name, Prob, Yields [Wheat, Corn, Beets]) <span className="text-red-400" aria-hidden="true">*</span>:</label>
+        <label
+          htmlFor="stochastic-scenarios"
+          className="block text-sm font-medium text-slate-300 mb-2"
+        >
+          Scenarios (Name, Prob, Yields [Wheat, Corn, Beets]){" "}
+          <span className="text-red-400" aria-hidden="true">
+            *
+          </span>
+          :
+        </label>
         <textarea
+          disabled={loading}
           id="stochastic-scenarios"
           rows="15"
           value={scenarios}
-          onChange={e => setScenarios(e.target.value)}
-          placeholder={'[{"name": "Scenario1", "probability": 0.5, "yields": [1.0, 2.0]}, ...]'}
+          onChange={(e) => setScenarios(e.target.value)}
+          placeholder={
+            '[{"name": "Scenario1", "probability": 0.5, "yields": [1.0, 2.0]}, ...]'
+          }
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required className="glass-input w-full font-mono text-sm leading-relaxed"
+          required
+          className="glass-input w-full font-mono text-sm leading-relaxed"
         />
       </div>
       <button
-        className={`glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2 ${loading ? 'opacity-80 cursor-wait' : ''}`}
+        className={`glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2 ${loading ? "opacity-80 cursor-wait" : ""}`}
         type="submit"
         disabled={loading}
         aria-busy={loading}
@@ -115,37 +163,83 @@ const StochasticSolver = () => {
       >
         {loading ? (
           <>
-            <svg aria-hidden="true" className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <svg
+              aria-hidden="true"
+              className="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
             Solving...
           </>
         ) : (
           <>
-            Solve Stochastic LP <kbd aria-hidden="true" className="text-xs opacity-80 ml-2 font-mono hidden sm:inline px-1.5 py-0.5 bg-white/10 border border-white/20 rounded-md shadow-sm">{shortcutSymbol}</kbd>
+            Solve Stochastic LP{" "}
+            <kbd
+              aria-hidden="true"
+              className="text-xs opacity-80 ml-2 font-mono hidden sm:inline px-1.5 py-0.5 bg-white/10 border border-white/20 rounded-md shadow-sm"
+            >
+              {shortcutSymbol}
+            </kbd>
           </>
         )}
       </button>
 
       {error && (
-        <div role="alert" aria-live="assertive" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200"
+        >
           Error: {error}
         </div>
       )}
 
       {!result && !error && (
-        <div className={`mt-8 p-8 bg-white/5 rounded-xl border border-dashed border-white/20 flex flex-col items-center justify-center text-slate-400 text-center transition-opacity duration-200 ${loading ? 'opacity-50' : ''}`}>
-          <svg aria-hidden="true" className="w-12 h-12 mb-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        <div
+          className={`mt-8 p-8 bg-white/5 rounded-xl border border-dashed border-white/20 flex flex-col items-center justify-center text-slate-400 text-center transition-opacity duration-200 ${loading ? "opacity-50" : ""}`}
+        >
+          <svg
+            aria-hidden="true"
+            className="w-12 h-12 mb-3 text-slate-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
           </svg>
           <p>Ready to optimize.</p>
-          <p className="text-sm mt-1 opacity-75">Enter your parameters above and click <strong>Solve</strong> to generate the solution.</p>
+          <p className="text-sm mt-1 opacity-75">
+            Enter your parameters above and click <strong>Solve</strong> to
+            generate the solution.
+          </p>
         </div>
       )}
 
       {result && (
-        <div className={`mt-8 p-6 bg-black/20 rounded-xl border border-white/5 transition-opacity duration-200 ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
+        <div
+          className={`mt-8 p-6 bg-black/20 rounded-xl border border-white/5 transition-opacity duration-200 ${loading ? "opacity-50 pointer-events-none" : ""}`}
+        >
           <h3
             className="text-xl font-bold mb-4 text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-sm"
             tabIndex="-1"
@@ -156,30 +250,51 @@ const StochasticSolver = () => {
           <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-white/5 p-4 rounded-lg">
               <dt className="text-slate-400 block text-sm">Status</dt>
-              <dd className={`text-lg font-semibold ${result.success ? 'text-green-400' : 'text-red-400'}`}>
+              <dd
+                className={`text-lg font-semibold ${result.success ? "text-green-400" : "text-red-400"}`}
+              >
                 {result.success ? "Optimal" : "Failed"}
               </dd>
             </div>
             <div className="bg-white/5 p-4 rounded-lg">
               <dt className="text-slate-400 block text-sm">Expected Profit</dt>
-              <dd className="text-lg font-semibold text-white">{result.expected_profit !== null ? `$${result.expected_profit.toFixed(2)}` : "N/A"}</dd>
+              <dd className="text-lg font-semibold text-white">
+                {result.expected_profit !== null
+                  ? `$${result.expected_profit.toFixed(2)}`
+                  : "N/A"}
+              </dd>
             </div>
             <div className="col-span-1 md:col-span-2 bg-white/5 p-4 rounded-lg">
               <dt className="flex justify-between items-center mb-1">
-                <span className="text-slate-400 block text-sm">Acres Allocation</span>
+                <span className="text-slate-400 block text-sm">
+                  Acres Allocation
+                </span>
                 <button
                   type="button"
                   onClick={handleCopyAllocation}
-                  className={`text-xs px-2 py-1 rounded transition-colors focus:outline-none focus-visible:ring-2 ${copied ? 'bg-green-500/20 hover:bg-green-500/30 text-green-300 focus-visible:ring-green-400' : 'bg-white/10 hover:bg-white/20 text-cyan-300 focus-visible:ring-cyan-400'}`}
-                  aria-label={copied ? "Copied allocation to clipboard" : "Copy allocation to clipboard"}
+                  className={`text-xs px-2 py-1 rounded transition-colors focus:outline-none focus-visible:ring-2 ${copied ? "bg-green-500/20 hover:bg-green-500/30 text-green-300 focus-visible:ring-green-400" : "bg-white/10 hover:bg-white/20 text-cyan-300 focus-visible:ring-cyan-400"}`}
+                  aria-label={
+                    copied
+                      ? "Copied allocation to clipboard"
+                      : "Copy allocation to clipboard"
+                  }
                 >
                   {copied ? "Copied!" : "Copy"}
                 </button>
-                <span aria-live="polite" className="sr-only">{copied ? "Copied to clipboard" : ""}</span>
+                <span aria-live="polite" className="sr-only">
+                  {copied ? "Copied to clipboard" : ""}
+                </span>
               </dt>
               <dd>
-                <span className="text-lg font-semibold text-cyan-300 overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" tabIndex={0} role="region" aria-label="Solution code">
-                  {result.x && result.x.length >= 3 ? `Wheat: ${result.x[0] !== null && result.x[0] !== undefined ? result.x[0].toFixed(1) : "N/A"}, Corn: ${result.x[1] !== null && result.x[1] !== undefined ? result.x[1].toFixed(1) : "N/A"}, Beets: ${result.x[2] !== null && result.x[2] !== undefined ? result.x[2].toFixed(1) : "N/A"}` : "None"}
+                <span
+                  className="text-lg font-semibold text-cyan-300 overflow-x-auto block focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                  tabIndex={0}
+                  role="region"
+                  aria-label="Solution code"
+                >
+                  {result.x && result.x.length >= 3
+                    ? `Wheat: ${result.x[0] !== null && result.x[0] !== undefined ? result.x[0].toFixed(1) : "N/A"}, Corn: ${result.x[1] !== null && result.x[1] !== undefined ? result.x[1].toFixed(1) : "N/A"}, Beets: ${result.x[2] !== null && result.x[2] !== undefined ? result.x[2].toFixed(1) : "N/A"}`
+                    : "None"}
                 </span>
               </dd>
             </div>
@@ -187,8 +302,15 @@ const StochasticSolver = () => {
 
           {result.plot && (
             <div>
-              <h4 className="text-lg font-semibold mb-3 text-slate-200">Decision & Profit Distribution</h4>
-              <img src={`data:image/png;base64,${result.plot}`} alt="Stochastic Plots" tabIndex={0} className="w-full rounded-lg border border-white/20 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400" />
+              <h4 className="text-lg font-semibold mb-3 text-slate-200">
+                Decision & Profit Distribution
+              </h4>
+              <img
+                src={`data:image/png;base64,${result.plot}`}
+                alt="Stochastic Plots"
+                tabIndex={0}
+                className="w-full rounded-lg border border-white/20 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              />
             </div>
           )}
         </div>
