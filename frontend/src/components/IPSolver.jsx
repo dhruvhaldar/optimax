@@ -77,6 +77,7 @@ const IPSolver = () => {
           autoCorrect="off"
           autoCapitalize="none"
           required className="glass-input w-full"
+          disabled={loading}
         />
       </div>
       <div className="mb-4">
@@ -92,6 +93,7 @@ const IPSolver = () => {
           autoCorrect="off"
           autoCapitalize="none"
           required className="glass-input w-full font-mono"
+          disabled={loading}
         />
       </div>
       <div className="mb-4">
@@ -107,6 +109,7 @@ const IPSolver = () => {
           autoCorrect="off"
           autoCapitalize="none"
           required className="glass-input w-full"
+          disabled={loading}
         />
       </div>
       <fieldset className="mb-6">
@@ -119,7 +122,8 @@ const IPSolver = () => {
               name="ip-objective-direction"
               checked={maximize === true}
               onChange={() => setMaximize(true)}
-              className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10"
+              className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
             />
             <span className="text-slate-300">Maximize</span>
           </label>
@@ -130,7 +134,8 @@ const IPSolver = () => {
               name="ip-objective-direction"
               checked={maximize === false}
               onChange={() => setMaximize(false)}
-              className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10"
+              className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
             />
             <span className="text-slate-300">Minimize</span>
           </label>

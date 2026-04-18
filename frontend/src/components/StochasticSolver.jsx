@@ -89,6 +89,7 @@ const StochasticSolver = () => {
           value={land}
           onChange={e => setLand(e.target.value)}
           required className="glass-input w-full"
+          disabled={loading}
         />
       </div>
       <div className="mb-4">
@@ -104,6 +105,7 @@ const StochasticSolver = () => {
           autoCorrect="off"
           autoCapitalize="none"
           required className="glass-input w-full font-mono text-sm leading-relaxed"
+          disabled={loading}
         />
       </div>
       <button
