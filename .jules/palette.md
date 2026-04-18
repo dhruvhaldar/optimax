@@ -17,3 +17,6 @@
 ## 2024-04-08 - Added explicit required indicators to form fields
 **Learning:** Native HTML5 `required` attributes convey requirement state to screen readers programmatically, but this isn't visible to sighted users unless explicitly styled. Duplicated `required` attributes and hidden `className="..."` inside elements were also observed.
 **Action:** Always append a visible indicator, such as `<span aria-hidden="true">*</span>`, to the labels of required inputs to ensure visual accessibility without double-announcing to screen readers.
+## 2024-05-16 - Prevent Concurrent Edits During Async Operations
+**Learning:** Users may unintentionally edit input fields while a solver request is in flight, which creates a mismatch between the visible form state and the background execution context, leading to confusion when the result renders.
+**Action:** Always apply `disabled={loading}` to all `<input>`, `<textarea>`, and form elements during async operations alongside the submit button. Combine this with `disabled:opacity-50 disabled:cursor-not-allowed` (or similar visual feedback) to clearly communicate the locked state.
