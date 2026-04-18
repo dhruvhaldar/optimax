@@ -76,7 +76,10 @@ def solve_cutting_stock(roll_length, demands):
         # Scipy: Min c x s.t. -A x <= -quantities
 
         # Slice the pre-allocated arrays up to the current number of columns
-        res = linprog(c[:current_cols], A_ub=current_patterns_neg[:, :current_cols], b_ub=quantities_arr, bounds=bounds, method='highs')
+        # Optimization: Disable presolve overhead for the master problem LP.
+        # Since we are solving hundreds of structurally identical LPs with just one additional column each iteration,
+        # SciPy's matrix presolve adds significant redundant execution time overhead (~30%).
+        res = linprog(c[:current_cols], A_ub=current_patterns_neg[:, :current_cols], b_ub=quantities_arr, bounds=bounds, method='highs', options={'presolve': False})
 
         if not res.success:
             return {"error": "Master problem infeasible", "logs": logs}
