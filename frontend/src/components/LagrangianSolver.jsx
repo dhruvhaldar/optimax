@@ -77,7 +77,7 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required className="glass-input w-full font-mono"
+          disabled={loading} required className="glass-input w-full font-mono disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
       <div className="mb-4">
@@ -92,7 +92,7 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required className="glass-input w-full font-mono"
+          disabled={loading} required className="glass-input w-full font-mono disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
       <div className="mb-4">
@@ -107,7 +107,7 @@ const LagrangianSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required className="glass-input w-full"
+          disabled={loading} required className="glass-input w-full disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
       <button

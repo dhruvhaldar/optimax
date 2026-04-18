@@ -76,7 +76,7 @@ const IPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required className="glass-input w-full"
+          disabled={loading} required className="glass-input w-full disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
       <div className="mb-4">
@@ -91,7 +91,7 @@ const IPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required className="glass-input w-full font-mono"
+          disabled={loading} required className="glass-input w-full font-mono disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
       <div className="mb-4">
@@ -106,10 +106,10 @@ const IPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
-          required className="glass-input w-full"
+          disabled={loading} required className="glass-input w-full disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
-      <fieldset className="mb-6">
+      <fieldset className="mb-6" disabled={loading}>
         <legend className="block text-sm font-medium text-slate-300 mb-2">Objective Direction:</legend>
         <div className="flex items-center space-x-6">
           <label htmlFor="ip-maximize" className="flex items-center space-x-3 cursor-pointer">
@@ -119,7 +119,7 @@ const IPSolver = () => {
               name="ip-objective-direction"
               checked={maximize === true}
               onChange={() => setMaximize(true)}
-              className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10"
+              className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
             />
             <span className="text-slate-300">Maximize</span>
           </label>
@@ -130,7 +130,7 @@ const IPSolver = () => {
               name="ip-objective-direction"
               checked={maximize === false}
               onChange={() => setMaximize(false)}
-              className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10"
+              className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
             />
             <span className="text-slate-300">Minimize</span>
           </label>
