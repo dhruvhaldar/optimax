@@ -113,3 +113,7 @@
 ## 2025-06-03 - [Disable SciPy milp presolve for Branch and Bound relaxations]
 **Learning:** When using `scipy.optimize.linprog` repeatedly to solve structurally identical LP relaxations during a Branch and Bound tree traversal (like in `api/solvers/ip.py`), the default presolve phase adds significant overhead (e.g., ~25-30% of total execution time). The presolver attempts to simplify the constraint matrix on every iteration, which is mostly redundant since only the variable bounds change slightly between nodes.
 **Action:** Pass `options={'presolve': False}` to `linprog` in tight loops for Branch and Bound solvers to bypass the redundant setup overhead and speed up the total solve time.
+
+## 2025-06-03 - [Disable SciPy linprog presolve for Column Generation Master LPs]
+**Learning:** For iterative algorithms like Column Generation that repeatedly solve a Master LP with only minor incremental changes (e.g., adding one column at a time), the default `presolve` phase in `scipy.optimize.linprog` adds unnecessary overhead. Since we repeatedly solve structurally similar LPs, this matrix simplification is redundant.
+**Action:** Pass `options={'presolve': False}` to `linprog` in tight loops for the Master LP in Column Generation to bypass the redundant setup overhead and speed up the total execution.
