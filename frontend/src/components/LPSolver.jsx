@@ -76,6 +76,7 @@ const LPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          disabled={loading}
           required className="glass-input w-full"
         />
       </div>
@@ -91,6 +92,7 @@ const LPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          disabled={loading}
           required className="glass-input w-full font-mono"
         />
       </div>
@@ -106,10 +108,11 @@ const LPSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          disabled={loading}
           required className="glass-input w-full"
         />
       </div>
-      <fieldset className="mb-6">
+      <fieldset className="mb-6 disabled:opacity-50 disabled:cursor-not-allowed" disabled={loading}>
         <legend className="block text-sm font-medium text-slate-300 mb-2">Objective Direction:</legend>
         <div className="flex items-center space-x-6">
           <label htmlFor="lp-maximize" className="flex items-center space-x-3 cursor-pointer">
@@ -119,6 +122,7 @@ const LPSolver = () => {
               name="lp-objective-direction"
               checked={maximize === true}
               onChange={() => setMaximize(true)}
+              disabled={loading}
               className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10"
             />
             <span className="text-slate-300">Maximize</span>
@@ -130,6 +134,7 @@ const LPSolver = () => {
               name="lp-objective-direction"
               checked={maximize === false}
               onChange={() => setMaximize(false)}
+              disabled={loading}
               className="form-radio h-5 w-5 text-cyan-500 rounded-full border-gray-300 focus:ring-cyan-500 bg-white/10"
             />
             <span className="text-slate-300">Minimize</span>

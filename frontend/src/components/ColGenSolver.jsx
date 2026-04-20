@@ -73,6 +73,7 @@ const ColGenSolver = () => {
           value={rollLength}
           onChange={e => setRollLength(e.target.value)}
           placeholder="e.g. 15"
+          disabled={loading}
           required className="glass-input w-full"
         />
       </div>
@@ -88,6 +89,7 @@ const ColGenSolver = () => {
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
+          disabled={loading}
           required className="glass-input w-full font-mono"
         />
       </div>

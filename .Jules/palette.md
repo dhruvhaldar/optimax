@@ -34,3 +34,7 @@
 ## 2026-04-15 - Support Continuous Values in Number Inputs
 **Learning:** HTML5 `<input type="number">` elements default to `step="1"`. If a user enters a decimal value (e.g., 1.5) for continuous quantities like land area or roll length, native browser validation will block the form submission with an obscure "Please enter a valid value" error, even if the backend uses `parseFloat()`.
 **Action:** Always add `step="any"` to number inputs meant for continuous or fractional data. Additionally, explicitly set `min="0"` for logically non-negative quantities to provide immediate native validation feedback before submission.
+
+## 2026-04-20 - Lock Form Inputs During Async Operations
+**Learning:** During asynchronous operations (e.g., solver loading states), explicitly applying the native `disabled` attribute (e.g., `disabled={loading}`) to all form inputs (`<input>`, `<textarea>`, and `<fieldset>`) prevents accidental user edits while a request is in flight. Combining this with visual CSS feedback (e.g., `disabled:opacity-50 disabled:cursor-not-allowed`) clearly communicates the locked state and prevents user confusion.
+**Action:** Always add `disabled={loading}` and appropriate visual feedback CSS to all form inputs (not just the submit button) when waiting for an async operation to complete.
