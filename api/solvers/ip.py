@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import heapq
 from collections import deque
 from scipy.optimize import linprog
@@ -242,8 +243,9 @@ def solve_ip(c, A_ub, b_ub, maximize=True, max_nodes=1000, skip_plot=False):
             # Ensure we actually found a fractional variable (though is_integer check above should cover this)
             if dist[idx] > 1e-5:
                 current_node.status = "branched"
-                val_floor = int(np.floor(res.x[idx]))
-                val_ceil = int(np.ceil(res.x[idx]))
+                # Optimization: Use math.floor/ceil instead of np.floor/ceil to eliminate numpy overhead on scalars
+                val_floor = math.floor(res.x[idx])
+                val_ceil = math.ceil(res.x[idx])
 
                 # Left child: x[idx] <= floor
                 left_bounds = current_node.bounds.copy()

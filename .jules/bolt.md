@@ -117,3 +117,7 @@
 ## 2025-06-03 - [Disable SciPy linprog presolve for Column Generation Master LPs]
 **Learning:** For iterative algorithms like Column Generation that repeatedly solve a Master LP with only minor incremental changes (e.g., adding one column at a time), the default `presolve` phase in `scipy.optimize.linprog` adds unnecessary overhead. Since we repeatedly solve structurally similar LPs, this matrix simplification is redundant.
 **Action:** Pass `options={'presolve': False}` to `linprog` in tight loops for the Master LP in Column Generation to bypass the redundant setup overhead and speed up the total execution.
+
+## 2025-06-04 - [math.floor vs np.floor in tight loops]
+**Learning:** Inside tight iterative loops (like Branch and Bound tree traversal), always use standard Python `math.floor` and `math.ceil` instead of `np.floor` and `np.ceil` when operating on scalar values. NumPy functions incur significant dispatch and boxing/unboxing overhead for scalars, making them noticeably slower.
+**Action:** Replace `np.floor` and `np.ceil` with standard python `math.floor` and `math.ceil` when operating on scalar values inside tight loops. Since `math.floor` and `math.ceil` natively return integers, it also eliminates the need for an explicit `int()` cast.
