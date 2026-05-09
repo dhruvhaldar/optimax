@@ -61,5 +61,20 @@ class TestPayloadSizeLimit(unittest.TestCase):
         self.assertEqual(response.status_code, 411)
         self.assertEqual(response.json()["detail"], "Chunked encoding not supported")
 
+    def test_chunked_bypass_with_content_length(self):
+        # Test bypassing chunked check by providing a Content-Length header
+        # The RFC 7230 says Transfer-Encoding overrides Content-Length.
+        # If the check is an 'elif', it might be skipped if Content-Length is present.
+        headers = {
+            "Content-Length": "100",
+            "Transfer-Encoding": "chunked"
+        }
+        # Using GET /api/health to avoid Pydantic validation errors (422) that might obscure the 411
+        response = self.client.get("/api/health", headers=headers)
+
+        # It should still be blocked by our middleware (411)
+        self.assertEqual(response.status_code, 411)
+        self.assertEqual(response.json()["detail"], "Chunked encoding not supported")
+
 if __name__ == '__main__':
     unittest.main()
