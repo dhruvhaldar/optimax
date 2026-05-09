@@ -14,8 +14,11 @@ def solve_lagrangian(costs, weights, capacities):
     weights: n_tasks x n_agents (list of lists)
     capacities: n_agents (list)
     """
-    costs = np.array(costs)
-    weights = np.array(weights)
+    # Optimization: Initialize costs and weights as Fortran-contiguous arrays so that
+    # subsequent `.ravel('F')` calls return a zero-copy memory view rather than
+    # triggering expensive deep copies, especially inside tight iteration loops.
+    costs = np.array(costs, order='F')
+    weights = np.array(weights, order='F')
     capacities = np.array(capacities)
 
     # Security: Validate dimensions to prevent IndexError (DoS)

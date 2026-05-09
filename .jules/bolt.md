@@ -121,3 +121,7 @@
 ## 2025-06-04 - [math.floor vs np.floor in tight loops]
 **Learning:** Inside tight iterative loops (like Branch and Bound tree traversal), always use standard Python `math.floor` and `math.ceil` instead of `np.floor` and `np.ceil` when operating on scalar values. NumPy functions incur significant dispatch and boxing/unboxing overhead for scalars, making them noticeably slower.
 **Action:** Replace `np.floor` and `np.ceil` with standard python `math.floor` and `math.ceil` when operating on scalar values inside tight loops. Since `math.floor` and `math.ceil` natively return integers, it also eliminates the need for an explicit `int()` cast.
+
+## 2025-06-05 - [Pre-allocate Fortran-contiguous arrays for zero-copy flattening]
+**Learning:** In the Lagrangian Relaxation solver, `np.array()` natively defaults to C-contiguous memory order. When flattening these arrays later with `.ravel('F')` (e.g. to convert matrices to 1D arrays for SciPy `milp`), NumPy is forced to create a deep memory copy because the C-contiguous array cannot be represented as a 1D Fortran-contiguous view. This causes severe, repeated `O(N)` memory allocation overhead inside iteration loops.
+**Action:** When a matrix is going to be repeatedly flattened using `.ravel('F')` inside an iteration loop, explicitly initialize the base matrix as Fortran-contiguous via `np.array(..., order='F')`. This ensures `.ravel('F')` natively returns a zero-copy memory view, completely eliminating the redundant memory allocation overhead.
