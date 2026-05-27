@@ -107,6 +107,7 @@ class LPParams(BaseModel):
     b_ub: BoundedConstraintVector
     bounds: Annotated[Optional[List[Union[List[Optional[SafeFloat]], None]]], Field(max_length=MAX_VARS)] = None
     maximize: bool = False
+    method: Annotated[str, Field(pattern=r"^(highs|highs-ds|highs-ipm)$")] = "highs"
 
 class IPParams(BaseModel):
     c: BoundedFloatList
@@ -143,7 +144,7 @@ def solve_lp_route(params: LPParams):
     bounds = params.bounds
     if bounds:
         bounds = [tuple(b) if b else (0, None) for b in bounds]
-    return lp.solve_lp(params.c, params.A_ub, params.b_ub, bounds, params.maximize)
+    return lp.solve_lp(params.c, params.A_ub, params.b_ub, bounds, params.maximize, params.method)
 
 @app.post("/api/ip", dependencies=[Depends(check_rate_limit)])
 def solve_ip_route(params: IPParams):

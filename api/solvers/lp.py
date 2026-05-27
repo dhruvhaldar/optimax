@@ -5,7 +5,10 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 import io
 import base64
 
-def solve_lp(c, A_ub, b_ub, bounds=None, maximize=False):
+def solve_lp(c, A_ub, b_ub, bounds=None, maximize=False, method="highs"):
+    """
+    method supports: highs, highs-ds (dual simplex), highs-ipm (interior point)
+    """
     """
     Solves a Linear Programming problem:
     Minimize: c^T * x
@@ -23,7 +26,7 @@ def solve_lp(c, A_ub, b_ub, bounds=None, maximize=False):
     if bounds is None:
         bounds = [(0, None)] * len(c)
 
-    res = linprog(c_solver, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method='highs')
+    res = linprog(c_solver, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method=method)
 
     img_b64 = None
     if len(c) == 2 and res.success:

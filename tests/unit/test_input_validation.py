@@ -92,6 +92,17 @@ class TestInputValidation(unittest.TestCase):
         response_low = self.client.post("/api/stochastic", json=payload_low)
         self.assertEqual(response_low.status_code, 422)
 
+    def test_lp_method_validation(self):
+        payload = {
+            "c": [3, 2],
+            "A_ub": [[2, 1], [1, 1], [1, 0]],
+            "b_ub": [100, 80, 40],
+            "maximize": True,
+            "method": "invalid-method"
+        }
+        response = self.client.post("/api/lp", json=payload)
+        self.assertEqual(response.status_code, 422)
+
     def test_lagrangian_dimension_mismatch(self):
         """Test that lagrangian solver validates dimensions properly to prevent 500 error."""
         payload = {

@@ -9,6 +9,7 @@ const LPSolver = () => {
   const [A, setA] = useState("[[2, 1], [1, 1], [1, 0]]");
   const [b, setB] = useState("[100, 80, 40]");
   const [maximize, setMaximize] = useState(true);
+  const [method, setMethod] = useState("highs");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -30,7 +31,7 @@ const LPSolver = () => {
     setLoading(true);
     setError(null);
     setInvalidField(null);
-    let payload = { maximize };
+    let payload = { maximize, method };
 
     try {
       payload.c = JSON.parse(c);
@@ -173,6 +174,20 @@ const LPSolver = () => {
           </label>
         </div>
       </fieldset>
+      <div className="mb-6">
+        <label htmlFor="lp-method" className="block text-sm font-medium text-slate-300 mb-2">LP Method:</label>
+        <select
+          id="lp-method"
+          value={method}
+          onChange={e => setMethod(e.target.value)}
+          disabled={loading}
+          className="glass-input w-full"
+        >
+          <option value="highs">HiGHS Auto</option>
+          <option value="highs-ds">Dual Simplex (highs-ds)</option>
+          <option value="highs-ipm">Interior Point (highs-ipm)</option>
+        </select>
+      </div>
       <button
         className={`glass-btn-primary w-full md:w-auto flex items-center justify-center gap-2 ${loading ? 'opacity-80 cursor-wait' : ''}`}
         type="submit"
