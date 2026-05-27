@@ -13,10 +13,18 @@ class TestSolvers(unittest.TestCase):
         c = [3, 2]
         A = [[2, 1], [1, 1], [1, 0]]
         b = [100, 80, 40]
-        res = lp.solve_lp(c, A, b, maximize=True)
+        res = lp.solve_lp(c, A, b, maximize=True, method='highs-ds')
         self.assertTrue(res['success'])
         self.assertAlmostEqual(res['fun'], 180.0, places=1)
         self.assertIsNotNone(res['plot'])
+
+    def test_solve_lp_interior_point(self):
+        c = [3, 2]
+        A = [[2, 1], [1, 1], [1, 0]]
+        b = [100, 80, 40]
+        res = lp.solve_lp(c, A, b, maximize=True, method='highs-ipm')
+        self.assertTrue(res['success'])
+        self.assertAlmostEqual(res['fun'], 180.0, places=1)
 
     def test_solve_ip(self):
         c = [5, 8]
