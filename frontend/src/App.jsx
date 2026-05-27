@@ -27,6 +27,14 @@ const TABS = [
   { id: 'stochastic', label: 'Stochastic Prog' },
 ];
 
+const CAPABILITIES = [
+  'Solve Linear Programming models via Simplex',
+  'Run Integer Programming with Branch & Bound',
+  'Experiment with Column Generation workflows',
+  'Apply Lagrangian Relaxation techniques',
+  'Compare decisions under stochastic scenarios',
+];
+
 function App() {
   const [activeTab, setActiveTab] = useState('lp');
   const [visitedTabs, setVisitedTabs] = useState(new Set(['lp']));
@@ -61,6 +69,17 @@ function App() {
         </h1>
         <p className="text-slate-300 text-lg">Applied Linear Optimization - Solver & Visualizer</p>
       </header>
+
+      <section aria-label="Library capabilities" className="glass-panel p-6 mb-8">
+        <h2 className="text-2xl font-semibold text-cyan-200 mb-4">What this frontend showcases</h2>
+        <ul className="grid gap-3 md:grid-cols-2">
+          {CAPABILITIES.map((capability) => (
+            <li key={capability} className="rounded-lg bg-white/5 border border-white/10 p-3 text-slate-200">
+              {capability}
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <div role="tablist" aria-label="Solver selection" className="flex flex-wrap justify-center gap-4 mb-8">
         {TABS.map((tab, index) => (
@@ -119,6 +138,23 @@ function App() {
           </div>
         </Suspense>
       </main>
+
+      <footer className="mt-8 glass-panel p-4 text-center text-slate-300 text-sm">
+        <p>
+          <a href="https://github.com/dhruvhaldar/optimax" target="_blank" rel="noreferrer" className="text-cyan-300 hover:text-cyan-200 underline">
+            GitHub Repository
+          </a>
+          {' · '}
+          <a href="https://github.com/dhruvhaldar/optimax/blob/main/LICENSE" target="_blank" rel="noreferrer" className="text-cyan-300 hover:text-cyan-200 underline">
+            MIT License
+          </a>
+          {' · '}
+          Built by{' '}
+          <a href="https://dhruvhaldar.vercel.app/" target="_blank" rel="noreferrer" className="text-cyan-300 hover:text-cyan-200 underline">
+            Dhruv Haldar
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }
