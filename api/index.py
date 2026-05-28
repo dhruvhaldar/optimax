@@ -42,7 +42,8 @@ async def limit_request_size(request: Request, call_next):
                 status_code=400,
                 content={"detail": "Invalid Content-Length header"},
             )
-    if "chunked" in request.headers.get("transfer-encoding", "").lower():
+    transfer_encodings = request.headers.getlist("transfer-encoding")
+    if any("chunked" in te.lower() for te in transfer_encodings):
         # Security: Prevent payload limit bypass via chunked encoding or multiple encodings
         return JSONResponse(
             status_code=411,
