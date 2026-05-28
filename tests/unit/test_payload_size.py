@@ -76,5 +76,17 @@ class TestPayloadSizeLimit(unittest.TestCase):
         self.assertEqual(response.status_code, 411)
         self.assertEqual(response.json()["detail"], "Chunked encoding not supported")
 
+    def test_chunked_bypass_multiple_headers(self):
+        # httpx allows sending multiple headers with the same name if provided as a list of tuples
+        headers = [
+            ("transfer-encoding", "gzip"),
+            ("transfer-encoding", "chunked")
+        ]
+        response = self.client.get("/api/health", headers=headers)
+
+        # It should still be blocked by our middleware (411)
+        self.assertEqual(response.status_code, 411)
+        self.assertEqual(response.json()["detail"], "Chunked encoding not supported")
+
 if __name__ == '__main__':
     unittest.main()
