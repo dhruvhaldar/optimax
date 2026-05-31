@@ -11,6 +11,7 @@ const LagrangianSolver = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [invalidField, setInvalidField] = useState(null);
   const [copied, setCopied] = useState(false);
 
   const resultRef = useResultFocus(loading, result);
@@ -30,15 +31,32 @@ const LagrangianSolver = () => {
     if (loading) return;
     setLoading(true);
     setError(null);
-    let payload;
+    setInvalidField(null);
+    let payload = {};
+
     try {
-      payload = {
-        costs: JSON.parse(costs),
-        weights: JSON.parse(weights),
-        capacities: JSON.parse(capacities)
-      };
+      payload.costs = JSON.parse(costs);
     } catch (err) {
-      setError("Invalid input format. Please ensure all matrices and vectors are formatted as valid JSON (e.g., [1, 2] or [[1, 2], [3, 4]]).");
+      setError("Invalid JSON format in Costs (Task x Agent).");
+      setInvalidField('costs');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      payload.weights = JSON.parse(weights);
+    } catch (err) {
+      setError("Invalid JSON format in Weights (Task x Agent).");
+      setInvalidField('weights');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      payload.capacities = JSON.parse(capacities);
+    } catch (err) {
+      setError("Invalid JSON format in Agent Capacities.");
+      setInvalidField('capacities');
       setLoading(false);
       return;
     }
@@ -71,14 +89,22 @@ const LagrangianSolver = () => {
           id="lagrangian-costs"
           rows="3"
           value={costs}
-          onChange={e => setCosts(e.target.value)}
+          onChange={e => {
+            setCosts(e.target.value);
+            if (invalidField === 'costs') {
+              setInvalidField(null);
+              setError(null);
+            }
+          }}
           placeholder="[[c11, c12], [c21, c22]]"
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
           disabled={loading}
-          required className="glass-input w-full font-mono"
+          aria-invalid={invalidField === 'costs' ? "true" : "false"}
+          aria-describedby={invalidField === 'costs' ? "lagrangian-error" : undefined}
+          required className={`glass-input w-full font-mono ${invalidField === 'costs' ? '!border-red-400 focus:!ring-red-400' : ''}`}
         />
       </div>
       <div className="mb-4">
@@ -87,14 +113,22 @@ const LagrangianSolver = () => {
           id="lagrangian-weights"
           rows="3"
           value={weights}
-          onChange={e => setWeights(e.target.value)}
+          onChange={e => {
+            setWeights(e.target.value);
+            if (invalidField === 'weights') {
+              setInvalidField(null);
+              setError(null);
+            }
+          }}
           placeholder="[[w11, w12], [w21, w22]]"
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
           disabled={loading}
-          required className="glass-input w-full font-mono"
+          aria-invalid={invalidField === 'weights' ? "true" : "false"}
+          aria-describedby={invalidField === 'weights' ? "lagrangian-error" : undefined}
+          required className={`glass-input w-full font-mono ${invalidField === 'weights' ? '!border-red-400 focus:!ring-red-400' : ''}`}
         />
       </div>
       <div className="mb-4">
@@ -103,14 +137,22 @@ const LagrangianSolver = () => {
           id="lagrangian-capacities"
           type="text"
           value={capacities}
-          onChange={e => setCapacities(e.target.value)}
+          onChange={e => {
+            setCapacities(e.target.value);
+            if (invalidField === 'capacities') {
+              setInvalidField(null);
+              setError(null);
+            }
+          }}
           placeholder="[C1, C2]"
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
           disabled={loading}
-          required className="glass-input w-full"
+          aria-invalid={invalidField === 'capacities' ? "true" : "false"}
+          aria-describedby={invalidField === 'capacities' ? "lagrangian-error" : undefined}
+          required className={`glass-input w-full ${invalidField === 'capacities' ? '!border-red-400 focus:!ring-red-400' : ''}`}
         />
       </div>
       <button
@@ -136,7 +178,7 @@ const LagrangianSolver = () => {
       </button>
 
       {error && (
-        <div role="alert" aria-live="assertive" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+        <div id="lagrangian-error" role="alert" aria-live="assertive" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
           Error: {error}
         </div>
       )}

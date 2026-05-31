@@ -41,3 +41,7 @@
 ## 2026-08-16 - Field-Level Form Error Specificity
 **Learning:** Applying form-wide generic error messages for inputs parsing structured data (like JSON or matrices) makes it difficult for users to identify which exact field failed validation. Further, relying only on standard classes (e.g., `border-red-400`) for visual validation can fail if existing generic input classes (like `.glass-input`) have higher CSS specificity.
 **Action:** Handle validation errors at the individual field level using `try-catch` per field. Apply `aria-invalid="true"`, link a specific error message via `aria-describedby`, and use `!important` classes (e.g., `!border-red-400 focus:!ring-red-400`) if necessary to override base classes and apply a visual error state directly to the invalid input. Clear the error state immediately `onChange`.
+
+## 2024-05-31 - Auto-clear Invalid Field State `onChange`
+**Learning:** When field-level validation applies specific error states to an input, relying on a global form re-submission to clear the error provides a poor experience. Furthermore, only calling `setInvalidField(null)` doesn't automatically clear the main error message display if `setError(null)` isn't called, leading to mixed signals.
+**Action:** Always call both `setInvalidField(null)` and `setError(null)` inside the specific input's `onChange` handler so that visual error states clear immediately as the user begins correcting their input.
