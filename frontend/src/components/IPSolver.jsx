@@ -12,6 +12,7 @@ const IPSolver = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [invalidField, setInvalidField] = useState(null);
   const [copied, setCopied] = useState(false);
 
   const resultRef = useResultFocus(loading, result);
@@ -28,16 +29,32 @@ const IPSolver = () => {
     if (loading) return;
     setLoading(true);
     setError(null);
-    let payload;
+    setInvalidField(null);
+    let payload = { maximize };
+
     try {
-      payload = {
-        c: JSON.parse(c),
-        A_ub: JSON.parse(A),
-        b_ub: JSON.parse(b),
-        maximize: maximize
-      };
+      payload.c = JSON.parse(c);
     } catch (err) {
-      setError("Invalid input format. Please ensure your vectors and matrices are formatted as valid JSON (e.g., [1, 2] or [[1, 2], [3, 4]]).");
+      setError("Invalid JSON format in Objective Coefficients (c).");
+      setInvalidField('c');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      payload.A_ub = JSON.parse(A);
+    } catch (err) {
+      setError("Invalid JSON format in Constraint Matrix (A_ub).");
+      setInvalidField('A');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      payload.b_ub = JSON.parse(b);
+    } catch (err) {
+      setError("Invalid JSON format in Constraint RHS (b_ub).");
+      setInvalidField('b');
       setLoading(false);
       return;
     }
@@ -70,14 +87,19 @@ const IPSolver = () => {
           id="ip-c"
           type="text"
           value={c}
-          onChange={e => setC(e.target.value)}
+          onChange={e => {
+            setC(e.target.value);
+            if (invalidField === 'c') setInvalidField(null);
+          }}
           placeholder="[c1, c2]"
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
           disabled={loading}
-          required className="glass-input w-full"
+          aria-invalid={invalidField === 'c' ? "true" : "false"}
+          aria-describedby={invalidField === 'c' ? "ip-error" : undefined}
+          required className={`glass-input w-full ${invalidField === 'c' ? '!border-red-400 focus:!ring-red-400' : ''}`}
         />
       </div>
       <div className="mb-4">
@@ -86,14 +108,19 @@ const IPSolver = () => {
           id="ip-A"
           rows="3"
           value={A}
-          onChange={e => setA(e.target.value)}
+          onChange={e => {
+            setA(e.target.value);
+            if (invalidField === 'A') setInvalidField(null);
+          }}
           placeholder="[[a11, a12], [a21, a22]]"
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
           disabled={loading}
-          required className="glass-input w-full font-mono"
+          aria-invalid={invalidField === 'A' ? "true" : "false"}
+          aria-describedby={invalidField === 'A' ? "ip-error" : undefined}
+          required className={`glass-input w-full font-mono ${invalidField === 'A' ? '!border-red-400 focus:!ring-red-400' : ''}`}
         />
       </div>
       <div className="mb-4">
@@ -102,14 +129,19 @@ const IPSolver = () => {
           id="ip-b"
           type="text"
           value={b}
-          onChange={e => setB(e.target.value)}
+          onChange={e => {
+            setB(e.target.value);
+            if (invalidField === 'b') setInvalidField(null);
+          }}
           placeholder="[b1, b2]"
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
           disabled={loading}
-          required className="glass-input w-full"
+          aria-invalid={invalidField === 'b' ? "true" : "false"}
+          aria-describedby={invalidField === 'b' ? "ip-error" : undefined}
+          required className={`glass-input w-full ${invalidField === 'b' ? '!border-red-400 focus:!ring-red-400' : ''}`}
         />
       </div>
       <fieldset className="mb-6 disabled:opacity-50 disabled:cursor-not-allowed" disabled={loading}>
@@ -164,7 +196,7 @@ const IPSolver = () => {
       </button>
 
       {error && (
-        <div role="alert" aria-live="assertive" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+        <div id="ip-error" role="alert" aria-live="assertive" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
           Error: {error}
         </div>
       )}
