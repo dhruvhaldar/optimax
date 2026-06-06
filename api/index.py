@@ -28,20 +28,21 @@ MAX_PAYLOAD_SIZE = 2_000_000 # 2MB limit
 @app.middleware("http")
 async def limit_request_size(request: Request, call_next):
     # Security: Protect against DoS by limiting payload size before JSON parsing
-    content_length = request.headers.get("content-length")
-    if content_length:
-        try:
-            if int(content_length) > MAX_PAYLOAD_SIZE:
+    content_lengths = request.headers.getlist("content-length")
+    for content_length in content_lengths:
+        for cl in content_length.split(','):
+            try:
+                if int(cl.strip()) > MAX_PAYLOAD_SIZE:
+                    return JSONResponse(
+                        status_code=413,
+                        content={"detail": "Payload Too Large"},
+                    )
+            except ValueError:
+                # Security: Prevent payload limit bypass via malformed or multiple Content-Length headers
                 return JSONResponse(
-                    status_code=413,
-                    content={"detail": "Payload Too Large"},
+                    status_code=400,
+                    content={"detail": "Invalid Content-Length header"},
                 )
-        except ValueError:
-            # Security: Prevent payload limit bypass via malformed or multiple Content-Length headers
-            return JSONResponse(
-                status_code=400,
-                content={"detail": "Invalid Content-Length header"},
-            )
     transfer_encodings = request.headers.getlist("transfer-encoding")
     if any("chunked" in te.lower() for te in transfer_encodings):
         # Security: Prevent payload limit bypass via chunked encoding or multiple encodings

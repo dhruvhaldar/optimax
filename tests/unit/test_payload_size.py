@@ -44,8 +44,28 @@ class TestPayloadSizeLimit(unittest.TestCase):
         }
         response = self.client.post("/api/lp", json=payload, headers=headers)
 
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json()["detail"], "Invalid Content-Length header")
+        self.assertEqual(response.status_code, 413) # Both are > 2_000_000, so it parses successfully and flags it as too large
+
+    def test_content_length_getlist_bypass(self):
+        # Test bypassing limit by supplying a small content-length first and a large one second
+        # Using httpx list-of-tuples format to send multiple headers with the same name
+        headers = [
+            ("content-length", "10"),
+            ("content-length", "5000000")
+        ]
+
+        # Valid JSON payload so if bypass works it returns 200/422
+        payload = {
+            "c": [1.0, 1.0],
+            "A_ub": [[1.0, 1.0]],
+            "b_ub": [1.0],
+            "maximize": True
+        }
+
+        response = self.client.post("/api/lp", json=payload, headers=headers)
+
+        # It should catch the 5000000 and return 413
+        self.assertEqual(response.status_code, 413)
 
     def test_chunked_encoding_bypass(self):
         # Test bypassing chunked check using multiple encodings
