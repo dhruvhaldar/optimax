@@ -76,7 +76,11 @@ def solve_lagrangian(costs, weights, capacities):
         # Use .ravel('F') instead of .flatten('F') to prevent creating a deep copy in memory.
         c_sub_flat = c_sub_all.ravel('F')
 
-        res = milp(c=c_sub_flat, constraints=all_constraints_sparse, integrality=integrality, bounds=bounds)
+        # Optimization: Disable the default presolve phase in scipy.optimize.milp.
+        # Since we repeatedly solve structurally identical constraint matrices with only
+        # varying objective coefficients, the presolver's attempt to simplify the matrix
+        # is entirely redundant and adds significant overhead per iteration.
+        res = milp(c=c_sub_flat, constraints=all_constraints_sparse, integrality=integrality, bounds=bounds, options={'presolve': False})
 
         if res.success:
             # milp minimizes, so objective value is negative of our maximization target
