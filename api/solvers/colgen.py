@@ -53,8 +53,10 @@ def solve_cutting_stock(roll_length, demands):
     # Optimization: Pre-allocate numpy arrays for the constraint matrix (current_patterns_neg) and objective (c)
     # up to the maximum possible size (n_items + max_iter).
     # This prevents O(N^2) memory reallocation overhead from using np.hstack/np.append inside the tight loop.
+    # Optimization: Initialize as Fortran-contiguous (order='F') so that column slicing ([:, :current_cols])
+    # natively returns a contiguous memory block, completely preventing deep copies inside the linprog solver call.
     max_cols = n_items + max_iter
-    current_patterns_neg = np.zeros((n_items, max_cols))
+    current_patterns_neg = np.zeros((n_items, max_cols), order='F')
     initial_patterns = -np.array(patterns, dtype=float).T
     current_patterns_neg[:, :n_items] = initial_patterns
     c = np.zeros(max_cols)
