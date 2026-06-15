@@ -100,7 +100,9 @@ def solve_lagrangian(costs, weights, capacities):
         # Check Primal Feasibility
         if np.all(g == 0):
             # Feasible
-            cost = np.sum(current_x * costs)
+            # Optimization: Use np.vdot to directly compute the dot product of two matrices,
+            # completely avoiding the O(N) memory allocation overhead from current_x * costs.
+            cost = np.vdot(current_x, costs)
             if cost < ub:
                 ub = cost
                 best_sol = current_x.copy()
