@@ -140,20 +140,32 @@ function App() {
       </main>
 
       <footer className="mt-8 glass-panel p-4 text-center text-slate-300 text-sm">
-        <p>
-          <a href="https://github.com/dhruvhaldar/optimax" target="_blank" rel="noreferrer" className="text-cyan-300 hover:text-cyan-200 underline">
+        <div className="flex flex-wrap justify-center items-center gap-2">
+          <a href="https://github.com/dhruvhaldar/optimax" target="_blank" rel="noreferrer" className="text-cyan-300 hover:text-cyan-200 underline inline-flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-sm">
             GitHub Repository
+            <span className="sr-only">(opens in a new tab)</span>
+            <svg aria-hidden="true" className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </a>
-          {' · '}
-          <a href="https://github.com/dhruvhaldar/optimax/blob/main/LICENSE" target="_blank" rel="noreferrer" className="text-cyan-300 hover:text-cyan-200 underline">
+          <span aria-hidden="true">·</span>
+          <a href="https://github.com/dhruvhaldar/optimax/blob/main/LICENSE" target="_blank" rel="noreferrer" className="text-cyan-300 hover:text-cyan-200 underline inline-flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-sm">
             MIT License
+            <span className="sr-only">(opens in a new tab)</span>
+            <svg aria-hidden="true" className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </a>
-          {' · '}
-          Built by{' '}
-          <a href="https://dhruvhaldar.vercel.app/" target="_blank" rel="noreferrer" className="text-cyan-300 hover:text-cyan-200 underline">
+          <span aria-hidden="true">·</span>
+          <span>Built by{' '}</span>
+          <a href="https://dhruvhaldar.vercel.app/" target="_blank" rel="noreferrer" className="text-cyan-300 hover:text-cyan-200 underline inline-flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-sm">
             Dhruv Haldar
+            <span className="sr-only">(opens in a new tab)</span>
+            <svg aria-hidden="true" className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </a>
-        </p>
+        </div>
       </footer>
     </div>
   );

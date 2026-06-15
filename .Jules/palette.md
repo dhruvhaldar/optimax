@@ -45,3 +45,7 @@
 ## 2024-05-31 - Auto-clear Invalid Field State `onChange`
 **Learning:** When field-level validation applies specific error states to an input, relying on a global form re-submission to clear the error provides a poor experience. Furthermore, only calling `setInvalidField(null)` doesn't automatically clear the main error message display if `setError(null)` isn't called, leading to mixed signals.
 **Action:** Always call both `setInvalidField(null)` and `setError(null)` inside the specific input's `onChange` handler so that visual error states clear immediately as the user begins correcting their input.
+
+## 2026-08-16 - Explicit Context Switches for External Links
+**Learning:** Links that open in a new tab (`target="_blank"`) represent a jarring context switch for users, particularly those using screen readers who may lose their place or history context without warning. Additionally, sighted users benefit from a visual cue indicating they are leaving the current application flow.
+**Action:** Always include a visual indicator (like an external link SVG icon) and explicit, visually hidden screen reader text (e.g., `<span className="sr-only">(opens in a new tab)</span>`) within all external links to ensure context switches are predictable for all users.
