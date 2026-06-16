@@ -118,7 +118,11 @@ def solve_stochastic(total_land, scenarios):
     vals_ub[idx:idx + n_scenarios] = np.ones(n_scenarios)
     b_ub[quota_ub_idx] = beets_quota
 
-    A_ub = sp.coo_matrix((vals_ub, (rows_ub, cols_ub)), shape=(n_ub_constraints, num_vars))
+    # Optimization: Convert the COO matrix to Compressed Sparse Column (CSC) format.
+    # SciPy's HiGHS solver natively operates on CSC sparse matrices. If passed a COO matrix,
+    # the solver internally performs an expensive memory allocation and conversion to CSC.
+    # Doing it preemptively here saves measurable execution time for large scenario counts.
+    A_ub = sp.coo_matrix((vals_ub, (rows_ub, cols_ub)), shape=(n_ub_constraints, num_vars)).tocsc()
 
     # --- Beets Balance Constraints (eq_idx: 0, 1, 2...) ---
     eq_idx = np.arange(n_scenarios)
@@ -134,7 +138,7 @@ def solve_stochastic(total_land, scenarios):
     vals_eq[2::3] = -1.0
     b_eq = np.zeros(n_eq_constraints)
 
-    A_eq = sp.coo_matrix((vals_eq, (rows_eq, cols_eq)), shape=(n_eq_constraints, num_vars))
+    A_eq = sp.coo_matrix((vals_eq, (rows_eq, cols_eq)), shape=(n_eq_constraints, num_vars)).tocsc()
 
     res = linprog(c, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=(0, None), method='highs')
 
