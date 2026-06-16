@@ -56,7 +56,11 @@ def solve_lagrangian(costs, weights, capacities):
     # Optimization: Use .ravel('F') instead of .flatten('F') to return a contiguous view and avoid redundant memory copying.
     vals = weights.ravel('F')
 
-    A_sub_sparse = sp.coo_matrix((vals, (rows, cols)), shape=(n_agents, n_tasks * n_agents))
+    # Optimization: Convert the COO matrix to Compressed Sparse Column (CSC) format once here.
+    # SciPy's HiGHS solver (used by milp) internally operates on CSC matrices. If we pass a COO matrix,
+    # the solver performs an implicit deep copy and conversion to CSC on EVERY iteration of the tight loop.
+    # Pre-converting it here avoids this redundant conversion overhead completely.
+    A_sub_sparse = sp.coo_matrix((vals, (rows, cols)), shape=(n_agents, n_tasks * n_agents)).tocsc()
     b_l = np.full(n_agents, -np.inf)
     b_u = capacities
     all_constraints_sparse = LinearConstraint(A_sub_sparse, b_l, b_u)
