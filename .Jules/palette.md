@@ -49,3 +49,6 @@
 ## 2026-08-16 - Explicit Context Switches for External Links
 **Learning:** Links that open in a new tab (`target="_blank"`) represent a jarring context switch for users, particularly those using screen readers who may lose their place or history context without warning. Additionally, sighted users benefit from a visual cue indicating they are leaving the current application flow.
 **Action:** Always include a visual indicator (like an external link SVG icon) and explicit, visually hidden screen reader text (e.g., `<span className="sr-only">(opens in a new tab)</span>`) within all external links to ensure context switches are predictable for all users.
+## 2026-06-17 - Field-Level JSON Validation Errors
+**Learning:** When forms involve textareas containing complex strings (like JSON arrays or matrices), handling validation errors at the individual field level with explicit visual (e.g. red borders) and semantic (aria-invalid, aria-describedby) feedback drastically improves the user experience. Relying solely on global error messages forces users to hunt for the specific problematic input.
+**Action:** Apply targeted error states (e.g., `invalidField`) directly to invalid inputs for structured data formats and clear the error state immediately `onChange` to provide rapid feedback as the user corrects the input.

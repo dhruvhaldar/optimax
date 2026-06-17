@@ -10,6 +10,7 @@ const ColGenSolver = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [invalidField, setInvalidField] = useState(null);
   const [copied, setCopied] = useState(false);
 
   const resultRef = useResultFocus(loading, result);
@@ -29,6 +30,7 @@ const ColGenSolver = () => {
     if (loading) return;
     setLoading(true);
     setError(null);
+    setInvalidField(null);
     let payload;
     try {
       payload = {
@@ -37,6 +39,7 @@ const ColGenSolver = () => {
       };
     } catch (err) {
       setError("Invalid input format. Please ensure demands are formatted as a valid JSON matrix (e.g., [[3, 25], [5, 20]]).");
+      setInvalidField('demands');
       setLoading(false);
       return;
     }
@@ -83,14 +86,19 @@ const ColGenSolver = () => {
           id="colgen-demands"
           rows="3"
           value={demands}
-          onChange={e => setDemands(e.target.value)}
+          onChange={e => {
+            setDemands(e.target.value);
+            if (invalidField === 'demands') setInvalidField(null);
+          }}
           placeholder="[[width, qty], ...]"
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
           disabled={loading}
-          required className="glass-input w-full font-mono"
+          aria-invalid={invalidField === 'demands' ? "true" : "false"}
+          aria-describedby={invalidField === 'demands' ? "colgen-error" : undefined}
+          required className={`glass-input w-full font-mono ${invalidField === 'demands' ? '!border-red-400 focus:!ring-red-400' : ''}`}
         />
       </div>
       <button
@@ -116,7 +124,7 @@ const ColGenSolver = () => {
       </button>
 
       {error && (
-        <div role="alert" aria-live="assertive" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+        <div id="colgen-error" role="alert" aria-live="assertive" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
           Error: {error}
         </div>
       )}

@@ -26,6 +26,7 @@ const StochasticSolver = () => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [invalidField, setInvalidField] = useState(null);
   const [copied, setCopied] = useState(false);
 
   const resultRef = useResultFocus(loading, result);
@@ -45,6 +46,7 @@ const StochasticSolver = () => {
     if (loading) return;
     setLoading(true);
     setError(null);
+    setInvalidField(null);
     let payload;
     try {
       payload = {
@@ -53,6 +55,7 @@ const StochasticSolver = () => {
       };
     } catch (err) {
       setError("Invalid JSON format in Scenarios. Please check for missing quotes, commas, or brackets.");
+      setInvalidField('scenarios');
       setLoading(false);
       return;
     }
@@ -98,14 +101,19 @@ const StochasticSolver = () => {
           id="stochastic-scenarios"
           rows="15"
           value={scenarios}
-          onChange={e => setScenarios(e.target.value)}
+          onChange={e => {
+            setScenarios(e.target.value);
+            if (invalidField === 'scenarios') setInvalidField(null);
+          }}
           placeholder={'[{"name": "Scenario1", "probability": 0.5, "yields": [1.0, 2.0]}, ...]'}
           spellCheck={false}
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="none"
           disabled={loading}
-          required className="glass-input w-full font-mono text-sm leading-relaxed"
+          aria-invalid={invalidField === 'scenarios' ? "true" : "false"}
+          aria-describedby={invalidField === 'scenarios' ? "stochastic-error" : undefined}
+          required className={`glass-input w-full font-mono text-sm leading-relaxed ${invalidField === 'scenarios' ? '!border-red-400 focus:!ring-red-400' : ''}`}
         />
       </div>
       <button
@@ -131,7 +139,7 @@ const StochasticSolver = () => {
       </button>
 
       {error && (
-        <div role="alert" aria-live="assertive" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+        <div id="stochastic-error" role="alert" aria-live="assertive" className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
           Error: {error}
         </div>
       )}
