@@ -104,7 +104,10 @@ const StochasticSolver = () => {
           value={scenarios}
           onChange={e => {
             setScenarios(e.target.value);
-            if (invalidField === 'scenarios') setInvalidField(null);
+            if (invalidField === 'scenarios') {
+              setInvalidField(null);
+              setError(null);
+            }
           }}
           placeholder={'[{"name": "Scenario1", "probability": 0.5, "yields": [1.0, 2.0]}, ...]'}
           spellCheck={false}

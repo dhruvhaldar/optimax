@@ -56,3 +56,7 @@
 ## 2026-06-18 - Textarea Line Wrapping for Code/JSON Inputs
 **Learning:** By default, HTML `<textarea>` elements use `wrap="soft"`, which causes long lines to wrap visually. For code-like inputs (such as JSON arrays or matrices), this behavior destroys the vertical alignment and makes the raw data very difficult to read or edit accurately.
 **Action:** Always add `wrap="off"` to `<textarea>` elements designated for code, JSON, or matrices to enforce horizontal scrolling instead of line wrapping, preserving the structured layout of the data.
+
+## $(date +%Y-%m-%d) - Auto-clear Global Error State on Input Change
+**Learning:** When a form utilizes both global error banners and specific field-level validation states, relying on a global form re-submission to clear the error provides a poor experience. Furthermore, only calling `setInvalidField(null)` inside the `onChange` handler doesn't automatically clear the main error message display if `setError(null)` isn't also called. This leads to mixed signals where the input is no longer visually marked as invalid, but a large red error banner still tells the user their input is wrong.
+**Action:** Always call both `setInvalidField(null)` and `setError(null)` inside specific input's `onChange` handlers so that global and field-level visual error states clear immediately as the user begins correcting their input.

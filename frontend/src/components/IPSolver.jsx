@@ -89,7 +89,10 @@ const IPSolver = () => {
           value={c}
           onChange={e => {
             setC(e.target.value);
-            if (invalidField === 'c') setInvalidField(null);
+            if (invalidField === 'c') {
+              setInvalidField(null);
+              setError(null);
+            }
           }}
           placeholder="[c1, c2]"
           spellCheck={false}
@@ -111,7 +114,10 @@ const IPSolver = () => {
           value={A}
           onChange={e => {
             setA(e.target.value);
-            if (invalidField === 'A') setInvalidField(null);
+            if (invalidField === 'A') {
+              setInvalidField(null);
+              setError(null);
+            }
           }}
           placeholder="[[a11, a12], [a21, a22]]"
           spellCheck={false}
@@ -132,7 +138,10 @@ const IPSolver = () => {
           value={b}
           onChange={e => {
             setB(e.target.value);
-            if (invalidField === 'b') setInvalidField(null);
+            if (invalidField === 'b') {
+              setInvalidField(null);
+              setError(null);
+            }
           }}
           placeholder="[b1, b2]"
           spellCheck={false}
