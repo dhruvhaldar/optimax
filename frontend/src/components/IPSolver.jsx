@@ -263,4 +263,4 @@ const IPSolver = () => {
   );
 };
 
-export default IPSolver;
+export default React.memo(IPSolver);
