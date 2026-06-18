@@ -85,6 +85,7 @@ const ColGenSolver = () => {
         <textarea
           id="colgen-demands"
           rows="3"
+          wrap="off"
           value={demands}
           onChange={e => {
             setDemands(e.target.value);

@@ -52,3 +52,7 @@
 ## 2026-06-17 - Field-Level JSON Validation Errors
 **Learning:** When forms involve textareas containing complex strings (like JSON arrays or matrices), handling validation errors at the individual field level with explicit visual (e.g. red borders) and semantic (aria-invalid, aria-describedby) feedback drastically improves the user experience. Relying solely on global error messages forces users to hunt for the specific problematic input.
 **Action:** Apply targeted error states (e.g., `invalidField`) directly to invalid inputs for structured data formats and clear the error state immediately `onChange` to provide rapid feedback as the user corrects the input.
+
+## 2026-06-18 - Textarea Line Wrapping for Code/JSON Inputs
+**Learning:** By default, HTML `<textarea>` elements use `wrap="soft"`, which causes long lines to wrap visually. For code-like inputs (such as JSON arrays or matrices), this behavior destroys the vertical alignment and makes the raw data very difficult to read or edit accurately.
+**Action:** Always add `wrap="off"` to `<textarea>` elements designated for code, JSON, or matrices to enforce horizontal scrolling instead of line wrapping, preserving the structured layout of the data.

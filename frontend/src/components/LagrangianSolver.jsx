@@ -88,6 +88,7 @@ const LagrangianSolver = () => {
         <textarea
           id="lagrangian-costs"
           rows="3"
+          wrap="off"
           value={costs}
           onChange={e => {
             setCosts(e.target.value);
@@ -112,6 +113,7 @@ const LagrangianSolver = () => {
         <textarea
           id="lagrangian-weights"
           rows="3"
+          wrap="off"
           value={weights}
           onChange={e => {
             setWeights(e.target.value);

@@ -108,6 +108,7 @@ const LPSolver = () => {
         <textarea
           id="lp-A"
           rows="3"
+          wrap="off"
           value={A}
           onChange={e => {
             setA(e.target.value);
