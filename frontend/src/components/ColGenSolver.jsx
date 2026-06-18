@@ -89,7 +89,10 @@ const ColGenSolver = () => {
           value={demands}
           onChange={e => {
             setDemands(e.target.value);
-            if (invalidField === 'demands') setInvalidField(null);
+            if (invalidField === 'demands') {
+              setInvalidField(null);
+              setError(null);
+            }
           }}
           placeholder="[[width, qty], ...]"
           spellCheck={false}
