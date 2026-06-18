@@ -100,6 +100,7 @@ const StochasticSolver = () => {
         <textarea
           id="stochastic-scenarios"
           rows="15"
+          wrap="off"
           value={scenarios}
           onChange={e => {
             setScenarios(e.target.value);

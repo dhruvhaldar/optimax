@@ -107,6 +107,7 @@ const IPSolver = () => {
         <textarea
           id="ip-A"
           rows="3"
+          wrap="off"
           value={A}
           onChange={e => {
             setA(e.target.value);
