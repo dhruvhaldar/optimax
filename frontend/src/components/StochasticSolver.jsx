@@ -208,4 +208,4 @@ const StochasticSolver = () => {
   );
 };
 
-export default StochasticSolver;
+export default React.memo(StochasticSolver);

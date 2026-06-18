@@ -258,4 +258,4 @@ const LagrangianSolver = () => {
   );
 };
 
-export default LagrangianSolver;
+export default React.memo(LagrangianSolver);

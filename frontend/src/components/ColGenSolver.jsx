@@ -206,4 +206,4 @@ const ColGenSolver = () => {
   );
 };
 
-export default ColGenSolver;
+export default React.memo(ColGenSolver);

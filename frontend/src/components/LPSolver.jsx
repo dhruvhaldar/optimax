@@ -278,4 +278,4 @@ const LPSolver = () => {
   );
 };
 
-export default LPSolver;
+export default React.memo(LPSolver);
