@@ -56,6 +56,7 @@ const StochasticSolver = () => {
     } catch (err) {
       setError("Invalid JSON format in Scenarios. Please check for missing quotes, commas, or brackets.");
       setInvalidField('scenarios');
+      setTimeout(() => document.getElementById('stochastic-scenarios')?.focus(), 0);
       setLoading(false);
       return;
     }

@@ -21,3 +21,7 @@
 ## 2026-05-03 - Field-Specific Validation Feedback
 **Learning:** When users input complex formats like JSON matrices, generic form-level errors force them to hunt for syntax mistakes across multiple fields. Catching parsing errors individually and associating them directly with the specific input via `aria-invalid` and `aria-describedby` drastically reduces cognitive load for both visual and screen-reader users.
 **Action:** Always parse complex input fields individually and bind validation state directly to the exact field, clearing the error onChange.
+
+## 2026-05-03 - Focus Management on Validation Errors
+**Learning:** When client-side form validation triggers an error state (e.g., during custom JSON parsing), users (especially screen-reader and keyboard-only users) can lose their place if focus remains on the submit button. Manually directing focus back to the exact input field that failed validation provides an immediate, frictionless path to correction.
+**Action:** Always accompany field-specific error states with a focus shift back to the invalid input (`document.getElementById(id)?.focus()`) to streamline the correction flow.
