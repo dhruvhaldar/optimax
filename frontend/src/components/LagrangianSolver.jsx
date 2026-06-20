@@ -39,6 +39,7 @@ const LagrangianSolver = () => {
     } catch (err) {
       setError("Invalid JSON format in Costs (Task x Agent).");
       setInvalidField('costs');
+      setTimeout(() => document.getElementById('lagrangian-costs')?.focus(), 0);
       setLoading(false);
       return;
     }
@@ -48,6 +49,7 @@ const LagrangianSolver = () => {
     } catch (err) {
       setError("Invalid JSON format in Weights (Task x Agent).");
       setInvalidField('weights');
+      setTimeout(() => document.getElementById('lagrangian-weights')?.focus(), 0);
       setLoading(false);
       return;
     }
@@ -57,6 +59,7 @@ const LagrangianSolver = () => {
     } catch (err) {
       setError("Invalid JSON format in Agent Capacities.");
       setInvalidField('capacities');
+      setTimeout(() => document.getElementById('lagrangian-capacities')?.focus(), 0);
       setLoading(false);
       return;
     }

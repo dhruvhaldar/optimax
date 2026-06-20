@@ -40,6 +40,7 @@ const ColGenSolver = () => {
     } catch (err) {
       setError("Invalid input format. Please ensure demands are formatted as a valid JSON matrix (e.g., [[3, 25], [5, 20]]).");
       setInvalidField('demands');
+      setTimeout(() => document.getElementById('colgen-demands')?.focus(), 0);
       setLoading(false);
       return;
     }

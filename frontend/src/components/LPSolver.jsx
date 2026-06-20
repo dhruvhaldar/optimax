@@ -38,6 +38,7 @@ const LPSolver = () => {
     } catch (err) {
       setError("Invalid JSON format in Objective Coefficients (c).");
       setInvalidField('c');
+      setTimeout(() => document.getElementById('lp-c')?.focus(), 0);
       setLoading(false);
       return;
     }
@@ -47,6 +48,7 @@ const LPSolver = () => {
     } catch (err) {
       setError("Invalid JSON format in Constraint Matrix (A_ub).");
       setInvalidField('A');
+      setTimeout(() => document.getElementById('lp-A')?.focus(), 0);
       setLoading(false);
       return;
     }
@@ -56,6 +58,7 @@ const LPSolver = () => {
     } catch (err) {
       setError("Invalid JSON format in Constraint RHS (b_ub).");
       setInvalidField('b');
+      setTimeout(() => document.getElementById('lp-b')?.focus(), 0);
       setLoading(false);
       return;
     }

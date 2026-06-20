@@ -37,6 +37,7 @@ const IPSolver = () => {
     } catch (err) {
       setError("Invalid JSON format in Objective Coefficients (c).");
       setInvalidField('c');
+      setTimeout(() => document.getElementById('ip-c')?.focus(), 0);
       setLoading(false);
       return;
     }
@@ -46,6 +47,7 @@ const IPSolver = () => {
     } catch (err) {
       setError("Invalid JSON format in Constraint Matrix (A_ub).");
       setInvalidField('A');
+      setTimeout(() => document.getElementById('ip-A')?.focus(), 0);
       setLoading(false);
       return;
     }
@@ -55,6 +57,7 @@ const IPSolver = () => {
     } catch (err) {
       setError("Invalid JSON format in Constraint RHS (b_ub).");
       setInvalidField('b');
+      setTimeout(() => document.getElementById('ip-b')?.focus(), 0);
       setLoading(false);
       return;
     }
