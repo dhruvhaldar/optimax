@@ -36,16 +36,38 @@ const CAPABILITIES = [
 ];
 
 function App() {
-  const [activeTab, setActiveTab] = useState('lp');
-  const [visitedTabs, setVisitedTabs] = useState(new Set(['lp']));
+  const [activeTab, setActiveTab] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    return TABS.some(t => t.id === hash) ? hash : 'lp';
+  });
+  const [visitedTabs, setVisitedTabs] = useState(new Set([activeTab]));
 
   useEffect(() => {
     const activeLabel = TABS.find(tab => tab.id === activeTab)?.label || 'Optimax';
     document.title = `${activeLabel} | Optimax`;
+    window.history.replaceState(null, '', `#${activeTab}`);
   }, [activeTab]);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (TABS.some(t => t.id === hash)) {
+        setActiveTab(hash);
+        setVisitedTabs(prev => {
+          if (prev.has(hash)) return prev;
+          const next = new Set(prev);
+          next.add(hash);
+          return next;
+        });
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const changeTab = (id) => {
     setActiveTab(id);
+    window.history.pushState(null, '', `#${id}`);
     setVisitedTabs(prev => {
       if (prev.has(id)) return prev;
       const next = new Set(prev);
