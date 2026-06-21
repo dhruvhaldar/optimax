@@ -164,7 +164,9 @@ def solve_lagrangian_route(params: LagrangianParams):
 @app.post("/api/stochastic", dependencies=[Depends(check_rate_limit)])
 def solve_stochastic_route(params: StochasticParams):
     # Convert Pydantic models to dicts
-    scenarios = [s.model_dump() for s in params.scenarios]
+    # Optimization: Use Pydantic V2's core model_dump on the parent array instead of a Python list comprehension.
+    # This prevents intermediate memory allocation overhead and relies on the faster Rust backend.
+    scenarios = params.model_dump()['scenarios']
     return stochastic.solve_stochastic(params.total_land, scenarios)
 
 if __name__ == "__main__":
